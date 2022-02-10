@@ -7,8 +7,8 @@ public class Board {
 		// Fill
 		return board;
 	}
-	
-	public Board() {};
+	private Peg[][] boardPos;
+	public Board(Player[] players) {};
 	public boolean canMove(Position startPos, Position targetPos) { return false; };
 	public boolean playerPeg (Player player, Position startPos) { return false; };
 	public void updatePeg (Position startPos, Position targetPos) {};
