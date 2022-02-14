@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class Board {
 	
@@ -39,15 +40,20 @@ public class Board {
 		new Position(14, 0), new Position(14, 1), new Position(14, 2),
 		new Position(13, 0), new Position(13, 1), new Position(13, 2), new Position(13, 3)
 	};
+	private Position[][] homeAll = {homeR, homeBk, homeG, homeW, homeBu};
 	
 	public Board(Player[] players) {
-		if (players.length>0) {
-			populateReg(homeR, players[0]);
+		for (int i=0; i<players.length; i++) {
+			populateReg(homeAll[i], players[i]);
 		}
-		
-		//boardPos
 	};
-	public boolean canMove(Position startPos, Position targetPos) { return false; };
+	
+	public boolean canMove(Position startPos, Position targetPos, boolean ongoingTurn) { 
+		if (possibleMoves(startPos, ongoingTurn).contains(targetPos)) {
+			return true;
+		}
+		return false; 
+	}
 	
 	public boolean playerPeg (Player player, Position startPos) {
 		
@@ -72,16 +78,119 @@ public class Board {
 	public Position[] getHomeRegion(Color c) {
 		
 		//waiting for color vars in GUI
-		
+		return null;
 	}
 	
-	public Position[] possibleMoves (Position startPos, boolean constraint) { return null; };
-	public void move(Position startPos, Position endPos) {};
-	public Peg[][] getPeg() { return null; };
+	public ArrayList<Position> possibleMoves(Position startPos, boolean constraint) {  
+		int sRow = startPos.getRow(); int sCol = startPos.getColumn();
+		//constraint true if ongoing turn, can only jump
+		ArrayList<Position> PM = new ArrayList<Position>();
+		ArrayList<Position> Around = getSurrPos(startPos);
+		if (!constraint) {
+			PM = Around;
+		}
+		for (Position p: Around) { //checking 5 jump
+			if (p.getRow()==sRow) {
+				if(startPos.getRow()+6<boardPos[sRow].length) {
+					//if ()
+				}
+			}
+		}
+		return null; }
+	
+	public void move(Position startPos, Position endPos) {
+		boardPos[endPos.getRow()][endPos.getColumn()] = boardPos[startPos.getRow()][startPos.getColumn()]; //check copy vs ref
+		boardPos[startPos.getRow()][startPos.getColumn()] = null;
+	}
+	public Peg[][] getPeg() { //possibly unnecessary
+		return null; 
+	}
+	
 	private void populateReg(Position[] region, Player p) {
 		for (int i=0; i<region.length; i++) {
 			boardPos[region[i].getRow()][region[i].getColumn()] = new Peg(p);
 		}
 	}
+	
+	private ArrayList<Position> getSurrPos(Position p) {
+		//precondition: the given position exists on a chinese checkers board
+		//and would point to a valid position on boardPos
+		ArrayList<Position> ret = new ArrayList<Position>();
+		
+		int aboveRowSize=-1;
+		try {aboveRowSize=boardPos[p.getRow()-1].length;} catch(ArrayIndexOutOfBoundsException e) {}
+		
+		int belowRowSize=-1;
+		try {aboveRowSize=boardPos[p.getRow()+1].length;} catch(ArrayIndexOutOfBoundsException e) {}
+		
+		int rootRowSize = boardPos[p.getRow()].length;
+		int rootIndex = p.getColumn();
+		int branchRowSize;
+		
+		//adds position to the right
+		ret.add(new Position(p.getRow(), p.getColumn()+1));
+		
+		//adds position to the top right
+		if(aboveRowSize!=-1) {
+			ret.add(currentCheck);
+		} catch(Exception e) {}
+		
+		//adds position to the top left
+		try {
+			branchRowSize = boardPos[p.getRow()-1].length;
+			currentCheck = new Position(p.getRow()-1, diagNodeIndex(rootRowSize,rootIndex,branchRowSize,left));
+			ret.add(currentCheck);
+		} catch(Exception e) {}
+		
+		//adds position to the left
+		currentCheck = new Position(p.getRow(), p.getColumn()-1);
+		if(currentCheck.getColumn()>boardPos[p.getRow()].length) {
+			//makes sure position to the left can exist
+			ret.add(currentCheck);
+		}
+		
+	}
+	
+	private static final boolean left = false, right = true;
+	private static int diagNodeIndex(int rootRowSize, int rootIndex, int branchRowSize, boolean direction) {
+		/*
+		 * Returns: the index (position in row, starting at 0)
+		 * of a node that is to the top-left or bottom-left of the root.
+		 * 
+		 * Parameter: rootRowSize is the size of the row containing the root node
+		 * Parameter: rootIndex is the index of the root node within its row
+		 * Parameter: branchRowSize is the size of the row containing the branch node
+		 * Parameter: direction is whether to go left or right. false->left , true->right
+		 * 
+		 * Precondition: the two rows have horizontal symmetry
+		 * 
+		 * Precondition: one row has an odd number of indices,
+		 * while the other has an even number of indices.
+		 */
+		
+		if(rootIndex<0 || rootRowSize<1 || rootIndex>=rootRowSize) {
+			throw new RuntimeException("NONEXISTANT ROOT NODE");
+		}
+		//makes sure root index can exist for specified root row size
+		
+		double rootRowDepth = (double)rootRowSize / 2.0;
+		//the distance from the center of the row to the outside of the row
+		
+		double rootIndexOffset = rootRowDepth - rootIndex;
+		//The distance from the center of the root row to the root node
+		
+		double branchRowDepth = (double)branchRowSize / 2.0;
+		//the distance from the center of the row to the outside of the row
+		
+		int branchIndex = (int)Math.floor(branchRowDepth-rootIndexOffset);
+		//the depth of the branch row minus the distance to the branch node
+		
+		branchIndex += (direction==left)?0:1;
+		//adds 1 if it's a right diagonal
+		
+		if(branchIndex<0 || (branchIndex+1)>branchRowSize) {throw new RuntimeException("NONEXISTANT BRANCH NODE");}
+		//throws exception if branch node cannot exist
+		
+		return branchIndex;
+	}
 }
-
