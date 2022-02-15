@@ -14,4 +14,8 @@ public class Position {
 	public int getColumn() {
 		return column;
 	}
+	
+	public String toString() {
+		return "ROW: " + row + ", COL: " +column; 
+	}
 }

@@ -121,34 +121,47 @@ public class Board {
 		try {aboveRowSize=boardPos[p.getRow()-1].length;} catch(ArrayIndexOutOfBoundsException e) {}
 		
 		int belowRowSize=-1;
-		try {aboveRowSize=boardPos[p.getRow()+1].length;} catch(ArrayIndexOutOfBoundsException e) {}
+		try {belowRowSize=boardPos[p.getRow()+1].length;} catch(ArrayIndexOutOfBoundsException e) {}
 		
 		int rootRowSize = boardPos[p.getRow()].length;
 		int rootIndex = p.getColumn();
-		int branchRowSize;
 		
-		//adds position to the right
-		ret.add(new Position(p.getRow(), p.getColumn()+1));
-		
-		//adds position to the top right
-		if(aboveRowSize!=-1) {
-			ret.add(currentCheck);
-		} catch(Exception e) {}
-		
-		//adds position to the top left
+		//adds positions to the right + left
+		Position temp = new Position(p.getRow(), p.getColumn()+1);
 		try {
-			branchRowSize = boardPos[p.getRow()-1].length;
-			currentCheck = new Position(p.getRow()-1, diagNodeIndex(rootRowSize,rootIndex,branchRowSize,left));
-			ret.add(currentCheck);
-		} catch(Exception e) {}
+			Peg asdf = boardPos[temp.getRow()][temp.getColumn()];
+			/*
+			 * "ASDF" isn't actually important, it's just to
+			 * make sure that the location to which ASDF would point
+			 * exists without throwing an arrayindexoutofboundsexception.
+			 * the shortest way to do this was using an assignment statement
+			 */
+			ret.add(temp);
+		} catch (ArrayIndexOutOfBoundsException e) {}
 		
-		//adds position to the left
-		currentCheck = new Position(p.getRow(), p.getColumn()-1);
-		if(currentCheck.getColumn()>boardPos[p.getRow()].length) {
-			//makes sure position to the left can exist
-			ret.add(currentCheck);
-		}
+		temp = new Position(p.getRow(), p.getColumn()-1);
+		try {
+			Peg asdf = boardPos[temp.getRow()][temp.getColumn()];
+			ret.add(temp);
+		} catch (ArrayIndexOutOfBoundsException e) {}
 		
+		//adds positions to the top
+		try {
+			ret.add(new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left)));
+		} catch (Exception e) {}
+		try {
+			ret.add(new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right)));
+		} catch (Exception e) {}
+		
+		//adds positions to the bottom
+		try {
+			ret.add(new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,belowRowSize,left)));
+		} catch (Exception e) {}
+		try {
+			ret.add(new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,belowRowSize,right)));
+		} catch (Exception e) {}
+		
+		return ret;
 	}
 	
 	private static final boolean left = false, right = true;
