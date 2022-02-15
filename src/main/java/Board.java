@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Board {
 	
@@ -148,59 +149,24 @@ public class Board {
 		}
 	}
 	
-	private ArrayList<Position> getSurrPos(Position p) {
+	private static ArrayList<Position> getSurrPos(Position p) {
 		//precondition: the given position exists on a chinese checkers board
 		//and would point to a valid position on boardPos
 		ArrayList<Position> ret = new ArrayList<Position>();
 		
+		ret.add(getTL(p));
+		ret.add(getTR(p));
+		ret.add(getR(p));
+		ret.add(getBR(p));
+		ret.add(getBL(p));
+		ret.add(getL(p));
 		
-		
-		int belowRowSize=-1;
-		try {belowRowSize=boardPos[p.getRow()+1].length;} catch(ArrayIndexOutOfBoundsException e) {}
-		
-		
-		
-		//adds positions to the right + left
-		
-		
-		temp = new Position(p.getRow(), p.getColumn()-1);
-		try {
-			Peg asdf = boardPos[temp.getRow()][temp.getColumn()];
-			ret.add(temp);
-		} catch (ArrayIndexOutOfBoundsException e) {}
-		
-		//adds positions to the top
-		
-		try {
-			ret.add(new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right)));
-		} catch (Exception e) {}
-		
-		//adds positions to the bottom
-		try {
-			ret.add(new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,belowRowSize,left)));
-		} catch (Exception e) {}
-		try {
-			ret.add(new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,belowRowSize,right)));
-		} catch (Exception e) {}
+		ret.removeAll(Collections.singleton(null));
 		
 		return ret;
 	}
 	
 	public static Position getTL(Position p) {
-		int rootRowSize = rowWidths[p.getRow()];
-		int rootIndex = p.getColumn();
-		
-		int aboveRowSize=-1;
-		try {aboveRowSize=rowWidths[p.getRow()-1];} catch(ArrayIndexOutOfBoundsException e) {}
-		
-		try {
-			return new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public static Position getTR(Position p) {
 		int rootRowSize = rowWidths[p.getRow()];
 		int rootIndex = p.getColumn();
 		
@@ -214,34 +180,76 @@ public class Board {
 		}
 	}
 	
-	public static Position getR(Position p) {
+	public static Position getTR(Position p) {
 		int rootRowSize = rowWidths[p.getRow()];
 		int rootIndex = p.getColumn();
 		
-		Position temp = new Position(p.getRow(), p.getColumn()+1);
+		int aboveRowSize=-1;
+		try {aboveRowSize=rowWidths[p.getRow()-1];} catch(ArrayIndexOutOfBoundsException e) {}
 		
+		try {
+			return new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public static Position getR(Position p) {
+		int rootRowSize = rowWidths[p.getRow()];
+		
+		//generates new position to the right
+		int index = p.getColumn()+1;
+		
+		//checks that it is within the row
+		if(index<0 || index>=rootRowSize) {
+			return null;
+		} else {
+			return new Position(p.getRow(),index);
+		}
 	}
 	
 	public static Position getBR(Position p) {
 		int rootRowSize = rowWidths[p.getRow()];
 		int rootIndex = p.getColumn();
 		
-		return null;
+		int aboveRowSize=-1;
+		try {aboveRowSize=rowWidths[p.getRow()+1];} catch(ArrayIndexOutOfBoundsException e) {}
+		
+		try {
+			return new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	public static Position getBL(Position p) {
 		int rootRowSize = rowWidths[p.getRow()];
 		int rootIndex = p.getColumn();
 		
-		return null;
+		int aboveRowSize=-1;
+		try {aboveRowSize=rowWidths[p.getRow()+1];} catch(ArrayIndexOutOfBoundsException e) {}
+		
+		try {
+			return new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left));
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	public static Position getL(Position p) {
 		int rootRowSize = rowWidths[p.getRow()];
-		int rootIndex = p.getColumn();
 		
-		return null;
+		//generates new position to the left
+		int index = p.getColumn()-1;
+		
+		//checks that it is within the row
+		if(index<0 || index>=rootRowSize) {
+			return null;
+		} else {
+			return new Position(p.getRow(),index);
+		}
 	}
+
 	private static final boolean left = false, right = true;
 	private static int diagNodeIndex(int rootRowSize, int rootIndex, int branchRowSize, boolean direction) {
 		/*
