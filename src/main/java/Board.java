@@ -10,6 +10,8 @@ public class Board {
 			{null, null, null, null, null, null, null, null, null, null, null, null},{null, null, null, null, null, null, null, null, null, null, null, null, null},
 			{null, null, null, null},{null, null, null},{null, null},{null}};
 	
+	private static final int[] rowWidths = {1,2,3,4,13,12,11,10,9,10,11,12,13,4,3,2,1};
+	
 	private Position[] homeR = {new Position(0, 0), 
 								new Position(1, 0), new Position(1, 1), 
 								new Position(2, 0), new Position(2, 1), new Position(2, 2),
@@ -86,19 +88,53 @@ public class Board {
 		//constraint true if ongoing turn, can only jump
 		ArrayList<Position> PM = new ArrayList<Position>();
 		ArrayList<Position> Around = getSurrPos(startPos);
-		if (!constraint) {
-			PM = Around;
+		Position p = getTL(startPos);
+		if (boardPos[p.getRow()][p.getColumn()]==null) {
+			if (!constraint) {PM.add(p);}
+		} else {
+			p = getTL(p);
+			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
 		}
-		for (Position p: Around) { //checking 5 jump
-			if (p.getRow()==sRow) {
-				if(startPos.getRow()+6<boardPos[sRow].length) {
-					//if ()
-				}
-			}
+		p = getTR(startPos);
+		if (boardPos[p.getRow()][p.getColumn()]==null) {
+			if (!constraint) {PM.add(p);}
+		} else {
+			p = getTR(p);
+			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
+		}
+		p = getR(startPos);
+		if (boardPos[p.getRow()][p.getColumn()]==null) {
+			if (!constraint) {PM.add(p);}
+		} else {
+			p = getR(p);
+			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
+		}
+		p = getBR(startPos);
+		if (boardPos[p.getRow()][p.getColumn()]==null) {
+			if (!constraint) {PM.add(p);}
+		} else {
+			p = getBR(p);
+			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
+		}
+		p = getBL(startPos);
+		if (boardPos[p.getRow()][p.getColumn()]==null) {
+			if (!constraint) {PM.add(p);}
+		} else {
+			p = getBL(p);
+			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
+		}
+		p = getL(startPos);
+		if (boardPos[p.getRow()][p.getColumn()]==null) {
+			if (!constraint) {PM.add(p);}
+		} else {
+			p = getL(p);
+			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
 		}
 		return null; }
 	
-	public void move(Position startPos, Position endPos) {
+	public void move(Move move) {
+		Position startPos = move.getStartPosition();
+		Position endPos = move.getEndPosition();
 		boardPos[endPos.getRow()][endPos.getColumn()] = boardPos[startPos.getRow()][startPos.getColumn()]; //check copy vs ref
 		boardPos[startPos.getRow()][startPos.getColumn()] = null;
 	}
@@ -117,27 +153,15 @@ public class Board {
 		//and would point to a valid position on boardPos
 		ArrayList<Position> ret = new ArrayList<Position>();
 		
-		int aboveRowSize=-1;
-		try {aboveRowSize=boardPos[p.getRow()-1].length;} catch(ArrayIndexOutOfBoundsException e) {}
+		
 		
 		int belowRowSize=-1;
 		try {belowRowSize=boardPos[p.getRow()+1].length;} catch(ArrayIndexOutOfBoundsException e) {}
 		
-		int rootRowSize = boardPos[p.getRow()].length;
-		int rootIndex = p.getColumn();
+		
 		
 		//adds positions to the right + left
-		Position temp = new Position(p.getRow(), p.getColumn()+1);
-		try {
-			Peg asdf = boardPos[temp.getRow()][temp.getColumn()];
-			/*
-			 * "ASDF" isn't actually important, it's just to
-			 * make sure that the location to which ASDF would point
-			 * exists without throwing an arrayindexoutofboundsexception.
-			 * the shortest way to do this was using an assignment statement
-			 */
-			ret.add(temp);
-		} catch (ArrayIndexOutOfBoundsException e) {}
+		
 		
 		temp = new Position(p.getRow(), p.getColumn()-1);
 		try {
@@ -146,9 +170,7 @@ public class Board {
 		} catch (ArrayIndexOutOfBoundsException e) {}
 		
 		//adds positions to the top
-		try {
-			ret.add(new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left)));
-		} catch (Exception e) {}
+		
 		try {
 			ret.add(new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right)));
 		} catch (Exception e) {}
@@ -164,6 +186,62 @@ public class Board {
 		return ret;
 	}
 	
+	public static Position getTL(Position p) {
+		int rootRowSize = rowWidths[p.getRow()];
+		int rootIndex = p.getColumn();
+		
+		int aboveRowSize=-1;
+		try {aboveRowSize=rowWidths[p.getRow()-1];} catch(ArrayIndexOutOfBoundsException e) {}
+		
+		try {
+			return new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public static Position getTR(Position p) {
+		int rootRowSize = rowWidths[p.getRow()];
+		int rootIndex = p.getColumn();
+		
+		int aboveRowSize=-1;
+		try {aboveRowSize=rowWidths[p.getRow()-1];} catch(ArrayIndexOutOfBoundsException e) {}
+		
+		try {
+			return new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left));
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public static Position getR(Position p) {
+		int rootRowSize = rowWidths[p.getRow()];
+		int rootIndex = p.getColumn();
+		
+		Position temp = new Position(p.getRow(), p.getColumn()+1);
+		
+	}
+	
+	public static Position getBR(Position p) {
+		int rootRowSize = rowWidths[p.getRow()];
+		int rootIndex = p.getColumn();
+		
+		return null;
+	}
+	
+	public static Position getBL(Position p) {
+		int rootRowSize = rowWidths[p.getRow()];
+		int rootIndex = p.getColumn();
+		
+		return null;
+	}
+	
+	public static Position getL(Position p) {
+		int rootRowSize = rowWidths[p.getRow()];
+		int rootIndex = p.getColumn();
+		
+		return null;
+	}
 	private static final boolean left = false, right = true;
 	private static int diagNodeIndex(int rootRowSize, int rootIndex, int branchRowSize, boolean direction) {
 		/*
