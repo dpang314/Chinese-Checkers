@@ -11,6 +11,7 @@ public class Board {
 			{null, null, null, null, null, null, null, null, null, null, null, null},{null, null, null, null, null, null, null, null, null, null, null, null, null},
 			{null, null, null, null},{null, null, null},{null, null},{null}};
 	
+	//only so that the various directional position methods can be static
 	private static final int[] rowWidths = {1,2,3,4,13,12,11,10,9,10,11,12,13,4,3,2,1};
 	
 	private Position[] homeR = {new Position(0, 0), 
@@ -58,11 +59,13 @@ public class Board {
 		return false; 
 	}
 	
-	public boolean playerPeg (Player player, Position startPos) {
+	public boolean playerPeg (Player player, Position pos) {
+		boolean ret;
 		
-		Peg checkedPeg = boardPos[startPos.getRow()][startPos.getColumn()];
-		return checkedPeg.getOwner()==player;
+		//checks if a peg at a position is owned by a specified player
 		
+		Peg checkedPeg = boardPos[pos.getRow()][pos.getColumn()];
+		return checkedPeg!=null && checkedPeg.getOwner()==player;
 	}
 	
 	private void updatePeg (Position startPos, Position targetPos) {
@@ -166,49 +169,55 @@ public class Board {
 		return ret;
 	}
 	
+	//ret means "the Position to be RETurned" in all subsequent methods
+	
 	public static Position getTL(Position p) {
+		Position ret = null;
+		
 		int rootRowSize = rowWidths[p.getRow()];
 		int rootIndex = p.getColumn();
 		
 		int aboveRowSize=-1;
-		try {aboveRowSize=rowWidths[p.getRow()-1];} catch(ArrayIndexOutOfBoundsException e) {}
+		try {aboveRowSize=rowWidths[p.getRow()-1];} finally {}
 		
 		try {
-			return new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left));
-		} catch (Exception e) {
-			return null;
-		}
+			ret = new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left));
+		} finally {return ret;}
 	}
 	
 	public static Position getTR(Position p) {
+		Position ret = null;
+		
 		int rootRowSize = rowWidths[p.getRow()];
 		int rootIndex = p.getColumn();
 		
 		int aboveRowSize=-1;
-		try {aboveRowSize=rowWidths[p.getRow()-1];} catch(ArrayIndexOutOfBoundsException e) {}
+		try {aboveRowSize=rowWidths[p.getRow()-1];} finally {}
 		
 		try {
-			return new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
-		} catch (Exception e) {
-			return null;
-		}
+			ret = new Position(p.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
+		} finally {return ret;}
 	}
 	
 	public static Position getR(Position p) {
+		Position ret=null;
+		
 		int rootRowSize = rowWidths[p.getRow()];
 		
 		//generates new position to the right
 		int index = p.getColumn()+1;
 		
 		//checks that it is within the row
-		if(index<0 || index>=rootRowSize) {
-			return null;
-		} else {
-			return new Position(p.getRow(),index);
+		if(!(index<0 || index>=rootRowSize)) {
+			ret = new Position(p.getRow(),index);
 		}
+		
+		return ret;
 	}
 	
 	public static Position getBR(Position p) {
+		Position ret = null;
+		
 		int rootRowSize = rowWidths[p.getRow()];
 		int rootIndex = p.getColumn();
 		
@@ -216,13 +225,13 @@ public class Board {
 		try {aboveRowSize=rowWidths[p.getRow()+1];} catch(ArrayIndexOutOfBoundsException e) {}
 		
 		try {
-			return new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
-		} catch (Exception e) {
-			return null;
-		}
+			ret = new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
+		} finally{return ret;}
 	}
 	
 	public static Position getBL(Position p) {
+		Position ret = null;
+		
 		int rootRowSize = rowWidths[p.getRow()];
 		int rootIndex = p.getColumn();
 		
@@ -230,29 +239,31 @@ public class Board {
 		try {aboveRowSize=rowWidths[p.getRow()+1];} catch(ArrayIndexOutOfBoundsException e) {}
 		
 		try {
-			return new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left));
-		} catch (Exception e) {
-			return null;
-		}
+			ret = new Position(p.getRow()+1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left));
+		} finally {return ret;}
 	}
 	
 	public static Position getL(Position p) {
+		Position ret = null;
+		
 		int rootRowSize = rowWidths[p.getRow()];
 		
 		//generates new position to the left
 		int index = p.getColumn()-1;
 		
 		//checks that it is within the row
-		if(index<0 || index>=rootRowSize) {
-			return null;
-		} else {
-			return new Position(p.getRow(),index);
+		if(!(index<0 || index>=rootRowSize)) {
+			ret = new Position(p.getRow(),index);
 		}
+		
+		return ret;
 	}
 
 	private static final boolean left = false, right = true;
 	private static int diagNodeIndex(int rootRowSize, int rootIndex, int branchRowSize, boolean direction) {
 		/*
+		 * IMPORTANT METHOD VERY IMPORTANT DO NOT MESS WITH THIS METHOD
+		 * 
 		 * Returns: the index (position in row, starting at 0)
 		 * of a node that is to the top-left or bottom-left of the root.
 		 * 
@@ -267,7 +278,8 @@ public class Board {
 		 * while the other has an even number of indices.
 		 */
 		
-		if(rootIndex<0 || rootRowSize<1 || rootIndex>=rootRowSize) {
+		if(rootIndex<0 || rootRowSize<1 || rootIndex>=rootRowSize)
+		{
 			throw new RuntimeException("NONEXISTANT ROOT NODE");
 		}
 		//makes sure root index can exist for specified root row size
@@ -287,7 +299,10 @@ public class Board {
 		branchIndex += (direction==left)?0:1;
 		//adds 1 if it's a right diagonal
 		
-		if(branchIndex<0 || (branchIndex+1)>branchRowSize) {throw new RuntimeException("NONEXISTANT BRANCH NODE");}
+		if(branchIndex<0 || (branchIndex+1)>branchRowSize)
+		{
+			throw new RuntimeException("NONEXISTANT BRANCH NODE");
+		}
 		//throws exception if branch node cannot exist
 		
 		return branchIndex;
