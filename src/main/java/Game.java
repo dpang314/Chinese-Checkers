@@ -13,6 +13,8 @@ public class Game {
 	private Board board;
   //Current player index
 	private int playerTurn = 0;
+  //First player turn
+	private int first = 0;
   //determines if there are more than one human player
   private boolean humans = false;
   //number of actual players
@@ -35,7 +37,7 @@ public class Game {
 	    //for the purposes of undo
 	    int z=0;
 	    for (Player p : player){
-	      if (p.type().contentEquals("human"))
+	      if (p.isHuman())
 	        z++;
 	    }
 	    if (z>1)
@@ -78,17 +80,27 @@ public class Game {
 	        i++;
 	      }
 	      currentPlayer = players[i];
+	      playerTurn = i;
+	      first = i;
 	    }
 	    //otherwise, the first player should be the first element
 	    else
 	      currentPlayer = players[0];
-      
 	};
 	
   
   
 	public void endTurn() {
-		
+		if (playerTurn<5) {
+			playerTurn++;
+			currentPlayer = players[playerTurn];
+		}
+		else {
+			playerTurn = 0;
+			currentPlayer = players[0];
+		}
+		if (playerTurn == first)
+			turn++;
 	}
 	
 	public void save() {
@@ -128,7 +140,8 @@ public class Game {
 		history.add(move);
 	};
 	
-	public Player gameOver() { 
+	public Player gameOver() {
+		
 		return null;
 	};
 	public Player[] getPlayers() { 
