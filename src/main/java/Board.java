@@ -44,7 +44,7 @@ public class Board {
 		new Position(14, 0), new Position(14, 1), new Position(14, 2),
 		new Position(13, 0), new Position(13, 1), new Position(13, 2), new Position(13, 3)
 	};
-	private Position[][] homeAll = {homeR, homeBk, homeG, homeW, homeBu};
+	private Position[][] homeAll = {homeR, homeBu, homeBk, homeW, homeG, homeY};
 	
 	public Board(Player[] players) {
 		for (int i=0; i<players.length; i++) {
