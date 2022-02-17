@@ -88,10 +88,8 @@ public class Board {
 	}
 	
 	public ArrayList<Position> possibleMoves(Position startPos, boolean constraint) {  
-		int sRow = startPos.getRow(); int sCol = startPos.getColumn();
 		//constraint true if ongoing turn, can only jump
 		ArrayList<Position> PM = new ArrayList<Position>();
-		ArrayList<Position> Around = getSurrPos(startPos);
 		Position p = getTL(startPos);
 		if (boardPos[p.getRow()][p.getColumn()]==null) {
 			if (!constraint) {PM.add(p);}
@@ -134,7 +132,7 @@ public class Board {
 			p = getL(p);
 			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
 		}
-		return null; }
+		return PM; }
 	
 	public void move(Move move) {
 		Position startPos = move.getStartPosition();
@@ -150,23 +148,6 @@ public class Board {
 		for (int i=0; i<region.length; i++) {
 			boardPos[region[i].getRow()][region[i].getColumn()] = new Peg(p);
 		}
-	}
-	
-	private static ArrayList<Position> getSurrPos(Position p) {
-		//precondition: the given position exists on a chinese checkers board
-		//and would point to a valid position on boardPos
-		ArrayList<Position> ret = new ArrayList<Position>();
-		
-		ret.add(getTL(p));
-		ret.add(getTR(p));
-		ret.add(getR(p));
-		ret.add(getBR(p));
-		ret.add(getBL(p));
-		ret.add(getL(p));
-		
-		ret.removeAll(Collections.singleton(null));
-		
-		return ret;
 	}
 	
 	//ret means "the Position to be RETurned" in all subsequent methods
