@@ -60,7 +60,6 @@ public class Board {
 	}
 	
 	public boolean playerPeg (Player player, Position pos) {
-		boolean ret;
 		
 		//checks if a peg at a position is owned by a specified player
 		
@@ -86,7 +85,7 @@ public class Board {
 		//waiting for color vars in GUI
 		return null;
 	}
-	
+
 	public ArrayList<Position> possibleMoves(Position startPos, boolean constraint) {  
 		//constraint true if ongoing turn, can only jump
 		ArrayList<Position> PM = new ArrayList<Position>();
