@@ -57,6 +57,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private boolean humSelect = false;
 	private boolean comSelect = false;
 	private boolean nonSelect = false;
+	private boolean ready = false;
 	
 	private JLabel none;
 	private JLabel computer;
@@ -200,13 +201,17 @@ public class MenuPanel extends JPanel implements ActionListener {
 		none.setVisible(false);
 		
 		name = new JTextField();
-		name.setBounds(820,355,20,20);
+		name.setBounds(600,500,250,70);
 		this.add(name);
+		name.setActionCommand("name");
+		name.addActionListener(this);
 		name.setVisible(false);
 		
 		difficulty = new JComboBox();
-		difficulty.setBounds(820,450,20,20);
+		difficulty.setBounds(600,500,250,70);
 		this.add(difficulty);
+		difficulty.setActionCommand("difficulty");
+		difficulty.addActionListener(this);
 		difficulty.setVisible(false);
 		
 		done = new JButton();
@@ -292,6 +297,9 @@ public class MenuPanel extends JPanel implements ActionListener {
 			nonSelect = true;
 			humSelect = false;
 			comSelect = false;
+		}
+		if (eventName.equals("difficulty")) {
+			done.setVisible(true);
 		}
 		// Major Done Button
 		if (eventName.equals("done")) {
