@@ -1,5 +1,8 @@
 import java.util.Stack;
 
+import java.util.Stack;
+import java.awt.Color;
+
 public class Game {
   //Stores all players in the game
 	private Player[] players;
@@ -139,11 +142,46 @@ public class Game {
 		board.move(move.getStartPosition(), move.getEndPosition());
 		history.add(move);
 	};
+  
+  //(1)red to (4)blue
+  //(6)yellow to (3)green
+  //(2)black to (5)white
+  //If corresponding corner is filled and it isnt filled with its own players peg, return current player
+	public Player winningPlayer() {
+	    //current player's color
+	    Color currentColor = currentPlayer.getColor();
+	    //Color of opposite player - determined below based on current player color
+	    Color assignedColor;
+	    //Goal region position array
+	    Position[] goal;
 	
-	public Player gameOver() {
-		
-		return null;
+	    if (currentColor.equals(Color.RED)){
+	      assignedColor = Color.BLUE;
+	    }
+	    else if (currentColor.equals(Color.BLUE))
+	      assignedColor = Color.RED;
+	    else if (currentColor.equals(Color.YELLOW))
+	      assignedColor = Color.GREEN;
+	    else if (currentColor.equals(Color.GREEN))
+	      assignedColor = Color.YELLOW;
+	    else if (currentColor.equals(Color.BLACK))
+	      assignedColor = Color.WHITE;
+	    else if (currentColor.equals(Color.WHITE))
+	      assignedColor = Color.BLACK;
+	
+	    goal = board.getHomeRegion(assignedColor);
+	
+	    //Checks every position in the goal region - if they are all filled by
+	    //current player's pegs, they win; otherwise return null
+	    for (Position p : goal) {
+	    	if (!playerPeg(currentPlayer,p)) {
+	    		return null;
+	    	}
+	    }
+    	return currentPlayer;
 	};
+
+
 	public Player[] getPlayers() { 
 		return players;
 	};
