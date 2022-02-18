@@ -85,52 +85,29 @@ public class Board {
 		//waiting for color vars in GUI
 		return null;
 	}
-
-	public ArrayList<Position> possibleMoves(Position startPos, boolean constraint) {  
+	private ArrayList<Position> addtoPM(ArrayList<Position> PM, Position p, boolean jumpOnly, Position p2){
+		if (boardPos[p.getRow()][p.getColumn()]==null) {
+			if (!jumpOnly) {PM.add(p);}
+		} else {
+			if (boardPos[p2.getRow()][p2.getColumn()]==null) {PM.add(p2);}
+		}
+		return PM;
+	}
+	public ArrayList<Position> possibleMoves(Position startPos, boolean jumpOnly) {  
 		//constraint true if ongoing turn, can only jump
 		ArrayList<Position> PM = new ArrayList<Position>();
-		Position p = getTL(startPos);
-		if (boardPos[p.getRow()][p.getColumn()]==null) {
-			if (!constraint) {PM.add(p);}
-		} else {
-			p = getTL(p);
-			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
-		}
-		p = getTR(startPos);
-		if (boardPos[p.getRow()][p.getColumn()]==null) {
-			if (!constraint) {PM.add(p);}
-		} else {
-			p = getTR(p);
-			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
-		}
-		p = getR(startPos);
-		if (boardPos[p.getRow()][p.getColumn()]==null) {
-			if (!constraint) {PM.add(p);}
-		} else {
-			p = getR(p);
-			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
-		}
-		p = getBR(startPos);
-		if (boardPos[p.getRow()][p.getColumn()]==null) {
-			if (!constraint) {PM.add(p);}
-		} else {
-			p = getBR(p);
-			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
-		}
-		p = getBL(startPos);
-		if (boardPos[p.getRow()][p.getColumn()]==null) {
-			if (!constraint) {PM.add(p);}
-		} else {
-			p = getBL(p);
-			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
-		}
-		p = getL(startPos);
-		if (boardPos[p.getRow()][p.getColumn()]==null) {
-			if (!constraint) {PM.add(p);}
-		} else {
-			p = getL(p);
-			if (boardPos[p.getRow()][p.getColumn()]==null) {PM.add(p);}
-		}
+		Position p = getTL(startPos), p2 = getTL(p);
+		PM = addtoPM(PM, p, jumpOnly, p2);
+		p = getTR(startPos); p2 = getTR(p);
+		PM = addtoPM(PM, p, jumpOnly, p2);
+		p = getR(startPos);p2 = getR(p);
+		PM = addtoPM(PM, p, jumpOnly, p2);
+		p = getBR(startPos);p2 = getBR(p);
+		PM = addtoPM(PM, p, jumpOnly, p2);
+		p = getBL(startPos);p2 = getBL(p);
+		PM = addtoPM(PM, p, jumpOnly, p2);
+		p = getL(startPos);p2 = getL(p);
+		PM = addtoPM(PM, p, jumpOnly, p2);
 		return PM; }
 	
 	public void move(Move move) {
@@ -146,6 +123,7 @@ public class Board {
 	private void populateReg(Position[] region, Player p) {
 		for (int i=0; i<region.length; i++) {
 			boardPos[region[i].getRow()][region[i].getColumn()] = new Peg(p);
+			p.addInitalPos(new Position(region[i].getRow(), region[i].getColumn()));
 		}
 	}
 	
