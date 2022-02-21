@@ -49,6 +49,8 @@ public class Board {
 	public Board(Player[] players) {
 		for (int i=0; i<players.length; i++) {
 			populateReg(homeAll[i], players[i]);
+			int WR = i>=3 ? i-3 : 1+3;
+			players[i].assignWinReg(WR);
 		}
 	};
 	
