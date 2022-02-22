@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Board {
 	
@@ -84,8 +83,24 @@ public class Board {
 	
 	public Position[] getHomeRegion(Color c) {
 		
-		//waiting for color vars in GUI
-		return null;
+		Position[] ret = null;
+		
+		if (c==Color.RED) {
+			ret = homeR;
+		} else if (c==Color.BLACK) {
+			ret = homeBk;
+		} else if (c==Color.GREEN) {
+			ret = homeG;
+		} else if (c==Color.BLUE) {
+			ret = homeBu;
+		} else if (c==Color.WHITE) {
+			ret = homeW;
+		} else if (c==Color.YELLOW) {
+			ret = homeY;
+		}
+		
+		return ret;
+		
 	}
 	private ArrayList<Position> addtoPM(ArrayList<Position> PM, Position p, boolean jumpOnly, Position p2){
 		if (boardPos[p.getRow()][p.getColumn()]==null) {
@@ -110,7 +125,8 @@ public class Board {
 		PM = addtoPM(PM, p, jumpOnly, p2);
 		p = getL(startPos);p2 = getL(p);
 		PM = addtoPM(PM, p, jumpOnly, p2);
-		return PM; }
+		return PM; 
+	}
 	
 	public void move(Move move) {
 		Position startPos = move.getStartPosition();
