@@ -48,7 +48,7 @@ public class Position {
 		return "ROW: " + row + ", COL: " +column; 
 	}
 	public boolean equals(Position p) {
-		return this.getRow()==this.getRow() && this.getColumn()==this.getColumn();
+		return this.getRow()==p.getRow() && this.getColumn()==p.getColumn();
 	}
 	
 	private Position getTL() {
