@@ -1,5 +1,3 @@
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -44,6 +42,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private Image logoSmall;
 	private Image scroll;
 	private Image arrow;
+	
+	// Sources 
+	private Image emptyButton;
+//	https://cdn1.iconfinder.com/data/icons/interface-59/24/radio-button-off-unchecked-round-circle-512.png
+	
+	private Image filledButton;
+//	https://cdn1.iconfinder.com/data/icons/thin-ui-1/100/Noun_Project_100Icon_1px_grid_thin_ic_radio_btn_full-512.png
+
 	// 0 = dark, 1 = Def, 2 = Human, 3 = Com,
 	private int p1Int = 2;
 	private int p2Int = 3;
@@ -53,25 +59,32 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private int p6Int = 0;
 	private int subject = 0;
 	
+	private String playerHolder = "";
+	
 	private boolean scrolled = false;
 	private boolean humSelect = false;
 	private boolean comSelect = false;
 	private boolean nonSelect = false;
-	private boolean ready = false;
+	private boolean doneStopper = false;
+	private boolean humanFill = false;
+	private boolean compFill = false;
+	private boolean noneFill = false;
+	private boolean override = false;
 	
 	private JLabel none;
 	private JLabel computer;
 	private JLabel human;
 	private JLabel playerNum;
 	private JLabel nameInstruct;
+	private JLabel comInstruct;
 	
 	private JTextField name;
 	
 	private JComboBox difficulty;
 	
-	private JRadioButton hum;
-	private JRadioButton com;
-	private JRadioButton non;
+	private JButton hum;
+	private JButton com;
+	private JButton non;
 	
 	private JButton P1;
 	private JButton P2;
@@ -85,12 +98,15 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private JButton done;
 	
 	private Font bigFont;
+	private Font playerFont;
 	
 	MenuPanel() {
 		setPreferredSize(new Dimension(1280,720));
-		bigFont = new Font("Serif", Font.BOLD, 35);
+		bigFont = CustomFont.getFont().deriveFont(15f);
+		playerFont = CustomFont.getFont().deriveFont(28f);
 		players = new Player[6];
 		this.setLayout(null);
+		
 		P1 = new JButton("");
 		P1.setBounds(100,125,180,80);
 		P1.setActionCommand("player1");
@@ -98,6 +114,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P1.setContentAreaFilled(false);
 		P1.setBorderPainted(false);
 		this.add(P1);
+		playerHolder = "Player 1";
 		
 		P2 = new JButton("");
 		P2.setBounds(340,180,180,80);
@@ -106,6 +123,8 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P2.setContentAreaFilled(false);
 		P2.setBorderPainted(false);
 		this.add(P2);
+		playerHolder = "Player 2";
+		
 		P3 = new JButton("");
 		P3.setBounds(158,258,180,80);
 		P3.setActionCommand("player3");
@@ -113,6 +132,8 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P3.setContentAreaFilled(false);
 		P3.setBorderPainted(false);
 		this.add(P3);
+		playerHolder = "Player 3";
+		
 		P4 = new JButton("");
 		P4.setBounds(405,312,180,80);
 		P4.setActionCommand("player4");
@@ -120,6 +141,8 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P4.setContentAreaFilled(false);
 		P4.setBorderPainted(false);
 		this.add(P4);
+		playerHolder = "Player 4";
+		
 		P5 = new JButton("");
 		P5.setBounds(225,410,180,80);
 		P5.setActionCommand("player5");
@@ -127,6 +150,8 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P5.setContentAreaFilled(false);
 		P5.setBorderPainted(false);
 		this.add(P5);
+		playerHolder = "Player 5";
+		
 		P6 = new JButton("");
 		P6.setBounds(458,450,180,80);
 		P6.setActionCommand("player6");
@@ -134,6 +159,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P6.setContentAreaFilled(false);
 		P6.setBorderPainted(false);
 		this.add(P6);
+		playerHolder = "Player 6";
 		
 		start = new JButton("");
 		start.setBounds(540,605,180,80);
@@ -159,67 +185,104 @@ public class MenuPanel extends JPanel implements ActionListener {
 		exit.setBorderPainted(false);
 		this.add(exit);
 		
-		hum = new JRadioButton();
-		hum.setBounds(745,275,20,20);
+		/////////////////////////////////////////
+		// DOPE STUFF
+		
+		hum = new JButton();
+		hum.setBounds(745,260,20,20);
 		hum.setActionCommand("hum");
 		hum.addActionListener(this);
+		hum.setContentAreaFilled(false);
+		hum.setBorderPainted(false);
 		this.add(hum);
 		hum.setVisible(false);
 		
-		non = new JRadioButton();
-		non.setBounds(745,340,20,20);
-		non.setActionCommand("non");
-		non.addActionListener(this);
-		this.add(non);
-		non.setVisible(false);
-		
-		com = new JRadioButton();
-		com.setBounds(745,405,20,20);
+		com = new JButton();
+		com.setBounds(745,310,20,20);
 		com.setActionCommand("com");
 		com.addActionListener(this);
+		com.setContentAreaFilled(false);
+		com.setBorderPainted(false);
 		this.add(com);
 		com.setVisible(false);
 		
+		non = new JButton();
+		non.setBounds(745,360,20,20);
+		non.setActionCommand("non");
+		non.addActionListener(this);
+		non.setContentAreaFilled(false);
+		non.setBorderPainted(false);
+		this.add(non);
+		non.setVisible(false);
+		
+		/////////////////////////////////////////////
+		
 		human = new JLabel("Human");
-		human.setBounds(800,275,300,60);
+		human.setBounds(800,260,300,20);
+		human.setFont(bigFont);
 		this.add(human);
 		human.setVisible(false);
 		
 		computer = new JLabel("Computer");
-		computer.setBounds(820,355,300,60);
+		computer.setBounds(800,310,300,20);
+		computer.setFont(bigFont);
 		this.add(computer);
 		computer.setVisible(false);
 		
 		none = new JLabel("None");
-		none.setBounds(820,355,300,60);
+		none.setBounds(800,360,300,20);
+		none.setFont(bigFont);
 		this.add(none);
 		none.setVisible(false);
 		
+		//////////////////////////////////////////////
+		
 		nameInstruct = new JLabel("Enter your name:");
-		nameInstruct.setBounds(820,355,300,60);
+		nameInstruct.setFont(bigFont);
+		nameInstruct.setBounds(813,382,300,60);
 		this.add(nameInstruct);
-		none.setVisible(false);
+		nameInstruct.setVisible(false);
 		
-		name = new JTextField();
-		name.setBounds(600,500,250,70);
-		this.add(name);
-		name.setActionCommand("name");
-		name.addActionListener(this);
-		name.setVisible(false);
+		comInstruct = new JLabel("Set Difficulty:");
+		comInstruct.setBounds(817,382,300,60);
+		comInstruct.setFont(bigFont);
+		this.add(comInstruct);
+		comInstruct.setVisible(false);
 		
-		difficulty = new JComboBox();
-		difficulty.setBounds(600,500,250,70);
+		//////////////////////////////////////////////
+		
+		String feed[] = {"Easier", "Harder"};
+		difficulty = new JComboBox(feed);
+		difficulty.setBounds(750,430,255,30);
 		this.add(difficulty);
 		difficulty.setActionCommand("difficulty");
 		difficulty.addActionListener(this);
 		difficulty.setVisible(false);
 		
-		done = new JButton();
-		done.setBounds(850, 580, 40, 90);
+		name = new JTextField("   ");
+		name.setBounds(750,430,255,30);
+		this.add(name);
+		name.setActionCommand("name");
+		name.addActionListener(this);
+		name.setVisible(false);
+		
+		///////////////////////////////////////////////
+		
+		done = new JButton("Done");
+		done.setBounds(770,465,200,50);
+		done.setFont(bigFont);
 		this.add(done);
 		done.setActionCommand("done");
 		done.addActionListener(this);
+		done.setContentAreaFilled(false);
 		done.setVisible(false);
+		
+		playerNum = new JLabel("");
+		playerNum.setBounds(820,200,250,30);
+		playerNum.setFont(playerFont);
+		this.add(playerNum);
+		playerNum.setVisible(false);
+		
 		
 		getImages();
 		
@@ -241,90 +304,178 @@ public class MenuPanel extends JPanel implements ActionListener {
 		String text;
 		if (eventName.equals("player1")) {
 			subject = 1;
-			if (scrolled) {
-				scrolled = false;
-			} else if (!scrolled) {
-				scrolled = true;
-			}
+			scrolled = true;
+			p1Int = 1;
+			playerHolder = "Player 1";
 		}
 		if (eventName.equals("player2")) {
-			System.out.println("Player 2");
 			subject = 2;
+			scrolled = true;
+			p2Int = 1;
+			playerHolder = "Player 2";
 		}
 		if (eventName.equals("player3")) {
-			System.out.println("Player 3");
 			subject = 3;
+			scrolled = true;
+			p3Int = 1;
+			playerHolder = "Player 3";
 		}
 		if (eventName.equals("player4")) {
-			System.out.println("Player 4");
 			subject = 4;
+			scrolled = true;
+			p4Int = 1;
+			playerHolder = "Player 4";
 		}
 		if (eventName.equals("player5")) {
-			System.out.println("Player 5");
 			subject = 5;
+			scrolled = true;
+			p5Int = 1;
+			playerHolder = "Player 5";
 		}
 		if (eventName.equals("player6")) {
-			System.out.println("Player 6");
 			subject = 6;
+			scrolled = true;
+			p6Int = 1;
+			playerHolder = "Player 6";
 		}
 		
 		if (eventName.equals("startB")) {
-			System.out.println("Start");
 			// set the game screen
 			// pass data from players
 		}
 		
 		if (eventName.equals("loadB")) {
-			System.out.println("Load");
 			// load code
 		}
 		
 		if (eventName.equals("exitB")) {
-			System.out.println("Exit");
-			// are you sure
+			// Insert exit are you sure start up.
+			System.exit(0);
 		}
+		
+		///////////////////////////////////////////////////
+		
 		if (eventName.equals("hum")) {
 			humSelect = true;
 			comSelect = false;
 			nonSelect = false;
+			humanFill = true;
+			compFill = false;
+			noneFill = false;
 		}
 		if (eventName.equals("com")) {
 			comSelect = true;
 			humSelect = false;
 			nonSelect = false;
+			compFill = true;
+			humanFill = false;
+			noneFill = false;
 		}
 		if (eventName.equals("non")) {
 			nonSelect = true;
 			humSelect = false;
 			comSelect = false;
+			noneFill = true;
+			humanFill = false;
+			compFill = false;
 		}
+		
+		/////////////////////////////////////////////
+		
+		// BOXES MAJOR WORK REMAINING
 		if (eventName.equals("difficulty")) {
-			done.setVisible(true);
+			doneStopper = false;
 		}
+		text = name.getText();
+		if (text.equals("   ")) {
+		} else {
+			doneStopper = false;
+		}
+		
+		// I can't figure out how to make the done button visible like cmon man
+		
+		
+		// all of the stuff below this works
+		
 		// Major Done Button
 		if (eventName.equals("done")) {
+			
+			if (playerHolder.equals("Player 1")) {
+				subject = 1;
+			}
+			if (playerHolder.equals("Player 2")) {
+				subject = 2;
+			}
+			if (playerHolder.equals("Player 3")) {
+				subject = 3;
+			}
+			if (playerHolder.equals("Player 4")) {
+				subject = 4;
+			}
+			if (playerHolder.equals("Player 5")) {
+				subject = 5;
+			}
+			if (playerHolder.equals("Player 6")) {
+				subject = 6;
+			}
 			if (comSelect) {
+				checkSubject(3);
 				dif = (String) difficulty.getSelectedItem();
 				if (dif.equals("Easier")) {
+				
+					
 					// create computer player
 					// set the difficulty to Easier
+				
+					
 				} else if (dif.equals("Harder")) {
+					
+					
 					// create computer player
 					// set the difficulty to Harder
 				}
+
 			}
 			else if (humSelect) {
+				checkSubject(2);
 				text = name.getText();
+				
+//				players[subject - 1] = new HumanPlayer();
 				// create human player
 				// set player name to whatever the text is
+
+				humSelect = false;
+			} else if (nonSelect == true) {
+				checkSubject(0);
 			}
+			scrolled = false;
+			subject = 0;
+			comSelect = false;
+			nonSelect = false;
+			humSelect = false;
+			name.setVisible(false);
+			nameInstruct.setVisible(false);
+			difficulty.setVisible(false);
+			comInstruct.setVisible(false);
+			name.setText("   ");
+			humanFill = false;
+			compFill = false;
+			noneFill = false;
+			
+			
 		}
-		
+		repaint();
 	}
 	private void getImages() {
 		// background
 		ImageIcon bg = new ImageIcon("images/bg.png");
 		background = bg.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
+		
+		ImageIcon fb = new ImageIcon("images/filledRadioButton.png");
+		filledButton = fb.getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT);
+		
+		ImageIcon eb = new ImageIcon("images/emptyRadioButton.png");
+		emptyButton = eb.getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT);
 		
 		// 4 button colors for 1 - 6
 		ImageIcon p1N = new ImageIcon("images/p1None.PNG");
@@ -410,7 +561,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	}
 	private void drawImages(Graphics g) {
 
-		repaint();
+		
 		if (!scrolled) {
 			g.drawImage(logoBig,0,0,this);
 			g.drawImage(dragon,0,0,this);
@@ -486,6 +637,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 		
 	}
 	private void reaction(Graphics g) {
+		if (!doneStopper) {
+			done.setVisible(true);
+		} else {
+			done.setVisible(false);
+		}
 		if (scrolled) {
 			non.setVisible(true);
 			com.setVisible(true);
@@ -493,19 +649,80 @@ public class MenuPanel extends JPanel implements ActionListener {
 			none.setVisible(true);
 			human.setVisible(true);
 			computer.setVisible(true);
-			
+			playerNum.setText(playerHolder);
+			playerNum.setVisible(true);
+			g.drawImage(emptyButton,745,260,this);
+			g.drawImage(emptyButton,745,310,this);
+			g.drawImage(emptyButton,745,360,this);
 		}
+		if (!scrolled) {
+			done.setVisible(false);
+			non.setVisible(false);
+			com.setVisible(false);
+			hum.setVisible(false);
+			none.setVisible(false);
+			human.setVisible(false);
+			computer.setVisible(false);
+			playerNum.setVisible(false);
+			doneStopper = true;
+		}
+		
 		if (humSelect) {
+			nameInstruct.setVisible(true);
+			comInstruct.setVisible(false);
 			name.setVisible(true);
 			difficulty.setVisible(false);
+			if (override) {
+				doneStopper = true;
+			}
 		}
 		if (comSelect) {
+			nameInstruct.setVisible(false);
+			comInstruct.setVisible(true);
 			difficulty.setVisible(true);
 			name.setVisible(false);
+			if (override) {
+				doneStopper = true;
+			}
 		}
 		if (nonSelect) {
+			nameInstruct.setVisible(false);
+			comInstruct.setVisible(false);
 			name.setVisible(false);
 			difficulty.setVisible(false);
+			doneStopper = false;
+		}
+		if (humanFill) {
+			g.drawImage(filledButton,745,260,this);
+		}
+		if (compFill) {
+			g.drawImage(filledButton,745,310,this);
+		}
+		if (noneFill) {
+			g.drawImage(filledButton,745,360,this);
+		}
+	}
+
+	private void checkSubject(int type) {
+		if (subject == 1) {
+			p1Int = type;
+		}
+		if (subject == 2) {
+			p2Int = type;
+		}
+		if (subject == 3) {
+			p3Int = type;
+		}
+		if (subject == 4) {
+			p4Int = type;
+		}
+		if (subject == 5) {
+			p5Int = type;
+		}
+		if (subject == 6) {
+			p6Int = type;
 		}
 	}
 }
+
+	
