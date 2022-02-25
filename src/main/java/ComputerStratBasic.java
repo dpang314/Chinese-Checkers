@@ -3,17 +3,20 @@ import java.util.ArrayList;
 
 public class ComputerStratBasic extends Player{
 	private int[][] winLine = new int[2][2]; //{{x1, x2}, {y1, y2}}
-	char dir;
+	private char dir;
+	private int[] WRP = new int[2]; //{row, col}
 	public ComputerStratBasic(Color color, String playerName) {
 		super(color, playerName);
 		winLine[0][0] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 0 :  3);
 		winLine[0][1] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 3 :  0);
 		winLine[1][0] = getWR()==1 || getWR()==5 ? 4 : (getWR()==4 || getWR()==2? 9 :  (getWR()==0 ? 0 : 13));
 		winLine[1][1] = getWR()==1 || getWR()==5 ? 7 : (getWR()==4 || getWR()==2? 12 :  (getWR()==0 ? 3 : 16));
-		if (color.equals(Color.yellow)||color.equals(Color.white)) {dir='l';}
-		else if (color.equals(Color.black)||color.equals(Color.green)) {dir='r';}
-		else if (color.equals(Color.red)) {dir='u';}
-		else {dir='d';}
+		if (color.equals(Color.yellow)) {dir='l'; WRP[0] = 4; WRP[1] = 0;}
+		else if (color.equals(Color.white)) {dir='l'; WRP[0] = 12; WRP[1] = 0;}
+		else if (color.equals(Color.black)) {dir='r'; WRP[0] = 4; WRP[1] = 12;}
+		else if (color.equals(Color.green)) {dir='r'; WRP[0] = 12; WRP[1] = 12;}
+		else if (color.equals(Color.red)) {dir='u'; WRP[0] = 0; WRP[1] = 0;}
+		else {dir='d'; WRP[0] = 16; WRP[1] = 0;}
 	}
 
 	@Override
@@ -64,6 +67,9 @@ public class ComputerStratBasic extends Player{
 				}
 			} 
 		}
+		if (distanceToWR(new Position(bestMove[0][0], bestMove[0][1]), board)<distanceToWR(new Position(bestMove[1][0], bestMove[1][1]), board)) {
+			
+		}
 		return bestMove;
 	};
 	private int distanceToWR(Position p, Board board) {
@@ -71,8 +77,8 @@ public class ComputerStratBasic extends Player{
 		Position newP = new Position(p.getRow(), p.getColumn());
 		if (winLine[1][0]>p.getRow() && (dir=='l'||dir=='r')) {
 			while (winLine[1][0]>newP.getRow()) {
-				if (dir=='l') {newP = board.getBL(newP);}
-				else {newP = board.getBR(newP);}
+				if (dir=='l') {newP = newP.adj(5);} //BL
+				else {newP = newP.adj(4);} //BR
 				dist+=1;
 			}
 			int x1 = (getColor().equals(Color.yellow)||getColor().equals(Color.black)) ? (winLine[0][0]-(winLine[1][0]-p.getRow())): (winLine[0][0]+(winLine[1][0]-p.getRow()));
@@ -84,8 +90,8 @@ public class ComputerStratBasic extends Player{
 		}
 		else if (winLine[1][1]<p.getRow() && (dir=='l'||dir=='r')) {
 			while (winLine[1][1]<newP.getRow()) {
-				if (dir=='l') {newP = board.getTL(newP);}
-				else {newP = board.getTR(newP);}
+				if (dir=='l') {newP = newP.adj(1);} //TL
+				else {newP = newP.adj(2);} //TR
 				dist+=1;
 			}
 			int x1 = (getColor().equals(Color.yellow)||getColor().equals(Color.black)) ? (winLine[0][0]-(winLine[1][0]-p.getRow())): (winLine[0][0]+(winLine[1][0]-p.getRow()));
@@ -108,5 +114,12 @@ public class ComputerStratBasic extends Player{
 			}
 		}
 		return dist;
+	}
+	private int distanceToWRP(Position p, Board board) {
+		int dist=0;
+		Position newP = new Position(p.getRow(), p.getColumn());
+		if (dir=='l' && WRP[0]>newP.getRow()) {
+			
+		}
 	}
 }
