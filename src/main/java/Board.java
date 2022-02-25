@@ -97,7 +97,7 @@ public class Board implements Cloneable {
 		boardPos[p.getRow()][p.getColumn()] = new Peg();
 	}
 	
-	public Position[] getRegion(Color c) {
+	public Position[] getHomeRegion(Color c) {
 		
 		Position[] ret = null;
 		
