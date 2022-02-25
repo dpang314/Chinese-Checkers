@@ -13,6 +13,9 @@ public class QuinnStrategy extends Player {
 	double currentBestValue = 0;
 	int currentFastestPath;
 	
+	//determines if it is the same turn still
+	private boolean moveCalculated;
+	
 	public QuinnStrategy() {
 		this(null,null);
 	}
@@ -26,6 +29,16 @@ public class QuinnStrategy extends Player {
 		boardAtTurnStart=board;
 		
 		return null;
+	}
+	
+	private Stack<Move> createMoveChain(Position[] path) {
+		Stack<Move> ret = new Stack<Move>();
+		ret.push(null);
+		for(int i = path.length-1; i>0; i++) {
+			Move newJump = new Move(path[i+1],path[i],this);
+			ret.push(newJump);
+		}
+		return ret;
 	}
 	
 	//recursive algorithm to figure out the possible jump chain following the given one
@@ -44,25 +57,31 @@ public class QuinnStrategy extends Player {
 			boolean touchedYet = alreadyTraversedInPath(path, p);
 			if(!touchedYet) {
 				DefaultMutableTreeNode nextNode = new DefaultMutableTreeNode(p);
-//				node.removeAllChildren();
+				node.removeAllChildren();
 				node.add(nextNode);
 				nextNode = getJumpChain(nextNode);
 			}
 		}
 		
+		//gets the root position (original position at start of turn)
 		Position rootPos = (Position) ((DefaultMutableTreeNode) node.getRoot()).getUserObject();
+		
+		//checks value of the current position difference
 		Move currentGrandMove = new Move(rootPos,passedPos, this);
 		double currentValue = grandMoveValue(currentGrandMove,getObjPos(Color.RED));
+		
+		//sees how many jumps it would take to get here
 		int currentChainLength = node.getDepth();
 		
+		//compares current grand move value to current best grand move value
 		double valueComp = percentDiff(currentBestValue,currentValue);
-		if(Math.abs(valueComp)>-2.0) {
-			if(currentChainLength<currentFastestPath) {
-				optimalSpotChain = path;
-				currentFastestPath=currentChainLength;
-			}
-		} else if (valueComp>0) {
+		
+		//if the move is better or equivalent but faster, it becomes the current optimal chain
+		boolean betterMove = valueComp>2.0;
+		boolean sameMoveFaster = Math.abs(valueComp)<=2.0 && currentChainLength<currentFastestPath;
+		if(betterMove||sameMoveFaster) { 
 			optimalSpotChain = path;
+			currentBestValue = currentValue;
 			currentFastestPath = currentChainLength;
 		}
 		
