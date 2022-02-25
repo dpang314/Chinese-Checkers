@@ -47,7 +47,11 @@ public class ComputerStratBasic extends Player{
 					}
 				}else {
 					if (winLine[0][0]<p.getRow() && winLine[0][1]>p.getRow()) {
-						newWeight=winLine[1][0]-p.getRow();
+						if (dir=='u') {
+							newWeight=p.getRow()-winLine[1][1];
+						} else {
+							newWeight=winLine[1][0]-p.getRow();
+						}
 					}
 					else{
 						newWeight=distanceToWR(p, board);
@@ -97,7 +101,11 @@ public class ComputerStratBasic extends Player{
 				else {newP = board.getBR(newP);}
 				dist+=1;
 			}
-			
+			if (dir=='u') {
+				dist+=p.getRow()-winLine[1][1];
+			} else {
+				dist+=winLine[1][0]-p.getRow();
+			}
 		}
 		return dist;
 	}
