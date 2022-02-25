@@ -42,8 +42,8 @@ public class Game {
 	    //for the purposes of undo
 	    int z=0;
 	    for (Player p : player){
-	      if (p.isHuman())
-	        z++;
+//	      if (p.isHuman())
+//	        z++;
 	    }
 	    if (z>1)
 	      humans = true;
@@ -180,7 +180,7 @@ public class Game {
     //current player's color
     Color currentColor = currentPlayer.getColor();
     //Color of opposite player - determined below based on current player color
-    Color assignedColor;
+    Color assignedColor = Color.BLUE;
     //Goal region position array
     Position[] goal;
 
@@ -198,14 +198,14 @@ public class Game {
     else if (currentColor.equals(Color.WHITE))
       assignedColor = Color.BLACK;
 
-    goal = board.getHomeRegion(assignedColor);
+   goal = board.getHomeRegion(assignedColor);
 
     //Checks every position in the goal region - if they are all filled by
     //current player's pegs, they win; otherwise return null
     for (Position p : goal) {
-      if (!playerPeg(currentPlayer, p)) {
-        return null;
-      }
+//      if (!playerPeg(currentPlayer, p)) {
+ //       return null;
+ //     }
     }
     return currentPlayer;
 	};

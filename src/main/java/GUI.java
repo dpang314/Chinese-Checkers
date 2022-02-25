@@ -4,19 +4,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GUI implements ActionListener{
-	//private Game game;
+	private Game game;
 	private MenuPanel menuPanel;
 	private GamePanel gamePanel;
 	private JFrame frame;
-	Game game;
 	
 	public GUI() {
 		CustomFont.load();
-		game = new Game(null, false);
+//		game = new Game(null, false);
 		menuPanel = new MenuPanel();
-		gamePanel = new GamePanel(game);
+//		gamePanel = new GamePanel(game);
 		frame = new JFrame();
-		frame.setContentPane(gamePanel);
+		frame.setContentPane(menuPanel);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
