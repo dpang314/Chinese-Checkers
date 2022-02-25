@@ -26,7 +26,7 @@ public class Game {
   //tracks moves within one turn; cleared at the end of every turn
   private Stack<Move> miniHistory;
 
-	public Game(Player[] player, boolean shuffle) {
+	public Game(Player[] player, boolean shuffle) {/*
 		//Sets players array to the one passed to it
 	    this.players = player;
 	    
@@ -91,6 +91,7 @@ public class Game {
 	    //otherwise, the first player should be the first element
 	    else
 	      currentPlayer = players[0];
+	      */
 	};
 	
   
@@ -210,6 +211,9 @@ public class Game {
     return currentPlayer;
 	};
 
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
 
 	public Player[] getPlayers() { 
 		return players;
