@@ -1,24 +1,40 @@
+/*
+ * Quinn Hancock
+ * Chinese Checkers
+ * Group Project 2022
+ * Red Team
+ */
+
 import java.awt.Color;
 import java.awt.geom.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Stack;
-import javax.swing.tree.*; //it's really more like a vine
+import java.util.ArrayDeque;
+import javax.swing.tree.*;
+
+/*
+ * HOW IT WORKS
+ *  
+ * iterates over the positions of owned pegs,
+ * recursively pathing over the moves that each one could take
+ * and deciding which move chain is the best based on how far it
+ * goes relative to the corner of the target triangle. Distances
+ * are weighted with a quadratic scalar to prioritize moving
+ * the pegs that are farthest away.
+ */
 
 public class QuinnStrategy extends Player {
 
+	//the board it sees
 	Board boardAtTurnStart = null;
-	Stack<Move> optimalJumpChain;
-	Position[] optimalSpotChain;
-	double currentBestValue = 0;
-	int currentFastestPath;
+	
+	//a queue of the jumps it wants to make
+	ArrayDeque<Move> optimalJumpChain;
 	
 	//determines if it is the same turn still
-	private boolean moveCalculated;
+	private boolean moveCalculated = false;
 	
-	public QuinnStrategy() {
-		this(null,null);
-	}
+	//holds the position that the strategy is aiming for
+	private Position obj;
 	
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
@@ -26,56 +42,98 @@ public class QuinnStrategy extends Player {
 
 	@Override
 	public Move getMove(Board board) {
-		boardAtTurnStart=board;
 		
-		return null;
+		//if no move has been found yet, set the board state and find a move
+		if(!moveCalculated) {
+			boardAtTurnStart=board;
+			for(Position p : this.posArr) {
+				investigateMoves(p);
+			}
+			moveCalculated = true;
+		}
+		
+		//if the turn is over, reset
+		if(optimalJumpChain.size() == 0) {
+			moveCalculated = false;
+		}
+		
+		return optimalJumpChain.poll();
+		
 	}
 	
-	private Stack<Move> createMoveChain(Position[] path) {
-		Stack<Move> ret = new Stack<Move>();
-		ret.push(null);
-		for(int i = path.length-1; i>0; i++) {
-			Move newJump = new Move(path[i+1],path[i],this);
-			ret.push(newJump);
+	public void setTargetColor(Color c) {
+		obj = getObjPos(c);
+	}
+	
+	//creates a queue of moves by iterating over the positions and looking at two at a time
+	private ArrayDeque<Move> createMoveQueue(Position[] path) {
+		ArrayDeque<Move> ret = new ArrayDeque<Move>();
+		for(int i = 0; i<path.length-1; i++) {
+			Move newJump = new Move(path[i],path[i+1],this);
+			ret.add(newJump);
 		}
 		return ret;
 	}
 	
-	//recursive algorithm to figure out the possible jump chain following the given one
-	private DefaultMutableTreeNode getJumpChain(DefaultMutableTreeNode node) {
+	//investigates all moves for a given position
+	private void investigateMoves(Position pos) {
+		for(Position p : boardAtTurnStart.possibleAdjacentMoves(pos)) {
+			checkAndUpdateIfOptimal(new Position[] {pos,p});
+		}
+		
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(pos);
+		investigateSubJumps(root);
+		optimalJumpChain = createMoveQueue(optimalSpotChain);
+	}
+	
+	//recursive algorithm to analyze the possible jump chain following the given one
+	private DefaultMutableTreeNode investigateSubJumps(DefaultMutableTreeNode node) {
 		
 		//stores the position passed in via the node
 		Position passedPos = (Position)node.getUserObject();
 		
 		//creates Position array from object path (weird casting issue)
-		Position[] path = Arrays.copyOf(node.getUserObjectPath(), node.getDepth(), Position[].class);
+		Position[] path = Arrays.copyOf(node.getUserObjectPath(), node.getLevel()+1, Position[].class);
 		
 		//iterates over possible jumps that could be made from the passed position
 		for(Position p : boardAtTurnStart.possibleMoves(passedPos, true)) {
 			
-			//returns subtree for the possible jump, assuming it hasn't been touched already
+			//investigates subtree for the possible jump, assuming it hasn't been touched already
 			boolean touchedYet = alreadyTraversedInPath(path, p);
+			
 			if(!touchedYet) {
 				DefaultMutableTreeNode nextNode = new DefaultMutableTreeNode(p);
 				node.removeAllChildren();
 				node.add(nextNode);
-				nextNode = getJumpChain(nextNode);
+				
+				nextNode = investigateSubJumps(nextNode);
 			}
 		}
 		
+		checkAndUpdateIfOptimal(path);
+		
+		return node;
+	}
+	
+	Position[] optimalSpotChain;
+	double currentBestValue = 0;
+	int currentFastestPath;
+
+	private void checkAndUpdateIfOptimal(Position[] path) {
 		//gets the root position (original position at start of turn)
-		Position rootPos = (Position) ((DefaultMutableTreeNode) node.getRoot()).getUserObject();
-		
+		Position rootPos = path[0];
+		Position endPos = path[path.length-1];
+
 		//checks value of the current position difference
-		Move currentGrandMove = new Move(rootPos,passedPos, this);
-		double currentValue = grandMoveValue(currentGrandMove,getObjPos(Color.RED));
-		
+		Move currentGrandMove = new Move(rootPos, endPos, this);
+		double currentValue = grandMoveValue(currentGrandMove);
+
 		//sees how many jumps it would take to get here
-		int currentChainLength = node.getDepth();
-		
+		int currentChainLength = path.length-1;
+
 		//compares current grand move value to current best grand move value
 		double valueComp = percentDiff(currentBestValue,currentValue);
-		
+
 		//if the move is better or equivalent but faster, it becomes the current optimal chain
 		boolean betterMove = valueComp>2.0;
 		boolean sameMoveFaster = Math.abs(valueComp)<=2.0 && currentChainLength<currentFastestPath;
@@ -84,8 +142,6 @@ public class QuinnStrategy extends Player {
 			currentBestValue = currentValue;
 			currentFastestPath = currentChainLength;
 		}
-		
-		return node;
 	}
 	
 	private boolean alreadyTraversedInPath(Position[] path, Position check) {
@@ -130,12 +186,13 @@ public class QuinnStrategy extends Player {
 		}
 	}
 	
-	private static double grandMoveValue(Move move, Position obj) {
+	private double grandMoveValue(Move move) {
 		return scaledDist(move.getStartPosition(),obj)-scaledDist(move.getEndPosition(),obj);
 	}
 	
+	//returns a double representing the percent difference between a and b
 	private static double percentDiff(double a, double b) {
-		double numDiff = a-b;
+		double numDiff = b-a;
 		return numDiff/a * 100;
 	}
 	
@@ -155,44 +212,5 @@ public class QuinnStrategy extends Player {
 			distance = (scale/20) * Math.pow(distance, 2) + ybump;
 		}
 		return distance;
-	}
-	
-	//for testing
-	private static void printPosChain(Position[] p) {
-		for(int i = 0; i<p.length; i++) {
-			System.out.println(i + ": " + p[i]);
-		}
-		System.out.println();
-	}
-	
-	//for testing
-	private static void printPosChain(ArrayList<Position> p) {
-		for(int i = 0; i<p.size(); i++) {
-			System.out.println(i + ": " + p.get(i));
-		}
-		System.out.println();
-	}
-	
-	//for testing
-	private static void printNode(TreeNode n) {
-		System.out.println("TOP-NODE: " + n);
-		for(int c = 0; c<n.getChildCount(); c++) {
-			System.out.println("   CHILD-" + c + ": " + n.getChildAt(c));
-		}
-	}
-	
-	public static void main(String[] args) {
-		QuinnStrategy myStrategy = new QuinnStrategy();
-		
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-		Position rootPos = new Position(10,6);
-		rootNode.setUserObject(rootPos);
-		
-		Board b = new Board();
-		b.fillPos(new Position(7,4));
-		b.fillPos(new Position(9,5));
-		myStrategy.boardAtTurnStart=b;
-		
-		Position obj = getObjPos(Color.RED);
 	}
 }

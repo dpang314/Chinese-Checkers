@@ -1,6 +1,6 @@
 
 public class Move {
-  private Player owner;
+	private Player owner;
 	private Position startPosition;
 	private Position endPosition;
 	
@@ -20,5 +20,8 @@ public class Move {
 	
 	public Position getEndPosition() {
 		return endPosition;
+	}
+	public String toString() {
+		return "[" + owner + "]" + " " + startPosition + " to " + endPosition;
 	}
 }

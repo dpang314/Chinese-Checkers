@@ -45,13 +45,13 @@ public class Position {
 	}
 	
 	public String toString() {
-		return "ROW: " + row + ", COL: " +column; 
+		return row + "-" + column;
 	}
 	public boolean equals(Position p) {
 		return this.getRow()==p.getRow() && this.getColumn()==p.getColumn();
 	}
 	
-	private Position getTL() {
+	public Position getTL() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
@@ -65,7 +65,7 @@ public class Position {
 		} finally {return ret;}
 	}
 	
-	private Position getTR() {
+	public Position getTR() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
@@ -79,7 +79,7 @@ public class Position {
 		} finally {return ret;}
 	}
 	
-	private Position getR() {
+	public Position getR() {
 		Position ret=null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
@@ -95,7 +95,7 @@ public class Position {
 		return ret;
 	}
 	
-	private Position getBR() {
+	public Position getBR() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
@@ -109,7 +109,7 @@ public class Position {
 		} finally{return ret;}
 	}
 	
-	private Position getBL() {
+	public Position getBL() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
@@ -123,7 +123,7 @@ public class Position {
 		} finally {return ret;}
 	}
 	
-	private Position getL() {
+	public Position getL() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];

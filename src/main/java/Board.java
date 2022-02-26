@@ -97,6 +97,12 @@ public class Board implements Cloneable {
 		boardPos[p.getRow()][p.getColumn()] = new Peg();
 	}
 	
+	public void fillPos(Position[] arr) {
+		for (Position p : arr) {
+			this.fillPos(p);
+		}
+	}
+	
 	public Position[] getHomeRegion(Color c) {
 		
 		Position[] ret = null;
@@ -130,15 +136,22 @@ public class Board implements Cloneable {
 		
 		//if adjacent positions are available, they are added
 		if(!jumpOnly) {
+			ret.addAll(possibleAdjacentMoves(p));
+		}
+		
+		return ret;
+	}
+	
+	public ArrayList<Position> possibleAdjacentMoves(Position p) {
+		ArrayList<Position> ret = new ArrayList<Position>();
+		
+		//adds adjacent position in each direction
+		for(int direction : Position.directions) {
+			Position check = p.adj(direction);
 			
-			//adds adjacent position in each direction
-			for(int direction : Position.directions) {
-				Position check = p.adj(direction);
-				
-				//makes sure position exists & is open
-				if(check!=null && !isOccupied(check)) {
-					ret.add(check);
-				}
+			//makes sure position exists & is open
+			if(check!=null && !isOccupied(check)) {
+				ret.add(check);
 			}
 		}
 		
