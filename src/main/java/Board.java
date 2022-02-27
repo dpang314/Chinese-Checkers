@@ -26,6 +26,10 @@ public class Board implements Cloneable {
 			{null, null, null, null, null, null, null, null, null, null},{null, null, null, null, null, null, null, null, null, null, null},
 			{null, null, null, null, null, null, null, null, null, null, null, null},{null, null, null, null, null, null, null, null, null, null, null, null, null},
 			{null, null, null, null},{null, null, null},{null, null},{null}};
+
+	public Peg[][] getPegs() {
+		return boardPos;
+	}
 	
 	//only so that the various directional position methods can be static
 	public static final int[] rowWidths = {1,2,3,4,13,12,11,10,9,10,11,12,13,4,3,2,1};

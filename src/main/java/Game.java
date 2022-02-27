@@ -20,9 +20,13 @@ public class Game {
   private boolean humans = false;
   //number of actual players
   private int numPlayers;
+  //tracks the final start and end position of the peg you moved on your turn
+  //this is the move that is added to the history stack
+  private Move finalMove = null;
+  //tracks moves within one turn; cleared at the end of every turn
+  private Stack<Move> miniHistory;
 
-
-	public Game(Player[] player, boolean shuffle) {
+	public Game(Player[] player, boolean shuffle) {/*
 		//Sets players array to the one passed to it
 	    this.players = player;
 	    
@@ -38,8 +42,8 @@ public class Game {
 	    //for the purposes of undo
 	    int z=0;
 	    for (Player p : player){
-	      if (p.isHuman())
-	        z++;
+//	      if (p.isHuman())
+//	        z++;
 	    }
 	    if (z>1)
 	      humans = true;
@@ -87,11 +91,23 @@ public class Game {
 	    //otherwise, the first player should be the first element
 	    else
 	      currentPlayer = players[0];
+	      */
 	};
 	
   
   
 	public void endTurn() {
+		//Doesn't add a move to the stack if
+		//there is no player in the slot
+		if (finalMove!=null)
+			history.add(finalMove);
+		//Resets final move and clears minihistory stack
+		//at the end of every turn
+		finalMove = null;
+		for (int i = 0; i<miniHistory.size();i++) {
+			miniHistory.remove(i);
+		}
+		//If not at the limit
 		if (playerTurn<5) {
 			playerTurn++;
 			currentPlayer = players[playerTurn];
@@ -102,6 +118,7 @@ public class Game {
 		}
 		if (playerTurn == first)
 			turn++;
+		
 	}
 	
 	public void save() {
@@ -109,36 +126,51 @@ public class Game {
 	}
 	
 	public void undo() {
-		//Creates undidMove: stores latest move on the stack
-	    Move undidMove = history.get(history.capacity()-1);
-		
-	    //if the last move on the stack was made by the current player,
-	    //do a reverse of the move (put the peg back where it started)
-		if (undidMove.getOwner()==currentPlayer) {
-			board.move(undidMove.getEndPosition(), undidMove.getStartPosition());
-			history.remove(history.capacity()-1);
+		Move undoingMove;
+		//If the player has made a move this turn, undoes only the FinalMove without
+		//referencing history
+		if (miniHistory.size()>0) {
+			//Creates a move to pass to board which is just a reverse of the 
+			//current turn's move
+			undoingMove = new Move(finalMove.getEndPosition(),
+					finalMove.getStartPosition(), currentPlayer);
+			board.move(undoingMove);
+			for (int i = 0; i<miniHistory.size();i++) {
+				miniHistory.remove(i);
+			}
 		}
-		//If the last move on the stack was not made by the current player:
-		else {
-			//Only undoes back to the end of your previous turn if there are no other
-			//human players
-			if (!humans) {
-				//Undoes every move which was not made by the current player between the current turn
-				//and the end of the current player's last turn
-				while ((undidMove.getOwner()==currentPlayer)==false){
-					undidMove = history.get(history.capacity()-1);	
-					board.move(undidMove.getEndPosition(), undidMove.getStartPosition());
-					history.remove(history.capacity()-1);
+		//If there were no moves made this turn, and there are no other human players,
+		//undoes to the beginning of your previous turn.
+		else if (!humans) {
+				//Undoes every move which was not made by the current 
+				//player between the current turn and the start of the 
+				//current player's last turn
+				int k = history.capacity()-1;
+				//iterates through each real player's move since the start of the
+				//current player's previous turn
+				for (int i = 0; i<numPlayers; i++){
+					Move undidMove = history.get(k-i);
+					undoingMove = new Move(undidMove.getEndPosition(),undidMove.getStartPosition()
+							,undidMove.getOwner());
+					board.move(undoingMove);
+					history.remove(k-i);
 			    }
 				//Sets turn counter back however many turns were skipped
 				turn-=numPlayers;
-			}
 		}
 	}
 	
+	
+	
 	public void movePeg(Move move) {
-		board.move(move.getStartPosition(), move.getEndPosition());
-		history.add(move);
+		board.move(move);
+		//adds the move to the mini stack for this turn
+		miniHistory.add(move);
+		//sets the finalMove to the current start and end position of the peg
+		//over the entire turn
+		finalMove = new Move(miniHistory.get(0).getStartPosition(),
+				miniHistory.get(miniHistory.size()-1).getEndPosition()
+				,currentPlayer);
 	};
   
   //(1)red to (4)blue
@@ -149,7 +181,7 @@ public class Game {
     //current player's color
     Color currentColor = currentPlayer.getColor();
     //Color of opposite player - determined below based on current player color
-    Color assignedColor;
+    Color assignedColor = Color.BLUE;
     //Goal region position array
     Position[] goal;
 
@@ -167,18 +199,21 @@ public class Game {
     else if (currentColor.equals(Color.WHITE))
       assignedColor = Color.BLACK;
 
-    goal = board.getHomeRegion(assignedColor);
+   goal = board.getHomeRegion(assignedColor);
 
     //Checks every position in the goal region - if they are all filled by
     //current player's pegs, they win; otherwise return null
     for (Position p : goal) {
-      if (!playerPeg(currentPlayer, p)) {
-        return null;
-      }
+//      if (!playerPeg(currentPlayer, p)) {
+ //       return null;
+ //     }
     }
     return currentPlayer;
 	};
 
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
 
 	public Player[] getPlayers() { 
 		return players;
