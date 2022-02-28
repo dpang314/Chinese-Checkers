@@ -1,8 +1,10 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.*;
 import java.awt.*;
+
 // Marty
 public class MenuPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -69,7 +71,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private boolean humanFill = false;
 	private boolean compFill = false;
 	private boolean noneFill = false;
-	private boolean override = false;
 	
 	private JLabel none;
 	private JLabel computer;
@@ -100,12 +101,17 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private Font bigFont;
 	private Font playerFont;
 	
+	Timer timer;
+	
 	MenuPanel() {
 		setPreferredSize(new Dimension(1280,720));
 		bigFont = CustomFont.getFont().deriveFont(15f);
 		playerFont = CustomFont.getFont().deriveFont(28f);
 		players = new Player[6];
 		this.setLayout(null);
+		
+//		timer = new Timer();
+//     	timer.scheduleAtFixedRate(new Animate(), 1000, 66); 
 		
 		P1 = new JButton("");
 		P1.setBounds(100,125,180,80);
@@ -393,7 +399,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 			compFill = false;
 			noneFill = false;
 			doneStopper = true;
-			System.out.println(doneStopper);
 		}
 		if (eventName.equals("com")) {
 			comSelect = true;
@@ -404,7 +409,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 			noneFill = false;
 			doneStopper = true;
 			name.setText("   ");
-			System.out.println(doneStopper);
 		}
 		if (eventName.equals("non")) {
 			nonSelect = true;
@@ -420,13 +424,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 		// BOXES MAJOR WORK REMAINING
 		if (eventName.equals("difficulty")) {
 			doneStopper = false;
-			System.out.println(doneStopper + " in difficulty");
 		}
 		text = name.getText();
 		if (text.equals("   ")) {
 		} else {
 			doneStopper = false;
-			System.out.println(doneStopper + " in textEvident");
 		}
 		
 		// I can't figure out how to make the done button visible like cmon man
@@ -498,7 +500,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 			humanFill = false;
 			compFill = false;
 			noneFill = false;
-			override = false;
 			P1.setVisible(true);
 			P2.setVisible(true);
 			P3.setVisible(true);
@@ -740,7 +741,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 			done.setVisible(false);
 		}
 	}
-
 	private void checkSubject(int type) {
 		if (subject == 1) {
 			p1Int = type;
@@ -761,6 +761,12 @@ public class MenuPanel extends JPanel implements ActionListener {
 			p6Int = type;
 		}
 	}
+/*	class Animate extends TimerTask {
+		public void run() {
+			System.out.println("Were working");
+		}
+	}
+*/
 }
 
 	

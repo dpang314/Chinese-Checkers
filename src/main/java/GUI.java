@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 public class GUI implements ActionListener{
 	private MenuPanel menuPanel;
 	private GamePanel gamePanel;
+	private Game game;
 	private JFrame frame;
 	
 	public GUI() {
