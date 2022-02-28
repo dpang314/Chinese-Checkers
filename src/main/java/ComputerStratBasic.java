@@ -25,7 +25,11 @@ public class ComputerStratBasic extends Player{
 		for (int i=0; i<posArr.size(); i++) {
 			bestMove = goodMove(posArr.get(i), bestMove, board, false);
 		}
-		
+		if (distanceToWR(new Position(bestMove[0][0], bestMove[0][1]), board)<distanceToWR(new Position(bestMove[1][0], bestMove[1][1]), board)) {
+			for (int i=0; i<posArr.size(); i++) {
+				bestMove = goodMove2(posArr.get(i), bestMove, board, false);
+			}
+		}
 		return new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
 	}
 	
@@ -67,11 +71,25 @@ public class ComputerStratBasic extends Player{
 				}
 			} 
 		}
-		if (distanceToWR(new Position(bestMove[0][0], bestMove[0][1]), board)<distanceToWR(new Position(bestMove[1][0], bestMove[1][1]), board)) {
-			
-		}
 		return bestMove;
 	};
+	private int[][] goodMove2(Position Pos, int[][] bestMove, Board board, boolean jumpOnly){
+		int row = Pos.getRow(), col = Pos.getColumn();
+		ArrayList<Position> posMoves= board.possibleMoves(Pos, jumpOnly);
+		for (Position p : posMoves) {
+			if (board.possibleMoves(p, true).size()>0) {
+				bestMove=goodMove2(p, bestMove, board, true);
+			} else {
+				int newWeight = distanceToWRP(p, board);
+				if (newWeight<bestMove[2][0]) {
+					bestMove[0][0] = row;bestMove[0][1] = col;
+					bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
+					bestMove[2][0] = newWeight;
+				}
+			} 
+		}
+		return bestMove;
+	}
 	private int distanceToWR(Position p, Board board) {
 		int dist=0;
 		Position newP = new Position(p.getRow(), p.getColumn());
@@ -103,8 +121,8 @@ public class ComputerStratBasic extends Player{
 		}
 		else if (winLine[0][0]>p.getColumn() && (dir=='u'||dir=='d')) {
 			while (winLine[0][0]>p.getColumn()) {
-				if (dir=='u') {newP = board.getTR(newP);}
-				else {newP = board.getBR(newP);}
+				if (dir=='u') {newP = newP.adj(2);} //TR
+				else {newP = newP.adj(4);} //BR
 				dist+=1;
 			}
 			if (dir=='u') {
@@ -118,8 +136,50 @@ public class ComputerStratBasic extends Player{
 	private int distanceToWRP(Position p, Board board) {
 		int dist=0;
 		Position newP = new Position(p.getRow(), p.getColumn());
-		if (dir=='l' && WRP[0]>newP.getRow()) {
-			
+		if (dir=='l') {
+			while (WRP[0]>newP.getRow()) {
+				newP = newP.adj(5);
+				dist+=1;
+			}
+			while (WRP[0]<newP.getRow()) {
+				newP = newP.adj(1);
+				dist+=1;
+			}
+			dist+=newP.getColumn();
 		}
+		if (dir=='r') {
+			while (WRP[0]>newP.getRow()) {
+				newP = newP.adj(4);
+				dist+=1;
+			}
+			while (WRP[0]<newP.getRow()) {
+				newP = newP.adj(2);
+				dist+=1;
+			}
+			dist+=WRP[1]-newP.getColumn();
+		}
+		if (dir=='u') {
+			while (WRP[1]>newP.getRow()) {
+				newP = newP.adj(2);
+				dist+=1;
+			}
+			while (WRP[1]<newP.getRow()) {
+				newP = newP.adj(1);
+				dist+=1;
+			}
+			dist+=newP.getRow();
+		}
+		if (dir=='d') {
+			while (WRP[1]>newP.getRow()) {
+				newP = newP.adj(4);
+				dist+=1;
+			}
+			while (WRP[1]<newP.getRow()) {
+				newP = newP.adj(5);
+				dist+=1;
+			}
+			dist+=newP.getRow();
+		}
+		return dist;
 	}
 }
