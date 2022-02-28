@@ -19,16 +19,25 @@ public class AdvancedStrategy extends Player {
 	}
 	
 	private void randomWalk(Peg peg) {
+		int temp = dist = pegDistance; //we need pegDistance variable
+		int minDist = Integer.MAX_VALUE;
 		for (int i = 1; i<=r; i++) {
-			
 			for (int j = 1; j<=l; j++) {
 				ArrayList<Position> moves = testBoard.possibleMoves(peg.getPos(), false);
 				Position randomEnd = moves.get((int)(Math.random()*moves.size()));
-				Move randomMove = new Move(peg.getPos(),
-						randomEnd,this);
+				Move randomMove = new Move(peg.getPos(),randomEnd,this);
 				testBoard.move(randomMove);
 			}
+			int rwDist;
+			if(rwDist < minDist) {
+				minDist = rwDist;
+				//endPos[peg] = 
+			}
+			pegDistance += rwDist;
 		}
+		pegDistance /= r;
+		pAvgs[peg] =  pegDistance;
+
 	}
 	
 	public Move getMove(Board board){
