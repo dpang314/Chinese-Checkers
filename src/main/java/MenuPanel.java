@@ -307,36 +307,66 @@ public class MenuPanel extends JPanel implements ActionListener {
 			scrolled = true;
 			p1Int = 1;
 			playerHolder = "Player 1";
+			P2.setVisible(false);
+			P3.setVisible(false);
+			P4.setVisible(false);
+			P5.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player2")) {
 			subject = 2;
 			scrolled = true;
 			p2Int = 1;
 			playerHolder = "Player 2";
+			P1.setVisible(false);
+			P3.setVisible(false);
+			P4.setVisible(false);
+			P5.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player3")) {
 			subject = 3;
 			scrolled = true;
 			p3Int = 1;
 			playerHolder = "Player 3";
+			P1.setVisible(false);
+			P2.setVisible(false);
+			P4.setVisible(false);
+			P5.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player4")) {
 			subject = 4;
 			scrolled = true;
 			p4Int = 1;
 			playerHolder = "Player 4";
+			P1.setVisible(false);
+			P2.setVisible(false);
+			P3.setVisible(false);
+			P5.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player5")) {
 			subject = 5;
 			scrolled = true;
 			p5Int = 1;
 			playerHolder = "Player 5";
+			P1.setVisible(false);
+			P2.setVisible(false);
+			P3.setVisible(false);
+			P4.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player6")) {
 			subject = 6;
 			scrolled = true;
 			p6Int = 1;
 			playerHolder = "Player 6";
+			P1.setVisible(false);
+			P2.setVisible(false);
+			P3.setVisible(false);
+			P4.setVisible(false);
+			P5.setVisible(false);
 		}
 		
 		if (eventName.equals("startB")) {
@@ -362,6 +392,8 @@ public class MenuPanel extends JPanel implements ActionListener {
 			humanFill = true;
 			compFill = false;
 			noneFill = false;
+			doneStopper = true;
+			System.out.println(doneStopper);
 		}
 		if (eventName.equals("com")) {
 			comSelect = true;
@@ -370,6 +402,9 @@ public class MenuPanel extends JPanel implements ActionListener {
 			compFill = true;
 			humanFill = false;
 			noneFill = false;
+			doneStopper = true;
+			name.setText("   ");
+			System.out.println(doneStopper);
 		}
 		if (eventName.equals("non")) {
 			nonSelect = true;
@@ -385,11 +420,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 		// BOXES MAJOR WORK REMAINING
 		if (eventName.equals("difficulty")) {
 			doneStopper = false;
+			System.out.println(doneStopper + " in difficulty");
 		}
 		text = name.getText();
 		if (text.equals("   ")) {
 		} else {
 			doneStopper = false;
+			System.out.println(doneStopper + " in textEvident");
 		}
 		
 		// I can't figure out how to make the done button visible like cmon man
@@ -461,7 +498,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 			humanFill = false;
 			compFill = false;
 			noneFill = false;
-			
+			override = false;
+			P1.setVisible(true);
+			P2.setVisible(true);
+			P3.setVisible(true);
+			P4.setVisible(true);
+			P5.setVisible(true);
+			P6.setVisible(true);
 			
 		}
 		repaint();
@@ -637,11 +680,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		
 	}
 	private void reaction(Graphics g) {
-		if (!doneStopper) {
-			done.setVisible(true);
-		} else {
-			done.setVisible(false);
-		}
+		
 		if (scrolled) {
 			non.setVisible(true);
 			com.setVisible(true);
@@ -672,18 +711,12 @@ public class MenuPanel extends JPanel implements ActionListener {
 			comInstruct.setVisible(false);
 			name.setVisible(true);
 			difficulty.setVisible(false);
-			if (override) {
-				doneStopper = true;
-			}
 		}
 		if (comSelect) {
 			nameInstruct.setVisible(false);
 			comInstruct.setVisible(true);
 			difficulty.setVisible(true);
 			name.setVisible(false);
-			if (override) {
-				doneStopper = true;
-			}
 		}
 		if (nonSelect) {
 			nameInstruct.setVisible(false);
@@ -700,6 +733,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 		}
 		if (noneFill) {
 			g.drawImage(filledButton,745,360,this);
+		}
+		if (!doneStopper) {
+			done.setVisible(true);
+		} else {
+			done.setVisible(false);
 		}
 	}
 
