@@ -23,13 +23,13 @@ public class ComputerStratBasic extends Player{
 	public Move getMove(Board board) {
 		int[][] bestMove= new int[3][2]; //{{r1, c1}, {r2, c2} {weight, 0}}
 		for (int i=0; i<posArr.size(); i++) {
-			bestMove = goodMove(posArr.get(i), bestMove, board, false);
+			bestMove = goodMove2(posArr.get(i), bestMove, board, false);
 		}
-		if (distanceToWR(new Position(bestMove[0][0], bestMove[0][1]), board)<distanceToWR(new Position(bestMove[1][0], bestMove[1][1]), board)) {
-			for (int i=0; i<posArr.size(); i++) {
-				bestMove = goodMove2(posArr.get(i), bestMove, board, false);
-			}
-		}
+//		if (distanceToWR(new Position(bestMove[0][0], bestMove[0][1]), board)<distanceToWR(new Position(bestMove[1][0], bestMove[1][1]), board)) {
+//			for (int i=0; i<posArr.size(); i++) {
+//				bestMove = goodMove2(posArr.get(i), bestMove, board, false);
+//			}
+//		}
 		return new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
 	}
 	
@@ -181,5 +181,12 @@ public class ComputerStratBasic extends Player{
 			dist+=newP.getRow();
 		}
 		return dist;
+	}
+	public static void main(String[] args) {
+		Board b1 = new Board();
+		b1.fillPos(new Position(7, 2));
+		b1.fillPos(new Position(9, 5));
+		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
+		c1.getMove(b1);
 	}
 }
