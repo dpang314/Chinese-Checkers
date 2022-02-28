@@ -21,4 +21,7 @@ public class Move {
 	public Position getEndPosition() {
 		return endPosition;
 	}
+	public String toString() {
+		return "[" + owner + "]" + " " + startPosition + " to " + endPosition;
+	}
 }

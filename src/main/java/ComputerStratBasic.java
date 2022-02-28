@@ -5,6 +5,7 @@ public class ComputerStratBasic extends Player{
 	private int[][] winLine = new int[2][2]; //{{x1, x2}, {y1, y2}}
 	private char dir;
 	private int[] WRP = new int[2]; //{row, col}
+	private ArrayList<Position> prevPos = new ArrayList<Position>();
 	public ComputerStratBasic(Color color, String playerName) {
 		super(color, playerName);
 		winLine[0][0] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 0 :  3);
@@ -22,6 +23,7 @@ public class ComputerStratBasic extends Player{
 	@Override
 	public Move getMove(Board board) {
 		int[][] bestMove= new int[3][2]; //{{r1, c1}, {r2, c2} {weight, 0}}
+		bestMove[2][0]=1000;
 		for (int i=0; i<posArr.size(); i++) {
 			bestMove = goodMove2(posArr.get(i), bestMove, board, false);
 		}
@@ -30,6 +32,7 @@ public class ComputerStratBasic extends Player{
 //				bestMove = goodMove2(posArr.get(i), bestMove, board, false);
 //			}
 //		}
+		System.out.println(bestMove[1][0]+","+bestMove[1][1]);
 		return new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
 	}
 	
@@ -74,13 +77,22 @@ public class ComputerStratBasic extends Player{
 		return bestMove;
 	};
 	private int[][] goodMove2(Position Pos, int[][] bestMove, Board board, boolean jumpOnly){
+		prevPos.add(Pos);
 		int row = Pos.getRow(), col = Pos.getColumn();
+		System.out.println("start pos: "+row+", "+col);
 		ArrayList<Position> posMoves= board.possibleMoves(Pos, jumpOnly);
 		for (Position p : posMoves) {
+			if (prevPos.contains(p)) {
+				prevPos.remove(prevPos.indexOf(p));
+			}
+		}
+		for (Position p : posMoves) {
+			System.out.println("possible pos: "+p.getRow()+", "+p.getColumn());
 			if (board.possibleMoves(p, true).size()>0) {
 				bestMove=goodMove2(p, bestMove, board, true);
 			} else {
 				int newWeight = distanceToWRP(p, board);
+				System.out.println("distance: "+newWeight);
 				if (newWeight<bestMove[2][0]) {
 					bestMove[0][0] = row;bestMove[0][1] = col;
 					bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
@@ -187,6 +199,8 @@ public class ComputerStratBasic extends Player{
 		b1.fillPos(new Position(7, 2));
 		b1.fillPos(new Position(9, 5));
 		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
-		c1.getMove(b1);
+		c1.posArr.add(new Position(7, 2));
+		c1.posArr.add(new Position(9, 5));
+		System.out.println(c1.getMove(b1));
 	}
 }
