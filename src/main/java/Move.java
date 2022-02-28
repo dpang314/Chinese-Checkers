@@ -4,10 +4,10 @@ public class Move {
 	private Position startPosition;
 	private Position endPosition;
 	
-	public Move(Position startPosition, Position endPosition, Player owner1) {
+	public Move(Position startPosition, Position endPosition, Player owner) {
 		this.startPosition = startPosition;
 		this.endPosition = endPosition;
-		this.owner = owner1;
+		this.owner = owner;
 	}
 
 	public Player getOwner(){
