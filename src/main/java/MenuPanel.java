@@ -43,6 +43,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private Image logoBig;
 	private Image logoSmall;
 	private Image scroll;
+	private Image shuffly;
 	private Image arrow;
 	
 	// Sources 
@@ -78,6 +79,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private JLabel playerNum;
 	private JLabel nameInstruct;
 	private JLabel comInstruct;
+	private JLabel shuffleLabel;
 	
 	private JTextField name;
 	
@@ -97,11 +99,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private JButton load;
 	private JButton exit;
 	private JButton done;
+	private JButton shuffler;
 	
 	private Font bigFont;
 	private Font playerFont;
 	
 	Timer timer;
+	
+	private Color color;
 	
 	MenuPanel() {
 		setPreferredSize(new Dimension(1280,720));
@@ -110,8 +115,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 		players = new Player[6];
 		this.setLayout(null);
 		
-//		timer = new Timer();
-//     	timer.scheduleAtFixedRate(new Animate(), 1000, 66); 
+		shuffler = new JButton("");
+		shuffler.setBounds(335,115,20,20);
+		shuffler.setActionCommand("Shuffler");
+		shuffler.addActionListener(this);
+		shuffler.setContentAreaFilled(false);
+		shuffler.setBorderPainted(false);
+		this.add(shuffler);
 		
 		P1 = new JButton("");
 		P1.setBounds(100,125,180,80);
@@ -255,6 +265,12 @@ public class MenuPanel extends JPanel implements ActionListener {
 		this.add(comInstruct);
 		comInstruct.setVisible(false);
 		
+		shuffleLabel = new JLabel("Shuffle Colors");
+		shuffleLabel.setBounds(380,110,200,30);
+		shuffleLabel.setFont(bigFont);
+		this.add(shuffleLabel);
+		shuffleLabel.setVisible(true);
+		
 		//////////////////////////////////////////////
 		
 		String feed[] = {"Easier", "Harder"};
@@ -389,6 +405,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 			System.exit(0);
 		}
 		
+		if (eventName.equals("Shuffler")) {
+			if (shuffle) {
+				shuffle = false;
+			} else if (!shuffle) {
+				shuffle = true;
+			}
+		}
 		///////////////////////////////////////////////////
 		
 		if (eventName.equals("hum")) {
@@ -461,14 +484,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 				checkSubject(3);
 				dif = (String) difficulty.getSelectedItem();
 				if (dif.equals("Easier")) {
-				
+					players[subject - 1] = new ComputerStratBasic(color,null);
 					
 					// create computer player
 					// set the difficulty to Easier
 				
 					
 				} else if (dif.equals("Harder")) {
-					
+					players[subject - 1] = new QuinnStrategy(color,null);
 					
 					// create computer player
 					// set the difficulty to Harder
@@ -477,8 +500,10 @@ public class MenuPanel extends JPanel implements ActionListener {
 			}
 			else if (humSelect) {
 				checkSubject(2);
+				checkColor();
 				text = name.getText();
 				
+				players[subject - 1] = new HumanPlayer(color, text);
 //				players[subject - 1] = new HumanPlayer();
 				// create human player
 				// set player name to whatever the text is
@@ -486,6 +511,10 @@ public class MenuPanel extends JPanel implements ActionListener {
 				humSelect = false;
 			} else if (nonSelect == true) {
 				checkSubject(0);
+			}
+			
+			if (shuffle) {
+				
 			}
 			scrolled = false;
 			subject = 0;
@@ -681,7 +710,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 		
 	}
 	private void reaction(Graphics g) {
-		
+		if (shuffle) {
+			g.drawImage(filledButton,335,115,this);
+		} else if (!shuffle) {
+			g.drawImage(emptyButton,335,115,this);
+		}
 		if (scrolled) {
 			non.setVisible(true);
 			com.setVisible(true);
@@ -761,12 +794,21 @@ public class MenuPanel extends JPanel implements ActionListener {
 			p6Int = type;
 		}
 	}
-/*	class Animate extends TimerTask {
-		public void run() {
-			System.out.println("Were working");
+	private void checkColor() {
+		if (subject == 1) {
+			color = Color.RED;
+		} else if (subject == 2) {
+			color = Color.BLUE;
+		} else if (subject == 3) {
+			color = Color.YELLOW;
+		} else if (subject == 4) {
+			color = Color.GREEN;
+		} else if (subject == 5) {
+			color = Color.BLACK;
+		} else if (subject == 6) {
+			color = Color.WHITE;
 		}
 	}
-*/
 }
 
 	
