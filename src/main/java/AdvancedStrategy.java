@@ -4,29 +4,38 @@ import java.util.ArrayList;
 public class AdvancedStrategy extends Player {
 	private int dist;
 	private double[] pAvgs = new double[10];
-	
+	private Position[]pegPos = new Position[10];
 	private Board testBoard;
 	
 	//number r and length l of random walks, respectively;
 	//change as desired
 	private int r = 10;
 	private int l = 10;
-	private Position[] endPos = new Position[10];
 	
+	//Tracks best ending position of every peg
+	private Position[] endPos = new Position[10];
 	
 	public AdvancedStrategy(Color color, String playerName) {
 		super(color, playerName);
+		//fills peg arrays
+		for (Position pos : ) {
+			
+		}
 	}
 	
 	private void randomWalk(Peg peg) {
-		int temp = dist = pegDistance; //we need pegDistance variable
+		//initialize pegdistance
+		int pegDistance = ;
+		
+		int temp = dist - pegDistance; //we need pegDistance variable
 		int minDist = Integer.MAX_VALUE;
 		for (int i = 1; i<=r; i++) {
+			Position beginningPos = peg.getPos();
 			for (int j = 1; j<=l; j++) {
-				ArrayList<Position> moves = testBoard.possibleMoves(peg.getPos(), false);
-				Position randomEnd = moves.get((int)(Math.random()*moves.size()));
-				Move randomMove = new Move(peg.getPos(),randomEnd,this);
-				testBoard.move(randomMove);
+				//Sets initial arraylist of possible moves it can make
+				ArrayList<Position> moves = testBoard.possibleMoves(beginningPos,false);
+				beginningPos = moves.get((int)(Math.random()*moves.size()));
+				
 			}
 			int rwDist;
 			if(rwDist < minDist) {
