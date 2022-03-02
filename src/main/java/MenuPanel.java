@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
@@ -8,7 +9,6 @@ import java.awt.*;
 // Marty
 public class MenuPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	private Player[] players;
 	private boolean shuffle;
 	private Image background;
 	// images
@@ -64,6 +64,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 	
 	private String playerHolder = "";
 	
+	private ArrayList <Integer> typesAl = new ArrayList <Integer>(6);
+	private ArrayList <String> namesAl = new ArrayList <String>(6);
+	private Player[] players;
+	private int[] types = {0,0,0,0,0,0};
+	private String[] names = new String[6];
 	private boolean scrolled = false;
 	private boolean humSelect = false;
 	private boolean comSelect = false;
@@ -105,8 +110,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private Font playerFont;
 	
 	Timer timer;
-	
-	private Color color;
 	
 	MenuPanel() {
 		setPreferredSize(new Dimension(1280,720));
@@ -392,6 +395,26 @@ public class MenuPanel extends JPanel implements ActionListener {
 		}
 		
 		if (eventName.equals("startB")) {
+			for (int x = 0; x < 6; x++) {
+				if (names[x] != null) {
+					namesAl.add(names[x]);
+				}
+				if (types[x] != 0) {
+					typesAl.add(types[x]);
+				}
+			}
+			int numPlayers = typesAl.size();
+			// true = human
+			// false = computer
+			for (int z = 0; z < 2; z++) {
+				if (typesAl.get(z) == 1) {
+					players[z] = new HumanPlayer(checkColor(z,numPlayers),names[z]);
+				} else if (typesAl.get(z) == 2) {
+					players[z] = new ComputerStratBasic(checkColor(z,numPlayers),null);
+				} else if (typesAl.get(z) == 3) {
+					players[z] = new QuinnStrategy(checkColor(z,numPlayers),null);
+				}
+			}
 			// set the game screen
 			// pass data from players
 		}
@@ -484,14 +507,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 				checkSubject(3);
 				dif = (String) difficulty.getSelectedItem();
 				if (dif.equals("Easier")) {
-					players[subject - 1] = new ComputerStratBasic(color,null);
+					types[subject - 1] = 2;
 					
 					// create computer player
 					// set the difficulty to Easier
 				
 					
 				} else if (dif.equals("Harder")) {
-					players[subject - 1] = new QuinnStrategy(color,null);
+					types[subject - 1] = 3;
 					
 					// create computer player
 					// set the difficulty to Harder
@@ -500,22 +523,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 			}
 			else if (humSelect) {
 				checkSubject(2);
-				checkColor();
 				text = name.getText();
-				
-				players[subject - 1] = new HumanPlayer(color, text);
-//				players[subject - 1] = new HumanPlayer();
-				// create human player
-				// set player name to whatever the text is
-
+				types[subject - 1] = 1;
+				names[subject - 1] = text;
 				humSelect = false;
 			} else if (nonSelect == true) {
 				checkSubject(0);
 			}
 			
-			if (shuffle) {
-				
-			}
 			scrolled = false;
 			subject = 0;
 			comSelect = false;
@@ -794,20 +809,46 @@ public class MenuPanel extends JPanel implements ActionListener {
 			p6Int = type;
 		}
 	}
-	private void checkColor() {
-		if (subject == 1) {
-			color = Color.RED;
-		} else if (subject == 2) {
-			color = Color.BLUE;
-		} else if (subject == 3) {
-			color = Color.YELLOW;
-		} else if (subject == 4) {
-			color = Color.GREEN;
-		} else if (subject == 5) {
-			color = Color.BLACK;
-		} else if (subject == 6) {
-			color = Color.WHITE;
+	private Color checkColor(int subject, int size) {
+		if (size == 6) {
+			if (subject == 1) {
+				return Color.RED;
+			} else if (subject == 2) {
+				return Color.BLUE;
+			} else if (subject == 3) {
+				return Color.YELLOW;
+			} else if (subject == 4) {
+				return Color.GREEN;
+			} else if (subject == 5) {
+				return Color.BLACK;
+			} else if (subject == 6) {
+				return Color.WHITE;
+			}
+		} else if (size == 4) {
+			if (subject == 1) {
+				return Color.YELLOW;
+			} else if (subject == 2) {
+				return Color.GREEN;
+			} else if (subject == 3) {
+				return Color.BLACK;
+			} else if (subject == 4) {
+				return Color.WHITE;
+			}
+		} else if (size == 2) {
+			if (subject == 1) {
+				return Color.RED;
+			} else if (subject == 2) {
+				return Color.BLUE;
+			}
 		}
+		
+		return null;
+	}
+	private void setColors() {
+		if (players[0] != null && players[1] != null && players[2] != null && players[3] != null && players[4] != null && players[5] != null ){ // 6 players
+			
+		}
+		
 	}
 }
 
