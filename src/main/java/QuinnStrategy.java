@@ -20,6 +20,10 @@ import javax.swing.tree.*;
  * goes relative to the corner of the target triangle. Distances
  * are weighted with a quadratic scalar to prioritize moving
  * the pegs that are farthest away.
+ * 
+ * FAQ
+ * 	Q: will you change it so it looks at future moves too?
+ * 	A: no
  */
 
 public class QuinnStrategy extends Player {
@@ -51,9 +55,14 @@ public class QuinnStrategy extends Player {
 		//if no move has been found yet, set the board state and find a move
 		if(!moveCalculated) {
 			boardAtTurnStart=board;
-			for(Position p : this.posArr) {
-				investigateMoves(p);
+			try {
+				for(Position p : this.posArr) {
+					investigateMoves(p);
+				}
+			} catch (Exception e) {
+				System.out.println("important fringe case found");
 			}
+			
 			optimalJumpChain = createMoveQueue(optimalSpotChain);
 			moveCalculated = true;
 		}
@@ -70,6 +79,7 @@ public class QuinnStrategy extends Player {
 		
 	}
 	
+	//sets the target objective position based on the 
 	public void setTargetColor(Color c) {
 		obj = getObjPos(c);
 	}
@@ -85,7 +95,7 @@ public class QuinnStrategy extends Player {
 	}
 	
 	//investigates all moves for a given position
-	private void investigateMoves(Position pos) {
+	private void investigateMoves(Position pos) throws Exception {
 		for(Position p : boardAtTurnStart.possibleAdjacentMoves(pos)) {
 			checkAndUpdateIfOptimal(new Position[] {pos,p});
 		}
@@ -95,7 +105,7 @@ public class QuinnStrategy extends Player {
 	}
 	
 	//recursive algorithm to analyze the possible jump chain following the given one
-	private DefaultMutableTreeNode investigateSubJumps(DefaultMutableTreeNode node) {
+	private DefaultMutableTreeNode investigateSubJumps(DefaultMutableTreeNode node) throws Exception {
 		
 		//stores the position passed in via the node
 		Position passedPos = (Position)node.getUserObject();
@@ -118,10 +128,9 @@ public class QuinnStrategy extends Player {
 			}
 		}
 		
-		if(!node.isRoot()) {
+		if(!node.isRoot()) {	
 			checkAndUpdateIfOptimal(path);
-		}
-		
+		}		
 		return node;
 	}
 	
@@ -129,7 +138,7 @@ public class QuinnStrategy extends Player {
 	double currentBestValue = -Double.MAX_VALUE;
 	int currentFastestPath = 0;
 
-	private void checkAndUpdateIfOptimal(Position[] path) {
+	private void checkAndUpdateIfOptimal(Position[] path) throws Exception {
 		
 		//gets the root position (original position at start of turn)
 		Position rootPos = path[0];
@@ -145,20 +154,18 @@ public class QuinnStrategy extends Player {
 		//compares current grand move value to current best grand move value
 		double valueComp = percentDiff(currentBestValue,currentValue);
 		
-//		System.out.println("---");
-//		for(Position p : path) {
-//			System.out.println(p);
-//		}
-//		System.out.println("---");
-//		System.out.println(valueComp);
-		
 		//if the move is better or equivalent but faster, it becomes the current optimal chain
 		boolean betterMove = valueComp>2.0;
 		boolean sameMoveFaster = Math.abs(valueComp)<=2.0 && currentChainLength<currentFastestPath;
-		if(betterMove||sameMoveFaster) { 
+		
+		boolean isFringeCaseMove = checkFringeCase0(currentGrandMove);
+		if(betterMove||sameMoveFaster||isFringeCaseMove) { 
 			optimalSpotChain = path;
 			currentBestValue = currentValue;
 			currentFastestPath = currentChainLength;
+			if(isFringeCaseMove) {
+				throw new Exception("Important specified fringe case found.");
+			}
 		}
 	}
 	
@@ -221,7 +228,7 @@ public class QuinnStrategy extends Player {
 	private static double scaledDist(Position p, Position obj) {
 		
 		//distance beyond which getting closer becomes more valuable
-		final double valueThreshold = 10;
+		final double valueThreshold = 9;
 		final double scale = 100;
 		final int power = 2;
 		
@@ -235,6 +242,29 @@ public class QuinnStrategy extends Player {
 			distance = (scale/20) * Math.pow(distance, power) + ybump;
 		}
 		return distance;
+	}
+	
+	// ----- ANNOYING FRINGE CASE METHODS -----
+	private boolean checkFringeCase0(Move m) {
+		Position start = m.getStartPosition();
+		Position end = m.getEndPosition();
+		
+		Position nuisance = new Position(4,6);
+		
+		if(!(start.equals(nuisance) &&
+			boardAtTurnStart.isOccupied(start.getTL()) &&
+			boardAtTurnStart.isOccupied(start.getTR()))) 
+		{
+			return false;
+		}
+		
+		boolean left = boardAtTurnStart.isOccupied(start.getTL().getL());
+		if(!left && end.equals(start.getL())) { 
+			return true;
+		} else if (left && end.equals(start.getR())) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static void main(String[] args) {	
@@ -267,7 +297,7 @@ public class QuinnStrategy extends Player {
 //				System.out.println("TURN ENDED!");
 			}
 		try {
-			Thread.sleep(200);
+			Thread.sleep(75);
 		} catch (InterruptedException e) {
 			System.err.println(e.getMessage());
 		}
