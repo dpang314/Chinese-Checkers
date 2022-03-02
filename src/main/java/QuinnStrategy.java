@@ -39,6 +39,11 @@ public class QuinnStrategy extends Player {
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
 	}
+	
+	//only for testing
+	public QuinnStrategy() {
+		this(null,null);
+	}
 
 	@Override
 	public Move getMove(Board board) {
@@ -49,12 +54,16 @@ public class QuinnStrategy extends Player {
 			for(Position p : this.posArr) {
 				investigateMoves(p);
 			}
+			optimalJumpChain = createMoveQueue(optimalSpotChain);
 			moveCalculated = true;
 		}
 		
 		//if the turn is over, reset
 		if(optimalJumpChain.size() == 0) {
 			moveCalculated = false;
+			optimalSpotChain = null;
+			currentBestValue = -Double.MAX_VALUE;
+			currentFastestPath = 0;
 		}
 		
 		return optimalJumpChain.poll();
@@ -83,7 +92,6 @@ public class QuinnStrategy extends Player {
 		
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(pos);
 		investigateSubJumps(root);
-		optimalJumpChain = createMoveQueue(optimalSpotChain);
 	}
 	
 	//recursive algorithm to analyze the possible jump chain following the given one
@@ -110,16 +118,19 @@ public class QuinnStrategy extends Player {
 			}
 		}
 		
-		checkAndUpdateIfOptimal(path);
+		if(!node.isRoot()) {
+			checkAndUpdateIfOptimal(path);
+		}
 		
 		return node;
 	}
 	
-	Position[] optimalSpotChain;
-	double currentBestValue = 0;
-	int currentFastestPath;
+	Position[] optimalSpotChain = null;
+	double currentBestValue = -Double.MAX_VALUE;
+	int currentFastestPath = 0;
 
 	private void checkAndUpdateIfOptimal(Position[] path) {
+		
 		//gets the root position (original position at start of turn)
 		Position rootPos = path[0];
 		Position endPos = path[path.length-1];
@@ -133,7 +144,14 @@ public class QuinnStrategy extends Player {
 
 		//compares current grand move value to current best grand move value
 		double valueComp = percentDiff(currentBestValue,currentValue);
-
+		
+//		System.out.println("---");
+//		for(Position p : path) {
+//			System.out.println(p);
+//		}
+//		System.out.println("---");
+//		System.out.println(valueComp);
+		
 		//if the move is better or equivalent but faster, it becomes the current optimal chain
 		boolean betterMove = valueComp>2.0;
 		boolean sameMoveFaster = Math.abs(valueComp)<=2.0 && currentChainLength<currentFastestPath;
@@ -144,6 +162,7 @@ public class QuinnStrategy extends Player {
 		}
 	}
 	
+	//checks if a position has already been touched in a jump path
 	private boolean alreadyTraversedInPath(Position[] path, Position check) {
 		boolean ret = false;
 		
@@ -193,14 +212,18 @@ public class QuinnStrategy extends Player {
 	//returns a double representing the percent difference between a and b
 	private static double percentDiff(double a, double b) {
 		double numDiff = b-a;
-		return numDiff/a * 100;
+//		System.out.println("b " + b);
+//		System.out.println("a " + a);
+		return numDiff/Math.abs(a) * 100;
 	}
 	
+	//applies a quadratic scalar to the found distance
 	private static double scaledDist(Position p, Position obj) {
 		
 		//distance beyond which getting closer becomes more valuable
-		final double valueThreshold = 9;
-		final double scale = 1.30;
+		final double valueThreshold = 10;
+		final double scale = 100;
+		final int power = 2;
 		
 		//objective point
 		Point2D.Double objPoint = getPoint(obj);
@@ -208,9 +231,46 @@ public class QuinnStrategy extends Player {
 		//finds distance, if it goes beyond the range, it scales quadratically
 		double distance = objPoint.distance(getPoint(p));
 		if(distance >= valueThreshold) {
-			double ybump = -((scale/20)*Math.pow(valueThreshold, 2)-valueThreshold);
-			distance = (scale/20) * Math.pow(distance, 2) + ybump;
+			double ybump = -((scale/20)*Math.pow(valueThreshold, power)-valueThreshold);
+			distance = (scale/20) * Math.pow(distance, power) + ybump;
 		}
 		return distance;
+	}
+	
+	public static void main(String[] args) {	
+		QuinnStrategy myStrategy = new QuinnStrategy();
+		Board b = new Board();
+		b.fillPos(Board.homeBk);
+		b.fillPos(Board.homeY);
+		b.fillPos(Board.homeW);
+		b.fillPos(Board.homeG);
+		myStrategy.setTargetColor(Color.RED);
+				
+		for(Position p : Board.homeBu) {
+			myStrategy.posArr.add(p);
+			b.fillPos(p);
+		}
+		
+		System.out.println("GAME START!");
+		b.printBoard();
+		
+		//prints move stack
+		Move move;
+		do {
+			move = myStrategy.getMove(b);
+			
+			if(move!=null) {
+				b.move(move);
+				b.printBoard();
+				System.out.println("TURN MADE!");
+			} else {
+//				System.out.println("TURN ENDED!");
+			}
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			System.err.println(e.getMessage());
+		}
+		} while (true);	
 	}
 }

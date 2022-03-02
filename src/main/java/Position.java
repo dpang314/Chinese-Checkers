@@ -58,7 +58,7 @@ public class Position {
 		int rootIndex = this.getColumn();
 		
 		int aboveRowSize=-1;
-		try {aboveRowSize=Board.rowWidths[this.getRow()-1];} finally {}
+		try {aboveRowSize=Board.rowWidths[this.getRow()-1];} catch (ArrayIndexOutOfBoundsException e) {}
 		
 		try {
 			ret = new Position(this.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left));
@@ -72,7 +72,7 @@ public class Position {
 		int rootIndex = this.getColumn();
 		
 		int aboveRowSize=-1;
-		try {aboveRowSize=Board.rowWidths[this.getRow()-1];} finally {}
+		try {aboveRowSize=Board.rowWidths[this.getRow()-1];} catch (ArrayIndexOutOfBoundsException e) {}
 		
 		try {
 			ret = new Position(this.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));

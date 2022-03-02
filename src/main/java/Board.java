@@ -74,13 +74,16 @@ public class Board implements Cloneable {
 		}
 	}
 	
+	//for testing only
 	public Board() {};
 	
-	public boolean canMove(Position startPos, Position targetPos, boolean ongoingTurn) { 
-		if (possibleMoves(startPos, ongoingTurn).contains(targetPos)) {
-			return true;
+	public boolean canMove(Position startPos, Position targetPos, boolean ongoingTurn) { 	
+		for(Position p : possibleMoves(startPos, ongoingTurn)) {
+			if (p.equals(targetPos)) {
+				return true;
+			}
 		}
-		return false; 
+		return false;
 	}
 	
 	public boolean playerPeg (Player player, Position pos) {
@@ -171,13 +174,13 @@ public class Board implements Cloneable {
 		//checks in each direction
 		for(int direction : Position.directions) {
 			Position check = p.adj(direction);
-			
+						
 			//ensures that adjacent space is filled
 			if(check!=null && isOccupied(check)) {
 				
 				//adds outer space if it's open
 				check = check.adj(direction);
-				if(!isOccupied(check)) {
+				if(check!=null && !isOccupied(check)) {
 					ret.add(check);
 				}
 			}
@@ -189,8 +192,17 @@ public class Board implements Cloneable {
 	public void move(Move move) {
 		Position startPos = move.getStartPosition();
 		Position endPos = move.getEndPosition();
+
+		//checks that the peg exists and can move to the specified location
+		if(boardPos[startPos.getRow()][startPos.getColumn()]==null || !canMove(startPos,endPos,false)) {
+			throw new RuntimeException("Invalid move. startPos is null or cannot move there.");
+		}
+		
 		boardPos[endPos.getRow()][endPos.getColumn()] = boardPos[startPos.getRow()][startPos.getColumn()]; //check copy vs ref
 		boardPos[startPos.getRow()][startPos.getColumn()] = null;
+		
+		//updates the move-maker's array of positions
+		move.getOwner().posArr.set(move.getOwner().posArr.indexOf(startPos), endPos);
 	}
 	
 	private void populateReg(Position[] region, Player p) {
@@ -198,5 +210,44 @@ public class Board implements Cloneable {
 			boardPos[region[i].getRow()][region[i].getColumn()] = new Peg(p);
 			p.addInitalPos(new Position(region[i].getRow(), region[i].getColumn()));
 		}
+	}
+	
+	//a template for printing out the board, dollar signs are
+	//regex placeholders
+	private static final String[] printerTemplate = {
+		"             $",
+		"            $ $",
+		"           $ $ $",
+		"          $ $ $ $",
+		"$ $ $ $ $ $ $ $ $ $ $ $ $",
+		" $ $ $ $ $ $ $ $ $ $ $ $",
+		"  $ $ $ $ $ $ $ $ $ $ $",
+		"   $ $ $ $ $ $ $ $ $ $",
+		"    $ $ $ $ $ $ $ $ $",
+		"   $ $ $ $ $ $ $ $ $ $",
+		"  $ $ $ $ $ $ $ $ $ $ $",
+		" $ $ $ $ $ $ $ $ $ $ $ $",
+		"$ $ $ $ $ $ $ $ $ $ $ $ $",
+		"          $ $ $ $",
+		"           $ $ $",
+		"            $ $",
+		"             $",
+	};
+	
+	//replaces a line from the template with the info from 
+	//the board
+	private String replaceLine(int row) {
+		String ret = printerTemplate[row];
+		for(int i = 0; i<rowWidths[row]; i++) {
+			ret = ret.replaceFirst("\\$", isOccupied(new Position(row,i))?"🅑":"ⵔ");
+		}
+		return ret;
+	}
+	
+	public void printBoard() {
+		for(int i = 0; i<boardPos.length; i++) {
+			System.out.println(replaceLine(i));
+		}
+		System.out.println();
 	}
 }
