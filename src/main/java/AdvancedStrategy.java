@@ -18,22 +18,25 @@ public class AdvancedStrategy extends Player {
 	public AdvancedStrategy(Color color, String playerName) {
 		super(color, playerName);
 		//fills peg arrays
-		for (Position pos : ) {
-			
-		}
+		
 	}
 	
 	private void randomWalk(Peg peg) {
 		//initialize pegdistance
-		int pegDistance = ;
+		int pegDistance = pegDistance(peg);
 		
 		int temp = dist - pegDistance; //we need pegDistance variable
+		pegDistance = 0;
 		int minDist = Integer.MAX_VALUE;
 		for (int i = 1; i<=r; i++) {
 			Position beginningPos = peg.getPos();
+			//to edit this board for each randomwalk without editing the actual board
+			//allows the board to be reset
+			Board secondaryTestBoard = testBoard.clone();
 			for (int j = 1; j<=l; j++) {
 				//Sets initial arraylist of possible moves it can make
-				ArrayList<Position> moves = testBoard.possibleMoves(beginningPos,false);
+				ArrayList<Position> moves = 
+						secondaryTestBoard.possibleMoves(beginningPos,false);
 				beginningPos = moves.get((int)(Math.random()*moves.size()));
 				
 			}
@@ -47,6 +50,34 @@ public class AdvancedStrategy extends Player {
 		pegDistance /= r;
 		pAvgs[peg] =  pegDistance;
 
+	}
+	
+	//Distance for one peg
+	//Can be used to find total distance of course
+	private int pegDistance(Peg peg) {
+		
+		int distanceEst = 0;
+		int winReg = this.getWR();
+		
+		//Finds the index of the tip of each win region
+		//since getting pieces into the tip is ideal
+		
+		int tipInd = 0;
+		if (winReg==2||winReg==4)
+			tipInd = 3;
+		else {
+			tipInd = 0;
+		}
+		//finds the goal position based on player color
+		Position[] winArea = testBoard.homeAll[this.getWR()];
+		Position goal = winArea[tipInd];
+		//Gets current peg's position
+		Position current = peg.getPos();
+		//estimates distance by row/column
+		distanceEst = Math.abs(current.getRow()-goal.getRow())+
+				Math.abs(current.getColumn()-goal.getColumn());
+		
+		return distanceEst;
 	}
 	
 	public Move getMove(Board board){
