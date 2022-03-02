@@ -20,4 +20,8 @@ public class Peg implements Cloneable{
 	public Position getPos() {
 		return pos;
 	}
+	
+	public void setPos(Position pos1) {
+		pos = pos1;
+	}
 }
