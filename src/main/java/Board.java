@@ -102,6 +102,7 @@ public class Board implements Cloneable {
 		
 		boardPos[p.getRow()][p.getColumn()] = new Peg();
 	}
+
 	
 	public Position[] getHomeRegion(Color c) {
 		
@@ -166,7 +167,7 @@ public class Board implements Cloneable {
 				
 				//adds outer space if it's open
 				check = check.adj(direction);
-				if(!isOccupied(check)) {
+				if(check!=null && !isOccupied(check)) {
 					ret.add(check);
 				}
 			}

@@ -30,7 +30,14 @@ public class Position {
 		}
 		}
 	}
-	
+	public boolean isAdjacentPos(Position p2) {
+		for(int direction : Position.directions) {
+			if (this.adj(direction)!=null && this.adj(direction).equals(p2)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public Position(int row, int column) {
 		this.row = row;
 		this.column = column;
