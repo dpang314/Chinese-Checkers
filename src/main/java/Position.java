@@ -59,7 +59,7 @@ public class Position {
 	}
 	
 	
-	private Position getTL() {
+	public Position getTL() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
