@@ -59,9 +59,7 @@ public class QuinnStrategy extends Player {
 				for(Position p : this.posArr) {
 					investigateMoves(p);
 				}
-			} catch (Exception e) {
-				System.out.println("important fringe case found");
-			}
+			} catch (Exception e) {}
 			
 			optimalJumpChain = createMoveQueue(optimalSpotChain);
 			moveCalculated = true;
@@ -228,7 +226,7 @@ public class QuinnStrategy extends Player {
 	private static double scaledDist(Position p, Position obj) {
 		
 		//distance beyond which getting closer becomes more valuable
-		final double valueThreshold = 9;
+		final double valueThreshold = 7;
 		final double scale = 100;
 		final int power = 2;
 		
