@@ -191,7 +191,14 @@ public class Board implements Cloneable {
 		
 		return ret;
 	}
-	
+	public static int indexOf(ArrayList<Position> PP, Position check) {
+		for (int i=0; i<PP.size(); i++) {
+			if (PP.get(i).equals(check)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 	public void move(Move move) {
 		Position startPos = move.getStartPosition();
 		Position endPos = move.getEndPosition();
@@ -205,7 +212,7 @@ public class Board implements Cloneable {
 		boardPos[startPos.getRow()][startPos.getColumn()] = null;
 		
 		//updates the move-maker's array of positions
-		move.getOwner().posArr.set(move.getOwner().posArr.indexOf(startPos), endPos);
+		move.getOwner().posArr.set(indexOf(move.getOwner().posArr, startPos), endPos);
 	}
 	
 	private void populateReg(Position[] region, Player p) {

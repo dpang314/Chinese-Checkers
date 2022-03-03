@@ -33,7 +33,7 @@ public class ComputerStratBasic extends Player{
 				bestMove[0][1] = posArr.get(i).getColumn();
 			}
 		}
-		System.out.println(bestMove[1][0]+","+bestMove[1][1]);
+		System.out.println("from: "+bestMove[0][0]+","+bestMove[0][1]+" to: "+bestMove[1][0]+","+bestMove[1][1]);
 		return new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
 	}
 	private int indexOf(ArrayList<Position> PP, Position check) {
@@ -47,35 +47,35 @@ public class ComputerStratBasic extends Player{
 	private int[][] goodMove2(Position Pos, int[][] bestMove, Board board, boolean jumpOnly){
 		if (indexOf(prevPos, Pos)==-1) {
 			prevPos.add(Pos);
-			System.out.println("PP: "+prevPos);
+			//System.out.println("PP: "+prevPos);
 			int row = Pos.getRow(), col = Pos.getColumn();
-			System.out.println("start pos: "+Pos);
+			//System.out.println("start pos: "+Pos);
 			ArrayList<Position> posMoves= board.possibleMoves(Pos, jumpOnly);
-			System.out.println("posMoves"+posMoves);
+			//System.out.println("posMoves"+posMoves);
 			for (Position p : posMoves) {
 				if (indexOf(prevPos, p)==-1 && p!=null) {
-					System.out.println("possible pos: "+p);
+					//System.out.println("possible pos: "+p);
 					ArrayList<Position> pM2 = new ArrayList<Position>();
 					if (!Pos.isAdjacentPos(p) && !(p.getRow()==WRP[0] && p.getColumn()==WRP[1])) {
 						pM2 = board.possibleMoves(p, true);
-						System.out.println("possible pos 2: "+pM2);
+						//System.out.println("possible pos 2: "+pM2);
 						//for (Position p2 : pM2) {
 						for (int i=0; i<pM2.size(); i++) {
 							if (indexOf(prevPos, pM2.get(i))!=-1) {
-								//pM2.remove(i);
-								System.out.println("removed: "+pM2.remove(i));
-								System.out.println("Pm2 len = "+pM2.size());
+								pM2.remove(i);
+								//System.out.println("removed: "+pM2.remove(i));
+								//System.out.println("Pm2 len = "+pM2.size());
 							}
-							else{System.out.println("kept as possible move: "+pM2.get(i));}
+							//else{System.out.println("kept as possible move: "+pM2.get(i));}
 						}
 					}
 					if (pM2.size()>0) {
 						bestMove=goodMove2(p, bestMove, board, true);
 					} else {
 						int newWeight = distanceToWRP(p, board);
-						System.out.println("distance: "+newWeight);
+						//System.out.println("distance: "+newWeight);
 						if (newWeight<bestMove[2][0] || (newWeight==bestMove[2][0] && distanceToWRP(Pos, board)>bestMove[2][1])) {
-							System.out.println("new best move: "+Pos+" to "+p);
+							//System.out.println("new best move: "+Pos+" to "+p);
 							newBM=true;
 							//bestMove[0][0] = row;bestMove[0][1] = col;
 							bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
@@ -107,7 +107,7 @@ public class ComputerStratBasic extends Player{
 	private int distanceToWRP(Position p, Board board) {
 		int dist=0;
 		Position newP = new Position(p.getRow(), p.getColumn());
-		System.out.println("position: "+newP);
+		//System.out.println("position: "+newP);
 		if (dir=='l') {
 			while (WRP[0]>newP.getRow()) {
 				newP = newP.adj(5);
@@ -162,15 +162,31 @@ public class ComputerStratBasic extends Player{
 		}
 		return dist;
 	}
+	public boolean hasWon(Board board, Color WR) {
+		   Position[] HR = board.getHomeRegion(WR);
+		    for (Position p :HR) {
+		      if (!board.playerPeg(this, p)) {
+		    	  return false;
+		      }
+		    }
+		return true;
+	}
 	public static void main(String[] args) {
-		Board b1 = new Board();
 		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
-		Position[] poses = {new Position(3, 0), new Position(2, 1), new Position(2, 2), new Position(4, 4)};
-		for (Position p:poses) {
-			b1.fillPos(p);
-			c1.posArr.add(p);
+		Player[] players = {c1};
+		Board b1 = new Board(players);
+		//System.out.println()
+//		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
+//		Position[] poses = {new Position(3, 0), new Position(2, 1), new Position(2, 2), new Position(4, 4)};
+//		for (Position p:poses) {
+//			b1.fillPos(p);
+//			c1.posArr.add(p);
+//		}
+		while(!c1.hasWon(b1, Color.blue)) {
+			b1.printBoard();
+			b1.move(c1.getMove(b1));
 		}
-		System.out.println("WR: "+c1.getWR());
-		System.out.println(c1.getMove(b1));
+		//System.out.println("WR: "+c1.getWR());
+		//System.out.println(c1.getMove(b1));
 	}
 }
