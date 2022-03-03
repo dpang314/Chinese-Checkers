@@ -18,8 +18,10 @@ public class ComputerStratBasic extends Player{
 		else if (color.equals(Color.green)) {dir='r'; WRP[0] = 12; WRP[1] = 12;}
 		else if (color.equals(Color.red)) {dir='u'; WRP[0] = 0; WRP[1] = 0;}
 		else {dir='d'; WRP[0] = 16; WRP[1] = 0;}
+		//prevPos.add(new Position(7, 2));//
+		//System.out.println(indexOf(prevPos, new Position(7, 2)));
 	}
-
+	
 	@Override
 	public Move getMove(Board board) {
 		int[][] bestMove= new int[3][2]; //{{r1, c1}, {r2, c2} {weight, 0}}
@@ -35,7 +37,14 @@ public class ComputerStratBasic extends Player{
 		System.out.println(bestMove[1][0]+","+bestMove[1][1]);
 		return new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
 	}
-	
+	private int indexOf(ArrayList<Position> PP, Position check) {
+		for (int i=0; i<PP.size(); i++) {
+			if (PP.get(i).equals(check)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 	private int[][] goodMove(Position Pos, int[][] bestMove, Board board, boolean jumpOnly){
 		int row = Pos.getRow(), col = Pos.getColumn();
 		ArrayList<Position> posMoves= board.possibleMoves(Pos, jumpOnly);
@@ -77,28 +86,40 @@ public class ComputerStratBasic extends Player{
 		return bestMove;
 	};
 	private int[][] goodMove2(Position Pos, int[][] bestMove, Board board, boolean jumpOnly){
-		prevPos.add(Pos);
-		int row = Pos.getRow(), col = Pos.getColumn();
-		System.out.println("start pos: "+row+", "+col);
-		ArrayList<Position> posMoves= board.possibleMoves(Pos, jumpOnly);
-		for (Position p : posMoves) {
-			if (prevPos.contains(p)) {
-				prevPos.remove(prevPos.indexOf(p));
-			}
-		}
-		for (Position p : posMoves) {
-			System.out.println("possible pos: "+p.getRow()+", "+p.getColumn());
-			if (board.possibleMoves(p, true).size()>0) {
-				bestMove=goodMove2(p, bestMove, board, true);
-			} else {
-				int newWeight = distanceToWRP(p, board);
-				System.out.println("distance: "+newWeight);
-				if (newWeight<bestMove[2][0]) {
-					bestMove[0][0] = row;bestMove[0][1] = col;
-					bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
-					bestMove[2][0] = newWeight;
+		if (indexOf(prevPos, Pos)==-1) {
+			prevPos.add(Pos);
+			System.out.println("PP: "+prevPos);
+			int row = Pos.getRow(), col = Pos.getColumn();
+			System.out.println("start pos: "+Pos);
+			ArrayList<Position> posMoves= board.possibleMoves(Pos, jumpOnly);
+			System.out.println("posMoves"+posMoves);
+			for (Position p : posMoves) {
+				if (indexOf(prevPos, p)==-1) {
+					System.out.println("possible pos: "+p);
+					ArrayList<Position> pM2 = board.possibleMoves(p, true);
+					System.out.println("possible pos 2: "+pM2);
+					for (Position p2 : pM2) {
+						if (indexOf(prevPos, p2)!=-1) {
+							pM2.remove(indexOf(pM2, p2));
+							System.out.println("removed");
+							System.out.println("Pm2 len = "+pM2.size());
+						}
+						System.out.println("done"+p2);
+					}
+					System.out.println("Pm2");
+					if (pM2.size()>0) {
+						bestMove=goodMove2(p, bestMove, board, true);
+					} else {
+						int newWeight = distanceToWRP(p, board);
+						System.out.println("distance: "+newWeight);
+						if (newWeight<bestMove[2][0]) {
+							bestMove[0][0] = row;bestMove[0][1] = col;
+							bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
+							bestMove[2][0] = newWeight;
+						}
+					} 
 				}
-			} 
+			}
 		}
 		return bestMove;
 	}
@@ -147,7 +168,9 @@ public class ComputerStratBasic extends Player{
 	}
 	private int distanceToWRP(Position p, Board board) {
 		int dist=0;
+		System.out.println("position: "+p);
 		Position newP = new Position(p.getRow(), p.getColumn());
+		System.out.println("position: "+newP);
 		if (dir=='l') {
 			while (WRP[0]>newP.getRow()) {
 				newP = newP.adj(5);
@@ -171,11 +194,12 @@ public class ComputerStratBasic extends Player{
 			dist+=WRP[1]-newP.getColumn();
 		}
 		if (dir=='u') {
-			while (WRP[1]>newP.getRow()) {
+			while ((board.rowWidths[newP.getRow()])/2>newP.getColumn()) {
 				newP = newP.adj(2);
+				System.out.println("newP: "+newP);
 				dist+=1;
 			}
-			while (WRP[1]<newP.getRow()) {
+			while ((board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
 				newP = newP.adj(1);
 				dist+=1;
 			}

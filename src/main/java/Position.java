@@ -51,6 +51,7 @@ public class Position {
 		return this.getRow()==p.getRow() && this.getColumn()==p.getColumn();
 	}
 	
+	
 	private Position getTL() {
 		Position ret = null;
 		
