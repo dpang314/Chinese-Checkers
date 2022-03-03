@@ -1,74 +1,173 @@
+/*
+ * Quinn Hancock
+ * Chinese Checkers
+ * Group Project 2022
+ * Red Team
+ */
+
 import java.awt.Color;
 import java.awt.geom.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Stack;
-import javax.swing.tree.*; //it's really more like a vine
+import java.util.ArrayDeque;
+import javax.swing.tree.*;
+
+/*
+ * HOW IT WORKS
+ *  
+ * iterates over the positions of owned pegs,
+ * recursively pathing over the moves that each one could take
+ * and deciding which move chain is the best based on how far it
+ * goes relative to the corner of the target triangle. Distances
+ * are weighted with a quadratic scalar to prioritize moving
+ * the pegs that are farthest away.
+ * 
+ * FAQ
+ * 	Q: will you change it so it looks at future moves too?
+ * 	A: no
+ */
 
 public class QuinnStrategy extends Player {
 
+	//the board it sees
 	Board boardAtTurnStart = null;
-	Stack<Move> optimalJumpChain;
-	Position[] optimalSpotChain;
-	double currentBestValue = 0;
-	int currentFastestPath;
 	
-	public QuinnStrategy() {
-		this(null,null);
-	}
+	//a queue of the jumps it wants to make
+	ArrayDeque<Move> optimalJumpChain;
+	
+	//determines if it is the same turn still
+	private boolean moveCalculated = false;
+	
+	//holds the position that the strategy is aiming for
+	private Position obj;
 	
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
 	}
+	
+	//only for testing
+	public QuinnStrategy() {
+		this(null,null);
+	}
 
 	@Override
 	public Move getMove(Board board) {
-		boardAtTurnStart=board;
 		
-		return null;
+		//if no move has been found yet, set the board state and find a move
+		if(!moveCalculated) {
+			boardAtTurnStart=board;
+			try {
+				for(Position p : this.posArr) {
+					investigateMoves(p);
+				}
+			} catch (Exception e) {}
+			
+			optimalJumpChain = createMoveQueue(optimalSpotChain);
+			moveCalculated = true;
+		}
+		
+		//if the turn is over, reset
+		if(optimalJumpChain.size() == 0) {
+			moveCalculated = false;
+			optimalSpotChain = null;
+			currentBestValue = -Double.MAX_VALUE;
+			currentFastestPath = 0;
+		}
+		
+		return optimalJumpChain.poll();
+		
 	}
 	
-	//recursive algorithm to figure out the possible jump chain following the given one
-	private DefaultMutableTreeNode getJumpChain(DefaultMutableTreeNode node) {
+	//sets the target objective position based on the 
+	public void setTargetColor(Color c) {
+		obj = getObjPos(c);
+	}
+	
+	//creates a queue of moves by iterating over the positions and looking at two at a time
+	private ArrayDeque<Move> createMoveQueue(Position[] path) {
+		ArrayDeque<Move> ret = new ArrayDeque<Move>();
+		for(int i = 0; i<path.length-1; i++) {
+			Move newJump = new Move(path[i],path[i+1],this);
+			ret.add(newJump);
+		}
+		return ret;
+	}
+	
+	//investigates all moves for a given position
+	private void investigateMoves(Position pos) throws Exception {
+		for(Position p : boardAtTurnStart.possibleAdjacentMoves(pos)) {
+			checkAndUpdateIfOptimal(new Position[] {pos,p});
+		}
+		
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(pos);
+		investigateSubJumps(root);
+	}
+	
+	//recursive algorithm to analyze the possible jump chain following the given one
+	private DefaultMutableTreeNode investigateSubJumps(DefaultMutableTreeNode node) throws Exception {
 		
 		//stores the position passed in via the node
 		Position passedPos = (Position)node.getUserObject();
 		
 		//creates Position array from object path (weird casting issue)
-		Position[] path = Arrays.copyOf(node.getUserObjectPath(), node.getDepth(), Position[].class);
+		Position[] path = Arrays.copyOf(node.getUserObjectPath(), node.getLevel()+1, Position[].class);
 		
 		//iterates over possible jumps that could be made from the passed position
 		for(Position p : boardAtTurnStart.possibleMoves(passedPos, true)) {
 			
-			//returns subtree for the possible jump, assuming it hasn't been touched already
+			//investigates subtree for the possible jump, assuming it hasn't been touched already
 			boolean touchedYet = alreadyTraversedInPath(path, p);
+			
 			if(!touchedYet) {
 				DefaultMutableTreeNode nextNode = new DefaultMutableTreeNode(p);
-//				node.removeAllChildren();
+				node.removeAllChildren();
 				node.add(nextNode);
-				nextNode = getJumpChain(nextNode);
+				
+				nextNode = investigateSubJumps(nextNode);
 			}
 		}
 		
-		Position rootPos = (Position) ((DefaultMutableTreeNode) node.getRoot()).getUserObject();
-		Move currentGrandMove = new Move(rootPos,passedPos, this);
-		double currentValue = grandMoveValue(currentGrandMove,getObjPos(Color.RED));
-		int currentChainLength = node.getDepth();
-		
-		double valueComp = percentDiff(currentBestValue,currentValue);
-		if(Math.abs(valueComp)>-2.0) {
-			if(currentChainLength<currentFastestPath) {
-				optimalSpotChain = path;
-				currentFastestPath=currentChainLength;
-			}
-		} else if (valueComp>0) {
-			optimalSpotChain = path;
-			currentFastestPath = currentChainLength;
-		}
-		
+		if(!node.isRoot()) {	
+			checkAndUpdateIfOptimal(path);
+		}		
 		return node;
 	}
 	
+	Position[] optimalSpotChain = null;
+	double currentBestValue = -Double.MAX_VALUE;
+	int currentFastestPath = 0;
+
+	private void checkAndUpdateIfOptimal(Position[] path) throws Exception {
+		
+		//gets the root position (original position at start of turn)
+		Position rootPos = path[0];
+		Position endPos = path[path.length-1];
+
+		//checks value of the current position difference
+		Move currentGrandMove = new Move(rootPos, endPos, this);
+		double currentValue = grandMoveValue(currentGrandMove);
+
+		//sees how many jumps it would take to get here
+		int currentChainLength = path.length-1;
+
+		//compares current grand move value to current best grand move value
+		double valueComp = percentDiff(currentBestValue,currentValue);
+		
+		//if the move is better or equivalent but faster, it becomes the current optimal chain
+		boolean betterMove = valueComp>2.0;
+		boolean sameMoveFaster = Math.abs(valueComp)<=2.0 && currentChainLength<currentFastestPath;
+		
+		boolean isFringeCaseMove = checkFringeCase0(currentGrandMove);
+		if(betterMove||sameMoveFaster||isFringeCaseMove) { 
+			optimalSpotChain = path;
+			currentBestValue = currentValue;
+			currentFastestPath = currentChainLength;
+			if(isFringeCaseMove) {
+				throw new Exception("Important specified fringe case found.");
+			}
+		}
+	}
+	
+	//checks if a position has already been touched in a jump path
 	private boolean alreadyTraversedInPath(Position[] path, Position check) {
 		boolean ret = false;
 		
@@ -111,20 +210,25 @@ public class QuinnStrategy extends Player {
 		}
 	}
 	
-	private static double grandMoveValue(Move move, Position obj) {
+	private double grandMoveValue(Move move) {
 		return scaledDist(move.getStartPosition(),obj)-scaledDist(move.getEndPosition(),obj);
 	}
 	
+	//returns a double representing the percent difference between a and b
 	private static double percentDiff(double a, double b) {
-		double numDiff = a-b;
-		return numDiff/a * 100;
+		double numDiff = b-a;
+//		System.out.println("b " + b);
+//		System.out.println("a " + a);
+		return numDiff/Math.abs(a) * 100;
 	}
 	
+	//applies a quadratic scalar to the found distance
 	private static double scaledDist(Position p, Position obj) {
 		
 		//distance beyond which getting closer becomes more valuable
-		final double valueThreshold = 9;
-		final double scale = 1.30;
+		final double valueThreshold = 7;
+		final double scale = 100;
+		final int power = 2;
 		
 		//objective point
 		Point2D.Double objPoint = getPoint(obj);
@@ -132,48 +236,69 @@ public class QuinnStrategy extends Player {
 		//finds distance, if it goes beyond the range, it scales quadratically
 		double distance = objPoint.distance(getPoint(p));
 		if(distance >= valueThreshold) {
-			double ybump = -((scale/20)*Math.pow(valueThreshold, 2)-valueThreshold);
-			distance = (scale/20) * Math.pow(distance, 2) + ybump;
+			double ybump = -((scale/20)*Math.pow(valueThreshold, power)-valueThreshold);
+			distance = (scale/20) * Math.pow(distance, power) + ybump;
 		}
 		return distance;
 	}
 	
-	//for testing
-	private static void printPosChain(Position[] p) {
-		for(int i = 0; i<p.length; i++) {
-			System.out.println(i + ": " + p[i]);
+	// ----- ANNOYING FRINGE CASE METHODS -----
+	private boolean checkFringeCase0(Move m) {
+		Position start = m.getStartPosition();
+		Position end = m.getEndPosition();
+		
+		Position nuisance = new Position(4,6);
+		
+		if(!(start.equals(nuisance) &&
+			boardAtTurnStart.isOccupied(start.getTL()) &&
+			boardAtTurnStart.isOccupied(start.getTR()))) 
+		{
+			return false;
 		}
-		System.out.println();
+		
+		boolean left = boardAtTurnStart.isOccupied(start.getTL().getL());
+		if(!left && end.equals(start.getL())) { 
+			return true;
+		} else if (left && end.equals(start.getR())) {
+			return true;
+		}
+		return false;
 	}
 	
-	//for testing
-	private static void printPosChain(ArrayList<Position> p) {
-		for(int i = 0; i<p.size(); i++) {
-			System.out.println(i + ": " + p.get(i));
-		}
-		System.out.println();
-	}
-	
-	//for testing
-	private static void printNode(TreeNode n) {
-		System.out.println("TOP-NODE: " + n);
-		for(int c = 0; c<n.getChildCount(); c++) {
-			System.out.println("   CHILD-" + c + ": " + n.getChildAt(c));
-		}
-	}
-	
-	public static void main(String[] args) {
+	public static void main(String[] args) {	
 		QuinnStrategy myStrategy = new QuinnStrategy();
-		
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-		Position rootPos = new Position(10,6);
-		rootNode.setUserObject(rootPos);
-		
 		Board b = new Board();
-		b.fillPos(new Position(7,4));
-		b.fillPos(new Position(9,5));
-		myStrategy.boardAtTurnStart=b;
+		b.fillPos(Board.homeBk);
+		b.fillPos(Board.homeY);
+		b.fillPos(Board.homeW);
+		b.fillPos(Board.homeG);
+		myStrategy.setTargetColor(Color.RED);
+				
+		for(Position p : Board.homeBu) {
+			myStrategy.posArr.add(p);
+			b.fillPos(p);
+		}
 		
-		Position obj = getObjPos(Color.RED);
+		System.out.println("GAME START!");
+		b.printBoard();
+		
+		//prints move stack
+		Move move;
+		do {
+			move = myStrategy.getMove(b);
+			
+			if(move!=null) {
+				b.move(move);
+				b.printBoard();
+				System.out.println("TURN MADE!");
+			} else {
+//				System.out.println("TURN ENDED!");
+			}
+		try {
+			Thread.sleep(75);
+		} catch (InterruptedException e) {
+			System.err.println(e.getMessage());
+		}
+		} while (true);	
 	}
 }

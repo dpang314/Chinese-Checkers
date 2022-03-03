@@ -30,7 +30,14 @@ public class Position {
 		}
 		}
 	}
-	
+	public boolean isAdjacentPos(Position p2) {
+		for(int direction : Position.directions) {
+			if (this.adj(direction)!=null && this.adj(direction).equals(p2)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public Position(int row, int column) {
 		this.row = row;
 		this.column = column;
@@ -45,41 +52,42 @@ public class Position {
 	}
 	
 	public String toString() {
-		return "ROW: " + row + ", COL: " +column; 
+		return row + "-" + column;
 	}
 	public boolean equals(Position p) {
 		return this.getRow()==p.getRow() && this.getColumn()==p.getColumn();
 	}
 	
-	private Position getTL() {
+	
+	public Position getTL() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
 		int rootIndex = this.getColumn();
 		
 		int aboveRowSize=-1;
-		try {aboveRowSize=Board.rowWidths[this.getRow()-1];} finally {}
+		try {aboveRowSize=Board.rowWidths[this.getRow()-1];} catch (ArrayIndexOutOfBoundsException e) {}
 		
 		try {
 			ret = new Position(this.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,left));
 		} finally {return ret;}
 	}
 	
-	private Position getTR() {
+	public Position getTR() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
 		int rootIndex = this.getColumn();
 		
 		int aboveRowSize=-1;
-		try {aboveRowSize=Board.rowWidths[this.getRow()-1];} finally {}
+		try {aboveRowSize=Board.rowWidths[this.getRow()-1];} catch (ArrayIndexOutOfBoundsException e) {}
 		
 		try {
 			ret = new Position(this.getRow()-1,diagNodeIndex(rootRowSize,rootIndex,aboveRowSize,right));
 		} finally {return ret;}
 	}
 	
-	private Position getR() {
+	public Position getR() {
 		Position ret=null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
@@ -95,7 +103,7 @@ public class Position {
 		return ret;
 	}
 	
-	private Position getBR() {
+	public Position getBR() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
@@ -109,7 +117,7 @@ public class Position {
 		} finally{return ret;}
 	}
 	
-	private Position getBL() {
+	public Position getBL() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];
@@ -123,7 +131,7 @@ public class Position {
 		} finally {return ret;}
 	}
 	
-	private Position getL() {
+	public Position getL() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];

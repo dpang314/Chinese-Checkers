@@ -1,13 +1,13 @@
 
 public class Move {
-  private Player owner;
+	private Player owner;
 	private Position startPosition;
 	private Position endPosition;
 	
-	public Move(Position startPosition, Position endPosition, Player owner1) {
+	public Move(Position startPosition, Position endPosition, Player owner) {
 		this.startPosition = startPosition;
 		this.endPosition = endPosition;
-		this.owner = owner1;
+		this.owner = owner;
 	}
 
 	public Player getOwner(){
@@ -20,5 +20,8 @@ public class Move {
 	
 	public Position getEndPosition() {
 		return endPosition;
+	}
+	public String toString() {
+		return "[" + owner + "]" + " " + startPosition + " to " + endPosition;
 	}
 }

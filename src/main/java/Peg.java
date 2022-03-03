@@ -11,7 +11,7 @@ public class Peg implements Cloneable{
 	
 	public Peg(Player owner) {
 		this.owner=owner;
-	};
+	}
 	
 	public Player getOwner() {
 		return owner;

@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Board implements Cloneable {
 	
@@ -64,25 +65,27 @@ public class Board implements Cloneable {
 		new Position(14, 0), new Position(14, 1), new Position(14, 2),
 		new Position(13, 0), new Position(13, 1), new Position(13, 2), new Position(13, 3)
 	};
-	public static final Position[][] homeAll = {homeR, homeBu, homeBk, homeW, homeG, homeY};
+	public static final ArrayList<Position[]> homeAll = new ArrayList<Position[]>();
 	
 	public Board(Player[] players) {
+		Collections.addAll(homeAll, homeR, homeBu, homeBk, homeW, homeG, homeY);
 		for (int i=0; i<players.length; i++) {
-			if (players[i] != null) {
-				populateReg(homeAll[i], players[i]);
-				int WR = i>=3 ? i-3 : 1+3;
-				players[i].assignWinReg(WR);
-			}
+			populateReg(getHomeRegion(players[i].getColor()), players[i]);
+			int WR = homeAll.indexOf(getHomeRegion(players[i].getColor()));
+			players[i].assignWinReg(WR);
 		}
 	}
 	
+	//for testing only
 	public Board() {};
 	
-	public boolean canMove(Position startPos, Position targetPos, boolean ongoingTurn) { 
-		if (possibleMoves(startPos, ongoingTurn).contains(targetPos)) {
-			return true;
+	public boolean canMove(Position startPos, Position targetPos, boolean ongoingTurn) { 	
+		for(Position p : possibleMoves(startPos, ongoingTurn)) {
+			if (p.equals(targetPos)) {
+				return true;
+			}
 		}
-		return false; 
+		return false;
 	}
 	
 	public boolean playerPeg (Player player, Position pos) {
@@ -101,6 +104,13 @@ public class Board implements Cloneable {
 		//only for testing, please don't implement
 		
 		boardPos[p.getRow()][p.getColumn()] = new Peg();
+	}
+
+	
+	public void fillPos(Position[] arr) {
+		for (Position p : arr) {
+			this.fillPos(p);
+		}
 	}
 	
 	public Position[] getHomeRegion(Color c) {
@@ -136,15 +146,22 @@ public class Board implements Cloneable {
 		
 		//if adjacent positions are available, they are added
 		if(!jumpOnly) {
+			ret.addAll(possibleAdjacentMoves(p));
+		}
+		
+		return ret;
+	}
+	
+	public ArrayList<Position> possibleAdjacentMoves(Position p) {
+		ArrayList<Position> ret = new ArrayList<Position>();
+		
+		//adds adjacent position in each direction
+		for(int direction : Position.directions) {
+			Position check = p.adj(direction);
 			
-			//adds adjacent position in each direction
-			for(int direction : Position.directions) {
-				Position check = p.adj(direction);
-				
-				//makes sure position exists & is open
-				if(check!=null && !isOccupied(check)) {
-					ret.add(check);
-				}
+			//makes sure position exists & is open
+			if(check!=null && !isOccupied(check)) {
+				ret.add(check);
 			}
 		}
 		
@@ -160,13 +177,13 @@ public class Board implements Cloneable {
 		//checks in each direction
 		for(int direction : Position.directions) {
 			Position check = p.adj(direction);
-			
+						
 			//ensures that adjacent space is filled
 			if(check!=null && isOccupied(check)) {
 				
 				//adds outer space if it's open
 				check = check.adj(direction);
-				if(!isOccupied(check)) {
+				if(check!=null && !isOccupied(check)) {
 					ret.add(check);
 				}
 			}
@@ -174,12 +191,28 @@ public class Board implements Cloneable {
 		
 		return ret;
 	}
-	
+	public static int indexOf(ArrayList<Position> PP, Position check) {
+		for (int i=0; i<PP.size(); i++) {
+			if (PP.get(i).equals(check)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 	public void move(Move move) {
 		Position startPos = move.getStartPosition();
 		Position endPos = move.getEndPosition();
+
+		//checks that the peg exists and can move to the specified location
+		if(boardPos[startPos.getRow()][startPos.getColumn()]==null || !canMove(startPos,endPos,false)) {
+			throw new RuntimeException("Invalid move. startPos is null or cannot move there.");
+		}
+		
 		boardPos[endPos.getRow()][endPos.getColumn()] = boardPos[startPos.getRow()][startPos.getColumn()]; //check copy vs ref
 		boardPos[startPos.getRow()][startPos.getColumn()] = null;
+		
+		//updates the move-maker's array of positions
+		move.getOwner().posArr.set(indexOf(move.getOwner().posArr, startPos), endPos);
 	}
 	
 	private void populateReg(Position[] region, Player p) {
@@ -188,4 +221,44 @@ public class Board implements Cloneable {
 //			p.addInitalPos(new Position(region[i].getRow(), region[i].getColumn()));
 		}
 	}
+	
+	//a template for printing out the board, dollar signs are
+	//regex placeholders
+	private static final String[] printerTemplate = {
+		"             $",
+		"            $ $",
+		"           $ $ $",
+		"          $ $ $ $",
+		"$ $ $ $ $ $ $ $ $ $ $ $ $",
+		" $ $ $ $ $ $ $ $ $ $ $ $",
+		"  $ $ $ $ $ $ $ $ $ $ $",
+		"   $ $ $ $ $ $ $ $ $ $",
+		"    $ $ $ $ $ $ $ $ $",
+		"   $ $ $ $ $ $ $ $ $ $",
+		"  $ $ $ $ $ $ $ $ $ $ $",
+		" $ $ $ $ $ $ $ $ $ $ $ $",
+		"$ $ $ $ $ $ $ $ $ $ $ $ $",
+		"          $ $ $ $",
+		"           $ $ $",
+		"            $ $",
+		"             $",
+	};
+	
+	//replaces a line from the template with the info from 
+	//the board
+	private String replaceLine(int row) {
+		String ret = printerTemplate[row];
+		for(int i = 0; i<rowWidths[row]; i++) {
+			ret = ret.replaceFirst("\\$", isOccupied(new Position(row,i))?"🅑":"ⵔ");
+		}
+		return ret;
+	}
+	
+	public void printBoard() {
+		for(int i = 0; i<boardPos.length; i++) {
+			System.out.println(replaceLine(i));
+		}
+		System.out.println();
+	}
+
 }
