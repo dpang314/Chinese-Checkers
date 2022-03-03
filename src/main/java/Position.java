@@ -30,7 +30,14 @@ public class Position {
 		}
 		}
 	}
-	
+	public boolean isAdjacentPos(Position p2) {
+		for(int direction : Position.directions) {
+			if (this.adj(direction)!=null && this.adj(direction).equals(p2)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public Position(int row, int column) {
 		this.row = row;
 		this.column = column;
@@ -51,7 +58,8 @@ public class Position {
 		return this.getRow()==p.getRow() && this.getColumn()==p.getColumn();
 	}
 	
-	public Position getTL() {
+	
+	private Position getTL() {
 		Position ret = null;
 		
 		int rootRowSize = Board.rowWidths[this.getRow()];

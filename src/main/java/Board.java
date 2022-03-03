@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Board implements Cloneable {
 	
@@ -64,12 +65,13 @@ public class Board implements Cloneable {
 		new Position(14, 0), new Position(14, 1), new Position(14, 2),
 		new Position(13, 0), new Position(13, 1), new Position(13, 2), new Position(13, 3)
 	};
-	public static final Position[][] homeAll = {homeR, homeBu, homeBk, homeW, homeG, homeY};
+	public static final ArrayList<Position[]> homeAll = new ArrayList<Position[]>();
 	
 	public Board(Player[] players) {
+		Collections.addAll(homeAll, homeR, homeBu, homeBk, homeW, homeG, homeY);
 		for (int i=0; i<players.length; i++) {
-			populateReg(homeAll[i], players[i]);
-			int WR = i>=3 ? i-3 : 1+3;
+			populateReg(getHomeRegion(players[i].getColor()), players[i]);
+			int WR = homeAll.indexOf(getHomeRegion(players[i].getColor()));
 			players[i].assignWinReg(WR);
 		}
 	}
@@ -103,6 +105,7 @@ public class Board implements Cloneable {
 		
 		boardPos[p.getRow()][p.getColumn()] = new Peg();
 	}
+
 	
 	public void fillPos(Position[] arr) {
 		for (Position p : arr) {
