@@ -5,12 +5,12 @@ public abstract class Player {
 	private Color color;
 	private String playerName;
 	private int winReg;
-	public ArrayList<Position> posArr = new ArrayList<Position>();
+	private ArrayList<Position> posArr;
 	
 	public Player(Color color, String playerName) {
 		this.color=color;
 		this.playerName=playerName;
-		
+		posArr = new ArrayList<Position>();
 	};
 	public abstract Move getMove(Board board);
 	public Color getColor() { return color; }

@@ -68,9 +68,11 @@ public class Board implements Cloneable {
 	
 	public Board(Player[] players) {
 		for (int i=0; i<players.length; i++) {
-			populateReg(homeAll[i], players[i]);
-			int WR = i>=3 ? i-3 : 1+3;
-			players[i].assignWinReg(WR);
+			if (players[i] != null) {
+				populateReg(homeAll[i], players[i]);
+				int WR = i>=3 ? i-3 : 1+3;
+				players[i].assignWinReg(WR);
+			}
 		}
 	}
 	
@@ -183,7 +185,7 @@ public class Board implements Cloneable {
 	private void populateReg(Position[] region, Player p) {
 		for (int i=0; i<region.length; i++) {
 			boardPos[region[i].getRow()][region[i].getColumn()] = new Peg(p);
-			p.addInitalPos(new Position(region[i].getRow(), region[i].getColumn()));
+//			p.addInitalPos(new Position(region[i].getRow(), region[i].getColumn()));
 		}
 	}
 }

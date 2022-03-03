@@ -1,3 +1,5 @@
+import org.junit.jupiter.api.Test;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.Dimension;
@@ -23,6 +25,7 @@ public class GamePanel extends JPanel {
 	int BUTTON_BOTTOM = 570;
 	int SPACING = 80;
 	int BUTTON_HEIGHT = 60;
+	boolean repaintButtons = false;
 	
 	private void style(JButton button) {
 		button.setContentAreaFilled(false);
@@ -62,30 +65,30 @@ public class GamePanel extends JPanel {
 
 	private void initIcons() {
 		try {
-			Image black = ImageIO.read(new File("images/pegBlack.PNG"))
+			Image black = ImageIO.read(new File("images/board/pegBlack.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image blue = ImageIO.read(new File("images/pegBlue.PNG"))
+			Image blue = ImageIO.read(new File("images/board/pegBlue.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image green = ImageIO.read(new File("images/pegGreen.PNG"))
+			Image green = ImageIO.read(new File("images/board/pegGreen.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image red = ImageIO.read(new File("images/pegRed.PNG"))
+			Image red = ImageIO.read(new File("images/board/pegRed.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image white = ImageIO.read(new File("images/pegWhite.PNG"))
+			Image white = ImageIO.read(new File("images/board/pegWhite.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image yellow = ImageIO.read(new File("images/pegYellow.PNG"))
+			Image yellow = ImageIO.read(new File("images/board/pegYellow.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
 
-			Image blackH = ImageIO.read(new File("images/pegBlackH.PNG"))
+			Image blackH = ImageIO.read(new File("images/board/pegBlackH.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image blueH = ImageIO.read(new File("images/pegBlueH.PNG"))
+			Image blueH = ImageIO.read(new File("images/board/pegBlueH.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image greenH = ImageIO.read(new File("images/pegGreenH.PNG"))
+			Image greenH = ImageIO.read(new File("images/board/pegGreenH.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image redH = ImageIO.read(new File("images/pegRedH.PNG"))
+			Image redH = ImageIO.read(new File("images/board/pegRedH.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image whiteH = ImageIO.read(new File("images/pegWhiteH.PNG"))
+			Image whiteH = ImageIO.read(new File("images/board/pegWhiteH.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image yellowH = ImageIO.read(new File("images/pegYellowH.PNG"))
+			Image yellowH = ImageIO.read(new File("images/board/pegYellowH.PNG"))
 					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
 
 			this.blackPeg = new ImageIcon(black);
@@ -129,39 +132,41 @@ public class GamePanel extends JPanel {
 
 	class PegButton extends JButton {
 		private Ellipse2D border;
+		private boolean highlighted;
+		private Peg peg;
 
-		public PegButton(Peg peg, boolean highlighted) {
+		public PegButton(Peg peg, int row, int column, boolean highlighted) {
+			this.highlighted = highlighted;
+			this.peg = peg;
 			// Image is a square with a circle
-			int row = peg.getPos().getRow();
-			int column = peg.getPos().getColumn();
 			ImageIcon icon = getImageIcon(peg.getOwner().getColor(), highlighted);
 			int RADIUS = icon.getIconHeight();
-			this.setFocusPainted(false);
-			this.setIcon(icon);
-			this.setBorderPainted(false);
-	        this.setContentAreaFilled(false);
-	        //this.setRolloverIcon(icon);
+//			this.setFocusPainted(false);
+//			this.setIcon(icon);
+//			this.setBorderPainted(false);
+//	        this.setContentAreaFilled(false);
 
 			Position pixels = getPixels(row, column, RADIUS);
-
 			this.setBounds(pixels.getRow(), pixels.getColumn(), RADIUS, RADIUS);
 
-			border = new Ellipse2D.Float(0, 0, RADIUS, RADIUS);
-
-			this.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (highlighted) {
-						selectedPeg = peg;
+			this.border = new Ellipse2D.Float(0, 0, RADIUS, RADIUS);
+			if (highlighted) {
+				this.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						GamePanel.this.selectedPeg = peg;
+						GamePanel.this.repaintButtons = true;
+						GamePanel.this.repaint();
 					}
-				}
-			});
+				});
+			}
 		}
 		
 		public boolean contains(int x, int y) {
 			return border.contains(x, y);
 		}
 	}
+
 
 	class HighlightButton extends JButton {
 		private Ellipse2D border;
@@ -279,12 +284,15 @@ public class GamePanel extends JPanel {
 	}
 
 	GamePanel(Game game, int WIDTH, int HEIGHT) {
+
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;
 		this.game = game;
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setLayout(null);
+		initIcons();
 		initButtons();
+
 		try {
 			boardImage = ImageIO.read(new File("./images/board/board.PNG"))
 					.getScaledInstance(WIDTH, HEIGHT, Image.SCALE_DEFAULT);
@@ -296,32 +304,43 @@ public class GamePanel extends JPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		repaintButtons = true;
 	}
+
+
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		this.removeAll();
-		initButtons();
-		Peg[][] pegs = game.getBoard().getPegs();
-		for (int i = 0; i < pegs.length; i++) {
-			for (int j = 0; j < pegs[i].length; j++) {
-				System.out.println(pegs[i][j].getOwner().getColor().toString());
-				if (pegs[i][j] != null) {
-					this.add(new PegButton(pegs[i][j], selectedPeg == null && pegs[i][j].getOwner().equals(game.getCurrentPlayer())));
+		if (repaintButtons) {
+			for (int i = 0; i < this.getComponentCount(); i++) {
+				if (this.getComponents()[i] instanceof PegButton || this.getComponents()[i] instanceof HighlightButton) {
+//					this.remove(i);
+//					i--;
 				}
 			}
-		}
-		if (selectedPeg != null) {
-			ArrayList<Position> highlighted = game.getBoard().possibleMoves(selectedPeg.getPos(), false);
-			for (int i = 0; i < highlighted.size(); i++) {
-				this.add(new HighlightButton(highlighted.get(i)));
+			Peg[][] pegs = game.getBoard().getPegs();
+			for (int i = 0; i < pegs.length; i++) {
+				for (int j = 0; j < pegs[i].length; j++) {
+					if (pegs[i][j] != null) {
+						PegButton pb = new PegButton(pegs[i][j], i, j,selectedPeg == null && pegs[i][j].getOwner().getColor().equals(game.getCurrentPlayer().getColor()));
+						this.add(pb);
+					}
+				}
 			}
+			if (selectedPeg != null) {
+				ArrayList<Position> highlighted = game.getBoard().possibleMoves(selectedPeg.getPos(), false);
+				for (int i = 0; i < highlighted.size(); i++) {
+					this.add(new HighlightButton(highlighted.get(i)));
+				}
+			}
+			repaintButtons = false;
 		}
-		g.drawString(game.getCurrentPlayer().getName(), BUTTON_LEFT, BUTTON_BOTTOM);
+
+		//g.drawString(game.getCurrentPlayer().getName(), BUTTON_LEFT, BUTTON_BOTTOM);
+
 		g.drawImage(backgroundImage, 0, 0, null);
 		g.drawImage(boardImage, 0, 0, null);
 		g.drawImage(menuImage, 0, 0, null);
 
-		this.revalidate();
 	};
 }
