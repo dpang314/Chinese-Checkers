@@ -7,22 +7,25 @@ public class ComputerStratBasic extends Player{
 	private int[] WRP = new int[2]; //{row, col}
 	private ArrayList<Position> prevPos = new ArrayList<Position>();
 	private boolean newBM = false;
+	private ArrayList <Position> moveQue = new ArrayList<Position>();
 	public ComputerStratBasic(Color color, String playerName) {
 		super(color, playerName);
 		winLine[0][0] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 0 :  3);
 		winLine[0][1] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 3 :  0);
 		winLine[1][0] = getWR()==1 || getWR()==5 ? 4 : (getWR()==4 || getWR()==2? 9 :  (getWR()==0 ? 0 : 13));
 		winLine[1][1] = getWR()==1 || getWR()==5 ? 7 : (getWR()==4 || getWR()==2? 12 :  (getWR()==0 ? 3 : 16));
-		if (color.equals(Color.yellow)) {dir='l'; WRP[0] = 4; WRP[1] = 0;}
-		else if (color.equals(Color.white)) {dir='l'; WRP[0] = 12; WRP[1] = 0;}
-		else if (color.equals(Color.black)) {dir='r'; WRP[0] = 4; WRP[1] = 12;}
-		else if (color.equals(Color.green)) {dir='r'; WRP[0] = 12; WRP[1] = 12;}
-		else if (color.equals(Color.red)) {dir='u'; WRP[0] = 0; WRP[1] = 0;}
+		if (color.equals(Color.green)) {dir='l'; WRP[0] = 4; WRP[1] = 0;}
+		else if (color.equals(Color.black)) {dir='l'; WRP[0] = 12; WRP[1] = 0;}
+		else if (color.equals(Color.white)) {dir='r'; WRP[0] = 4; WRP[1] = 12;}
+		else if (color.equals(Color.yellow)) {dir='r'; WRP[0] = 12; WRP[1] = 12;}
+		else if (color.equals(Color.blue)) {dir='u'; WRP[0] = 0; WRP[1] = 0;}
 		else {dir='d'; WRP[0] = 16; WRP[1] = 0;}
 	}
 	
 	@Override
 	public Move getMove(Board board) {
+		prevPos.clear();
+		moveQue.clear();
 		int[][] bestMove= new int[3][2]; //{{r1, c1}, {r2, c2} {weight, distance travelled}}
 		bestMove[2][0]=1000;
 		for (int i=0; i<posArr.size(); i++) {
@@ -31,9 +34,11 @@ public class ComputerStratBasic extends Player{
 			if(newBM) {
 				bestMove[0][0] = posArr.get(i).getRow();
 				bestMove[0][1] = posArr.get(i).getColumn();
+				moveQue.add(0, new Position(bestMove[0][0], bestMove[0][1]));
 			}
 		}
 		System.out.println("from: "+bestMove[0][0]+","+bestMove[0][1]+" to: "+bestMove[1][0]+","+bestMove[1][1]);
+		System.out.println("MQ: "+moveQue);
 		return new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
 	}
 	private int indexOf(ArrayList<Position> PP, Position check) {
@@ -49,9 +54,9 @@ public class ComputerStratBasic extends Player{
 			prevPos.add(Pos);
 			//System.out.println("PP: "+prevPos);
 			int row = Pos.getRow(), col = Pos.getColumn();
-			//System.out.println("start pos: "+Pos);
+			System.out.println("start pos: "+Pos);
 			ArrayList<Position> posMoves= board.possibleMoves(Pos, jumpOnly);
-			//System.out.println("posMoves"+posMoves);
+			System.out.println("posMoves"+posMoves);
 			for (Position p : posMoves) {
 				if (indexOf(prevPos, p)==-1 && p!=null) {
 					//System.out.println("possible pos: "+p);
@@ -71,11 +76,16 @@ public class ComputerStratBasic extends Player{
 					}
 					if (pM2.size()>0) {
 						bestMove=goodMove2(p, bestMove, board, true);
+						if (newBM) {
+							System.out.println("adding to MQ: "+p+", "+new Position(bestMove[1][0], bestMove[1][1]));
+							moveQue.add(p);
+							moveQue.add(new Position(bestMove[1][0], bestMove[1][1]));
+						}
 					} else {
 						int newWeight = distanceToWRP(p, board);
 						//System.out.println("distance: "+newWeight);
 						if (newWeight<bestMove[2][0] || (newWeight==bestMove[2][0] && distanceToWRP(Pos, board)>bestMove[2][1])) {
-							//System.out.println("new best move: "+Pos+" to "+p);
+							System.out.println("new best move: "+Pos+" to "+p+" with w: "+newWeight);
 							newBM=true;
 							//bestMove[0][0] = row;bestMove[0][1] = col;
 							bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
@@ -150,15 +160,32 @@ public class ComputerStratBasic extends Player{
 			dist+=newP.getRow();
 		}
 		if (dir=='d') {
-			while (WRP[1]>newP.getRow()) {
-				newP = newP.adj(4);
+			while ((board.rowWidths[newP.getRow()])/2>newP.getColumn()) {
+				if (newP.adj(4)!=null) {
+					newP = newP.adj(4);
+				} else {
+					newP = newP.adj(3); 
+				}
 				dist+=1;
 			}
-			while (WRP[1]<newP.getRow()) {
-				newP = newP.adj(5);
+			while ((board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
+				if (newP.adj(5)!=null) {
+					newP = newP.adj(5);
+				} else {
+					newP = newP.adj(0); 
+				}
 				dist+=1;
 			}
-			dist+=newP.getRow();
+//			dist+=newP.getRow();
+//			while (WRP[1]>newP.getRow()) {
+//				newP = newP.adj(4);
+//				dist+=1;
+//			}
+//			while (WRP[1]<newP.getRow()) {
+//				newP = newP.adj(5);
+//				dist+=1;
+//			}
+//			dist+=newP.getRow();
 		}
 		return dist;
 	}
@@ -172,21 +199,26 @@ public class ComputerStratBasic extends Player{
 		return true;
 	}
 	public static void main(String[] args) {
-		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
-		Player[] players = {c1};
-		Board b1 = new Board(players);
+		//ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
+		//Player[] players = {c1};
+		Board b1 = new Board();//players);
 		//System.out.println()
-//		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
-//		Position[] poses = {new Position(3, 0), new Position(2, 1), new Position(2, 2), new Position(4, 4)};
-//		for (Position p:poses) {
-//			b1.fillPos(p);
-//			c1.posArr.add(p);
-//		}
-		while(!c1.hasWon(b1, Color.blue)) {
-			b1.printBoard();
-			b1.move(c1.getMove(b1));
+		ComputerStratBasic c1 = new ComputerStratBasic(Color.blue, "Hannah");
+		Position[] poses = {new Position(6, 2), new Position(5, 3), new Position(4, 5), new Position(3, 0), new Position(3, 2),new Position(1, 1)};
+		for (Position p:poses) {
+			b1.fillPos(p);
+			c1.posArr.add(p);
 		}
+//		while(!c1.hasWon(b1, Color.blue)) {
+//			b1.printBoard();
+//			b1.move(c1.getMove(b1));
+//			
+//		}
 		//System.out.println("WR: "+c1.getWR());
+		b1.printBoard();
+		System.out.println(c1.getMove(b1));
+		b1.move(c1.getMove(b1));
 		//System.out.println(c1.getMove(b1));
+		b1.printBoard();
 	}
 }
