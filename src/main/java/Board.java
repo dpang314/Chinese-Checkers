@@ -253,4 +253,5 @@ public class Board implements Cloneable {
 		}
 		System.out.println();
 	}
+
 }
