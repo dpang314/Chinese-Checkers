@@ -134,7 +134,9 @@ public class Board implements Cloneable {
 		return ret;
 		
 	}
-
+	public Position[] getHomeRegion(int i) {
+		return homeAll.get(i);
+	}
 	public ArrayList<Position> possibleMoves(Position p, boolean jumpOnly) {  
 		//constraint true if ongoing turn, can only jump
 		
