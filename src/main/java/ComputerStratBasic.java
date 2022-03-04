@@ -16,7 +16,7 @@ public class ComputerStratBasic extends Player{
 		WRP = new int[2];
 		prevPos = new ArrayList<Position>(); moveQue = new ArrayList<Position>();
 		newBM = false; newTurn = true;
-		numWiTurn=0;
+		numWiTurn=1;
 		winLine[0][0] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 0 :  3);
 		winLine[0][1] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 3 :  0);
 		winLine[1][0] = getWR()==1 || getWR()==5 ? 4 : (getWR()==4 || getWR()==2? 9 :  (getWR()==0 ? 0 : 13));
@@ -48,16 +48,24 @@ public class ComputerStratBasic extends Player{
 			moveQue = reOrderMQ(moveQue, board);
 			System.out.println("MQ: "+moveQue);
 			System.out.println("from: "+bestMove[0][0]+","+bestMove[0][1]+" to: "+bestMove[1][0]+","+bestMove[1][1]);
+			ArrayList<Position> pm = board.possibleMoves(new Position(bestMove[0][0], bestMove[0][1]), false);
+			if (indexOf(pm, new Position(bestMove[1][0], bestMove[1][1]))!=-1) {
+				numWiTurn=1;
+				newTurn = true;
+				return new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
+			}
 		}
 		newTurn = false;
-		Position ret = moveQue.get(numWiTurn);
-		Position ret2 = moveQue.get(numWiTurn+1);
-		if (numWiTurn+2<moveQue.size()) {
+		if (numWiTurn==moveQue.size()) {
+			return null;
+		}
+		Position ret = moveQue.get(numWiTurn-1);
+		Position ret2 = moveQue.get(numWiTurn);
+		if (numWiTurn+1<moveQue.size()) {
 			numWiTurn+=1;
 		} else {
-			numWiTurn=0;
+			numWiTurn=1;
 			newTurn = true;
-			return null;
 		}
 		return new Move(ret, ret2, this);
 	}
@@ -257,11 +265,19 @@ public class ComputerStratBasic extends Player{
 //		}
 		//System.out.println("WR: "+c1.getWR());
 		b1.printBoard();
-		Move m  = c1.getMove(b1);
-		while (m!=null) {
-			b1.move(m);
-			b1.printBoard();
-			m  = c1.getMove(b1);
+//		Move m  = c1.getMove(b1);
+//		while (m!=null) {
+//			System.out.println("Move: "+m);
+//			b1.move(m);
+//			b1.printBoard();
+//			m  = c1.getMove(b1);
+//		}
+		for (int i=0; i<6; i++) {
+			Move m  = c1.getMove(b1);
+			if (m!=null) {
+				b1.move(m);
+				b1.printBoard();
+			}
 		}
 		//b1.move(c1.getMove(b1));
 		//System.out.println(c1.getMove(b1));
