@@ -24,7 +24,7 @@ public class Game {
   //this is the move that is added to the history stack
   private Move finalMove = null;
   //tracks moves within one turn; cleared at the end of every turn
-  private Stack<Move> miniHistory;
+  private Stack<Move> miniHistory = new Stack<Move>();
 
 	public Game(Player[] player, boolean shuffle) {
 		//Sets players array to the one passed to it
@@ -96,7 +96,7 @@ public class Game {
 	
   
   
-	public void endTurn() {
+	public void endTurn(GamePanel gamePanel) {
 		//Doesn't add a move to the stack if
 		//there is no player in the slot
 		if (finalMove!=null)
@@ -108,14 +108,20 @@ public class Game {
 			miniHistory.remove(i);
 		}
 		//If not at the limit
-		if (playerTurn<5) {
+		playerTurn++;
+		while (players[playerTurn] == null) {
 			playerTurn++;
-			currentPlayer = players[playerTurn];
+			playerTurn %= 6;
 		}
-		else {
-			playerTurn = 0;
-			currentPlayer = players[0];
+		currentPlayer = players[playerTurn];
+
+		if (currentPlayer instanceof QuinnStrategy) {
+			System.out.println(currentPlayer.getMove(board));
+			//movePeg(currentPlayer.getMove(board));
+			gamePanel.repaintButtons = true;
+			gamePanel.repaint();
 		}
+
 		if (playerTurn == first)
 			turn++;
 		

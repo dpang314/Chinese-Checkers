@@ -5,7 +5,7 @@ public abstract class Player {
 	private Color color;
 	private String playerName;
 	private int winReg;
-	private ArrayList<Position> posArr;
+	public ArrayList<Position> posArr;
 	
 	public Player(Color color, String playerName) {
 		this.color=color;

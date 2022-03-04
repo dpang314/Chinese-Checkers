@@ -1,5 +1,3 @@
-import org.junit.jupiter.api.Test;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.Dimension;
@@ -9,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.awt.image.BufferedImage;
 import java.awt.geom.*;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -17,8 +14,10 @@ import java.util.ArrayList;
 public class GamePanel extends JPanel {
 	private Game game;
 	private int WIDTH, HEIGHT;
-	private Peg selectedPeg;
-	private boolean moved;
+	private Position selectedPosition;
+	private boolean moved = false;
+	private boolean movedAdjacent;
+
 	private JButton end, undo, save, quit, exit;
 	private Image backgroundImage, boardImage, menuImage;
 	int BUTTON_LEFT = 920;
@@ -105,7 +104,7 @@ public class GamePanel extends JPanel {
 			this.whitePegHighlighted = new ImageIcon(whiteH);
 			this.yellowPegHighlighted = new ImageIcon(yellowH);
 
-			this.positionHighlight = new ImageIcon(ImageIO.read(new File("./images/board/highlight.PNG")));
+			this.positionHighlight = new ImageIcon(ImageIO.read(new File("./images/board/highlight.PNG")).getScaledInstance(32, 32, Image.SCALE_DEFAULT));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -113,17 +112,17 @@ public class GamePanel extends JPanel {
 
 	private ImageIcon getImageIcon(Color color, boolean highlighted) {
 		if (color.equals(Color.RED)) {
-			return highlighted ? redPeg : redPegHighlighted;
+			return highlighted ? redPegHighlighted : redPeg;
 		} else if (color.equals(Color.BLACK)) {
-			return highlighted ? blackPeg : blackPegHighlighted;
+			return highlighted ? blackPegHighlighted : blackPeg;
 		} else if (color.equals(Color.BLUE)) {
-			return highlighted ? bluePeg : bluePegHighlighted;
+			return highlighted ? bluePegHighlighted : bluePeg;
 		} else if (color.equals(Color.GREEN)) {
-			return highlighted ? greenPeg : greenPegHighlighted;
+			return highlighted ? greenPegHighlighted : greenPeg;
 		} else if (color.equals(Color.WHITE)) {
-			return highlighted ? whitePeg : whitePegHighlighted;
+			return highlighted ? whitePegHighlighted : whitePeg;
 		} else if (color.equals(Color.YELLOW)) {
-			return highlighted ? yellowPeg : yellowPegHighlighted;
+			return highlighted ? yellowPegHighlighted : yellowPeg;
 		}
 		return null;
 	}
@@ -133,20 +132,18 @@ public class GamePanel extends JPanel {
 	class PegButton extends JButton {
 		private Ellipse2D border;
 		private boolean highlighted;
-		private Peg peg;
 
-		public PegButton(Peg peg, int row, int column, boolean highlighted) {
+		public PegButton(Position pos, Color color, boolean highlighted) {
 			this.highlighted = highlighted;
-			this.peg = peg;
 			// Image is a square with a circle
-			ImageIcon icon = getImageIcon(peg.getOwner().getColor(), highlighted);
+			ImageIcon icon = getImageIcon(color, highlighted);
 			int RADIUS = icon.getIconHeight();
-//			this.setFocusPainted(false);
-//			this.setIcon(icon);
-//			this.setBorderPainted(false);
-//	        this.setContentAreaFilled(false);
+			this.setFocusPainted(false);
+			this.setIcon(icon);
+			this.setBorderPainted(false);
+			this.setContentAreaFilled(false);
 
-			Position pixels = getPixels(row, column, RADIUS);
+			Position pixels = getPixels(pos.getRow(), pos.getColumn(), RADIUS);
 			this.setBounds(pixels.getRow(), pixels.getColumn(), RADIUS, RADIUS);
 
 			this.border = new Ellipse2D.Float(0, 0, RADIUS, RADIUS);
@@ -154,7 +151,7 @@ public class GamePanel extends JPanel {
 				this.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						GamePanel.this.selectedPeg = peg;
+						GamePanel.this.selectedPosition = pos;
 						GamePanel.this.repaintButtons = true;
 						GamePanel.this.repaint();
 					}
@@ -167,11 +164,10 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-
 	class HighlightButton extends JButton {
 		private Ellipse2D border;
 
-		public HighlightButton(Position position) {
+		public HighlightButton(Position position, boolean adjacent) {
 			// Image is a square with a circle
 			ImageIcon icon = positionHighlight;
 			int RADIUS = icon.getIconHeight();
@@ -179,7 +175,6 @@ public class GamePanel extends JPanel {
 			this.setIcon(icon);
 			this.setBorderPainted(false);
 			this.setContentAreaFilled(false);
-			//this.setRolloverIcon(icon);
 
 			Position pixels = getPixels(position.getRow(), position.getColumn(), RADIUS);
 
@@ -190,7 +185,14 @@ public class GamePanel extends JPanel {
 			this.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					game.movePeg(new Move(selectedPeg.getPos(), position, game.getCurrentPlayer()));
+					game.movePeg(new Move(selectedPosition, position, game.getCurrentPlayer()));
+					GamePanel.this.repaintButtons = true;
+					GamePanel.this.repaint();
+					selectedPosition = position;
+					moved = true;
+					if (adjacent) {
+						movedAdjacent = true;
+					}
 				}
 			});
 		}
@@ -215,8 +217,12 @@ public class GamePanel extends JPanel {
 	private ActionListener endAction = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			selectedPeg = null;
+			selectedPosition = null;
 			moved = false;
+			movedAdjacent = false;
+			game.endTurn(GamePanel.this);
+			repaintButtons = true;
+			repaint();
 		}
 	};
 
@@ -255,7 +261,7 @@ public class GamePanel extends JPanel {
 		end = new JButton("End Turn");
 		end.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 4, 254, BUTTON_HEIGHT);
 		style(end);
-		if (this.moved) {
+		if (!this.moved) {
 			styleDisabled(end);
 		}
 		end.addActionListener(endAction);
@@ -291,7 +297,6 @@ public class GamePanel extends JPanel {
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setLayout(null);
 		initIcons();
-		initButtons();
 
 		try {
 			boardImage = ImageIO.read(new File("./images/board/board.PNG"))
@@ -313,24 +318,40 @@ public class GamePanel extends JPanel {
 		super.paintComponent(g);
 		if (repaintButtons) {
 			for (int i = 0; i < this.getComponentCount(); i++) {
-				if (this.getComponents()[i] instanceof PegButton || this.getComponents()[i] instanceof HighlightButton) {
-//					this.remove(i);
-//					i--;
+				if (this.getComponents()[i] instanceof JButton) {
+					this.remove(i);
+					i--;
 				}
 			}
-			Peg[][] pegs = game.getBoard().getPegs();
-			for (int i = 0; i < pegs.length; i++) {
-				for (int j = 0; j < pegs[i].length; j++) {
-					if (pegs[i][j] != null) {
-						PegButton pb = new PegButton(pegs[i][j], i, j,selectedPeg == null && pegs[i][j].getOwner().getColor().equals(game.getCurrentPlayer().getColor()));
+			initButtons();
+
+			for (int i = 0; i < game.getPlayers().length; i++) {
+				if (game.getPlayers()[i] != null) {
+					for (Position pos : game.getPlayers()[i].posArr) {
+						PegButton pb = new PegButton(pos, game.getPlayers()[i].getColor(),
+								(moved == false && game.getPlayers()[i].getColor().equals(game.getCurrentPlayer().getColor())) ||
+										(moved && !movedAdjacent && pos.equals(selectedPosition)));
 						this.add(pb);
 					}
 				}
 			}
-			if (selectedPeg != null) {
-				ArrayList<Position> highlighted = game.getBoard().possibleMoves(selectedPeg.getPos(), false);
-				for (int i = 0; i < highlighted.size(); i++) {
-					this.add(new HighlightButton(highlighted.get(i)));
+			if (selectedPosition != null) {
+				if (moved) {
+					if (!movedAdjacent) {
+						ArrayList<Position> jump = game.getBoard().possibleJumpMoves(selectedPosition);
+						for (int i = 0; i < jump.size(); i++) {
+							this.add(new HighlightButton(jump.get(i), false));
+						}
+					}
+				} else {
+					ArrayList<Position> jump = game.getBoard().possibleJumpMoves(selectedPosition);
+					ArrayList<Position> adjacent = game.getBoard().possibleAdjacentMoves(selectedPosition);
+					for (int i = 0; i < jump.size(); i++) {
+						this.add(new HighlightButton(jump.get(i), false));
+					}
+					for (int i = 0; i < adjacent.size(); i++) {
+						this.add(new HighlightButton(adjacent.get(i), true));
+					}
 				}
 			}
 			repaintButtons = false;
