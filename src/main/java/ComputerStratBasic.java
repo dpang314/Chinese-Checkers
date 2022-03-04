@@ -10,12 +10,14 @@ public class ComputerStratBasic extends Player{
 	private boolean newBM, newTurn;
 	private int numWiTurn;
 	private ArrayList <Position> moveQue;
+	private Position[] winReg;
 	public ComputerStratBasic(Color color, String playerName) {
 		super(color, playerName);
 		WRP = new int[2];
 		prevPos = new ArrayList<Position>(); moveQue = new ArrayList<Position>();
 		newBM = false; newTurn = true;
 		numWiTurn=1;
+		//winReg = getWR();
 		if (color.equals(Color.green)) {dir='l'; WRP[0] = 4; WRP[1] = 0;}
 		else if (color.equals(Color.black)) {dir='l'; WRP[0] = 12; WRP[1] = 0;}
 		else if (color.equals(Color.white)) {dir='r'; WRP[0] = 4; WRP[1] = 12;}
@@ -147,7 +149,7 @@ public class ComputerStratBasic extends Player{
 			if (p1.getColumn()>p2.getColumn()) {
 				return true;
 			}
-		} else if (getWR()==1 || getWR()==5) {
+		} else if (getWRInt()==1 || getWRInt()==5) {
 			if (p1.getRow()<p2.getColumn()) {
 				return true;
 			}

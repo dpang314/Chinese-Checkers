@@ -5,6 +5,7 @@ public abstract class Player {
 	private Color color;
 	private String playerName;
 	private Position[] winReg;
+	private int winRegInt;
 	public ArrayList<Position> posArr = new ArrayList<Position>();
 	
 	public Player(Color color, String playerName) {
@@ -21,7 +22,13 @@ public abstract class Player {
 	public void assignWinReg(Position[] WR) {
 		winReg=WR;
 	}
+	public void assignWinRegInt(int WR) {
+		winRegInt=WR;
+	}
 	public Position[] getWR() {
 		return winReg;
+	}
+	public int getWRInt() {
+		return winRegInt;
 	}
 }
