@@ -134,7 +134,7 @@ public class Board implements Cloneable {
 		return ret;
 		
 	}
-	public Position[] getWinRegion(int i) {
+	public static Position[] getWinRegion(int i) {
 		return homeAll.get(i);
 	}
 	public ArrayList<Position> possibleMoves(Position p, boolean jumpOnly) {  
