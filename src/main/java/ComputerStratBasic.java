@@ -60,7 +60,7 @@ public class ComputerStratBasic extends Player{
 	private ArrayList<Position> removeDups(ArrayList <Position> moveQue) {
 		ArrayList <Position> mq = new ArrayList<Position>();
 		for (Position p:moveQue) {
-			if (indexOf(mq, p)!=-1) {
+			if (indexOf(mq, p)==-1) {
 				mq.add(p);
 			}
 		}
