@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public abstract class Player {	
 	private Color color;
 	private String playerName;
-	private int winReg;
+	private Position[] winReg;
 	public ArrayList<Position> posArr = new ArrayList<Position>();
 	
 	public Player(Color color, String playerName) {
@@ -18,10 +18,10 @@ public abstract class Player {
 	public void addInitalPos(Position pos) {
 		posArr.add(pos);
 	}
-	public void assignWinReg(int n) {
-		winReg=n;
+	public void assignWinReg(Position[] WR) {
+		winReg=WR;
 	}
-	public int getWR() {
+	public Position[] getWR() {
 		return winReg;
 	}
 }

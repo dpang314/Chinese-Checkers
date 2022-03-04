@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class ComputerStratBasic extends Player{
-	private int[][] winLine; //{{x1, x2}, {y1, y2}}
+	//private int[][] winLine; //{{x1, x2}, {y1, y2}}
 	private char dir;
 	private int[] WRP; //{row, col}
 	private ArrayList<Position> prevPos;
@@ -12,15 +12,10 @@ public class ComputerStratBasic extends Player{
 	private ArrayList <Position> moveQue;
 	public ComputerStratBasic(Color color, String playerName) {
 		super(color, playerName);
-		winLine = new int[2][2];
 		WRP = new int[2];
 		prevPos = new ArrayList<Position>(); moveQue = new ArrayList<Position>();
 		newBM = false; newTurn = true;
 		numWiTurn=1;
-		winLine[0][0] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 0 :  3);
-		winLine[0][1] = getWR()==1 || getWR()==2 ? 9 : (getWR()==4 || getWR()==0? 3 :  0);
-		winLine[1][0] = getWR()==1 || getWR()==5 ? 4 : (getWR()==4 || getWR()==2? 9 :  (getWR()==0 ? 0 : 13));
-		winLine[1][1] = getWR()==1 || getWR()==5 ? 7 : (getWR()==4 || getWR()==2? 12 :  (getWR()==0 ? 3 : 16));
 		if (color.equals(Color.green)) {dir='l'; WRP[0] = 4; WRP[1] = 0;}
 		else if (color.equals(Color.black)) {dir='l'; WRP[0] = 12; WRP[1] = 0;}
 		else if (color.equals(Color.white)) {dir='r'; WRP[0] = 4; WRP[1] = 12;}

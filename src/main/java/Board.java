@@ -72,7 +72,8 @@ public class Board implements Cloneable {
 		for (int i=0; i<players.length; i++) {
 			populateReg(getHomeRegion(players[i].getColor()), players[i]);
 			int WR = (homeAll.indexOf(getHomeRegion(players[i].getColor()))%2==0) ? homeAll.indexOf(getHomeRegion(players[i].getColor()))+1 : homeAll.indexOf(getHomeRegion(players[i].getColor()))-1;
-			players[i].assignWinReg(WR);
+			players[i].assignWinReg(homeAll.get(WR));
+			
 		}
 	}
 	
