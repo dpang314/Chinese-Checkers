@@ -1,7 +1,9 @@
+import java.io.Serializable;
 import java.util.Stack;
 import java.awt.Color;
+import java.util.concurrent.TimeUnit;
 
-public class Game {
+public class Game implements Serializable {
   //Stores all players in the game
 	private Player[] players;
   //Stores which player's turn it is
@@ -93,10 +95,13 @@ public class Game {
 	      currentPlayer = players[0];
 
 	};
-	
+
+	public Move getTurn() {
+		Move move = currentPlayer.getMove(board);
+		return move;
+	}
   
-  
-	public void endTurn(GamePanel gamePanel) {
+	public void endTurn() {
 		//Doesn't add a move to the stack if
 		//there is no player in the slot
 		if (finalMove!=null)
@@ -114,13 +119,6 @@ public class Game {
 			playerTurn %= 6;
 		}
 		currentPlayer = players[playerTurn];
-
-		if (currentPlayer instanceof QuinnStrategy) {
-			System.out.println(currentPlayer.getMove(board));
-			//movePeg(currentPlayer.getMove(board));
-			gamePanel.repaintButtons = true;
-			gamePanel.repaint();
-		}
 
 		if (playerTurn == first)
 			turn++;
