@@ -51,7 +51,7 @@ public class ComputerStratBasic extends Player{
 				}
 			}
 			moveQue = reOrderMQ(moveQue, board);
-			System.out.println("MQ: "+moveQue);
+			//System.out.println("MQ: "+moveQue);
 			//System.out.println("from: "+bestMove[0][0]+","+bestMove[0][1]+" to: "+bestMove[1][0]+","+bestMove[1][1]);
 			ArrayList<Position> pm = board.possibleMoves(new Position(bestMove[0][0], bestMove[0][1]), false);
 			if (indexOf(pm, new Position(bestMove[1][0], bestMove[1][1]))!=-1) {
@@ -139,7 +139,7 @@ public class ComputerStratBasic extends Player{
 					if (pM2.size()>0) {
 						bestMove=goodMove2(p, bestMove, board, true);
 						if (newBM) {
-							System.out.println("adding to MQ: "+p+", "+new Position(bestMove[1][0], bestMove[1][1]));
+							//System.out.println("adding to MQ: "+p+", "+new Position(bestMove[1][0], bestMove[1][1]));
 							moveQue.add(p);
 							moveQue.add(new Position(bestMove[1][0], bestMove[1][1]));
 						}
@@ -152,7 +152,7 @@ public class ComputerStratBasic extends Player{
 						if (!(indexOf(winReg, Pos)!=-1 && indexOf(winReg, p)==-1)) {
 							if (newWeight<bestMove[2][0] || (newWeight==bestMove[2][0] && distanceToWRP(Pos, board)>bestMove[2][1])) {
 							//if (newWeight<bestMove[2][0] || (newWeight==bestMove[2][0] && distanceToWRP(Pos, board)>bestMove[2][1]) || (indexOf(winReg, new Position(bestMove[0][0], bestMove[0][1]))!=-1 && distanceToWRP(Pos, board)>bestMove[2][1])) {
-								System.out.println("new best move: "+Pos+" to "+p+" with w: "+newWeight);
+								//System.out.println("new best move: "+Pos+" to "+p+" with w: "+newWeight);
 								newBM=true;
 								//bestMove[0][0] = row;bestMove[0][1] = col;
 								bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
@@ -259,7 +259,7 @@ public class ComputerStratBasic extends Player{
 	public static void main(String[] args) {
 		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
 		Player[] players = {c1};
-		Board b1 = new Board();//players);
+		Board b1 = new Board(players);//players);
 		//System.out.println()
 //		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
 //		Position[] poses = {new Position(6, 2), new Position(5, 3), new Position(4, 5), new Position(3, 0), new Position(3, 2), new Position(1, 1)};
