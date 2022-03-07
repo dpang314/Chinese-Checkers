@@ -114,6 +114,12 @@ public class Board implements Cloneable {
 		
 		boardPos[p.getRow()][p.getColumn()] = new Peg();
 	}
+	public void clearPos(Position p) {
+		//only for testing, please don't implement
+		
+		boardPos[p.getRow()][p.getColumn()] = null;
+		
+	}
 
 	
 	public void fillPos(Position[] arr) {
