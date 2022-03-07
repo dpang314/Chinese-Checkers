@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Stack;
 import java.awt.Color;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,14 @@ public class Game implements Serializable {
   private Move finalMove = null;
   //tracks moves within one turn; cleared at the end of every turn
   private Stack<Move> miniHistory = new Stack<Move>();
+
+  private final static Color[][] colorAssignments = {
+		  {}, {},
+		  { Color.RED, Color.BLUE },
+		  { Color.RED, Color.GREEN, Color.WHITE },
+		  { Color.BLACK, Color.GREEN, Color.WHITE, Color.YELLOW },
+		  { Color.RED, Color.BLACK, Color.GREEN, Color.BLUE, Color.WHITE, Color.YELLOW }
+  };
 
 	public Game(Player[] player, boolean shuffle) {
 		//Sets players array to the one passed to it
@@ -58,14 +67,14 @@ public class Game implements Serializable {
 	    //Shuffles turn order
 	    if (shuffle) {
 	      //Second players array with all null elements
-	      Player[] players2 = new Player[]{null,null,null,null,null,null};
+	      Player[] playersCopy = new Player[]{null,null,null,null,null,null};
 	      //Iterates through every space in players2
 	      for (int i = 0; i < 6; i++){
 	        //creates a random index k and assigns an element from players to players2
 	        //in that random index; checks to make sure only null spaces in players2 are
 	        //being occupied
 	        int k = (int)Math.random()*6;
-	        while (!(players2[k]==null)){
+	        while (!(playersCopy[k]==null)){
 	          k = (int)Math.random()*6;
 	        }
 	        //Once this is over, every player in players should be assigned to a null space
@@ -74,10 +83,23 @@ public class Game implements Serializable {
 	        //If 2 or more null spaces in players are assigned to the same 
 	        //null space in players2 it doesn't matter because all of players2's elements
 	        //were null to begin with
-	        players2[k]=players[i];
+			  playersCopy[k]=players[i];
 	      }
+
+//		  int count = 0;
+//		  for (int i = 0; i < playersCopy.length; i++) {
+//			  if (playersCopy[i] != null) {
+//				  if (playersCopy[i] instanceof HumanPlayer) {
+//					  playersCopy[i] = new HumanPlayer(colorAssignments[numPlayers][count], playersCopy[i].getName());
+//				  } else if (playersCopy[i] instanceof QuinnStrategy)
+//				  playersCopy[i] =
+//				  playersCopy[i].setColor();
+//				  count++;
+//
+//			  }
+//		  }
 	      //Sets players to players2 so the game will now reference the random turn order
-	      players = players2;
+	      players = playersCopy;
 	
 	      //If shuffled, the first element will NOT necessarily be a player; so it will
 	      //iterate through the array until it finds a real player to set the first player
@@ -114,6 +136,7 @@ public class Game implements Serializable {
 		}
 		//If not at the limit
 		playerTurn++;
+		playerTurn %= 6;
 		while (players[playerTurn] == null) {
 			playerTurn++;
 			playerTurn %= 6;
@@ -184,35 +207,18 @@ public class Game implements Serializable {
 	public Player winningPlayer() {
     //current player's color
     Color currentColor = currentPlayer.getColor();
-    //Color of opposite player - determined below based on current player color
-    Color assignedColor = Color.BLUE;
     //Goal region position array
-    Position[] goal;
-
-    if (currentColor.equals(Color.RED)){
-      assignedColor = Color.BLUE;
-    }
-    else if (currentColor.equals(Color.BLUE))
-      assignedColor = Color.RED;
-    else if (currentColor.equals(Color.YELLOW))
-      assignedColor = Color.GREEN;
-    else if (currentColor.equals(Color.GREEN))
-      assignedColor = Color.YELLOW;
-    else if (currentColor.equals(Color.BLACK))
-      assignedColor = Color.WHITE;
-    else if (currentColor.equals(Color.WHITE))
-      assignedColor = Color.BLACK;
-
-   goal = board.getHomeRegion(assignedColor);
+    Position[] goal = Board.getWinRegion(currentColor);
 
     //Checks every position in the goal region - if they are all filled by
     //current player's pegs, they win; otherwise return null
-    for (Position p : goal) {
-//      if (!playerPeg(currentPlayer, p)) {
- //       return null;
- //     }
-    }
-    return currentPlayer;
+		Player ret = currentPlayer;
+		for (Position p : goal) {
+			if (!currentPlayer.posArr.contains(p)) {
+				ret = null;
+			}
+		}
+    	return ret;
 	};
 
 	public Player getCurrentPlayer() {

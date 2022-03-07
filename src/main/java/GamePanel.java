@@ -207,23 +207,33 @@ public class GamePanel extends JPanel {
 		}
 	}
 
+	private boolean gameOver = false;
+
 	private void renderComputerMoves() {
-		if (game.getCurrentPlayer() instanceof QuinnStrategy) {
-			Move move;
-			while ((move = game.getTurn()) != null) {
+		if (game.winningPlayer() != null) {
+			gameOver = true;
+			repaint();
+		} else if (game.getCurrentPlayer() instanceof QuinnStrategy) {
+			Move move = game.getTurn();
+			if (move == null) {
+				reset();
+				game.endTurn();
+				repaintButtons = true;
+				repaint();
+				renderComputerMoves();
+			} else {
 				game.movePeg(move);
 				repaintButtons = true;
 				repaint();
-				try {
-					TimeUnit.MILLISECONDS.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				Timer timer = new Timer(100, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						renderComputerMoves();
+					}
+				});
+				timer.setRepeats(false);
+				timer.start();
 			}
-			reset();
-			game.endTurn();
-			repaintButtons = true;
-			repaint();
 		}
 	}
 
@@ -247,6 +257,7 @@ public class GamePanel extends JPanel {
 	private final ActionListener undoAction = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			reset();
 			game.undo();
 			repaintButtons = true;
 			repaint();
@@ -264,8 +275,8 @@ public class GamePanel extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			int confirmed = JOptionPane.showConfirmDialog(GamePanel.this,
-					"Are you sure you want to quit the program?",
-					"Exit", JOptionPane.YES_NO_OPTION);
+					"Are you sure you want to quit the game?",
+					"Quit", JOptionPane.YES_NO_OPTION);
 			if (confirmed == JOptionPane.YES_OPTION) {
 				save();
 				gui.switchToMenuPanel();
@@ -306,7 +317,7 @@ public class GamePanel extends JPanel {
 		end = new JButton("End Turn");
 		end.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 4, 254, BUTTON_HEIGHT);
 		style(end);
-		if (!this.moved) {
+		if (!this.moved || gameOver) {
 			styleDisabled(end);
 		}
 		end.addActionListener(endAction);
@@ -314,7 +325,9 @@ public class GamePanel extends JPanel {
 		undo = new JButton("Undo");
 		undo.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 3, 254, BUTTON_HEIGHT);
 		style(undo);
-		styleDisabled(undo);
+		if (!this.moved || gameOver) {
+			styleDisabled(undo);
+		}
 		undo.addActionListener(undoAction);
 		this.add(undo);
 		save = new JButton("Save");
@@ -362,6 +375,17 @@ public class GamePanel extends JPanel {
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		g.drawImage(backgroundImage, 0, 0, null);
+		g.drawImage(boardImage, 0, 0, null);
+		g.drawImage(menuImage, 0, 0, null);
+
+		g.setFont(CustomFont.getFont().deriveFont(20f));
+		if (gameOver) {
+			g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT, 100);
+		} else {
+			g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT, 100);
+		}
 		if (repaintButtons) {
 			for (int i = 0; i < this.getComponentCount(); i++) {
 				if (this.getComponents()[i] instanceof JButton) {
@@ -369,7 +393,7 @@ public class GamePanel extends JPanel {
 					i--;
 				}
 			}
-			initButtons();
+
 
 			for (int i = 0; i < game.getPlayers().length; i++) {
 				if (game.getPlayers()[i] != null) {
@@ -400,14 +424,8 @@ public class GamePanel extends JPanel {
 					}
 				}
 			}
+			initButtons();
 			repaintButtons = false;
 		}
-
-		//g.drawString(game.getCurrentPlayer().getName(), BUTTON_LEFT, BUTTON_BOTTOM);
-
-		g.drawImage(backgroundImage, 0, 0, null);
-		g.drawImage(boardImage, 0, 0, null);
-		g.drawImage(menuImage, 0, 0, null);
-
 	};
 }

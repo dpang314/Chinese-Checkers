@@ -29,6 +29,13 @@ public class GUI implements ActionListener{
 		frame.pack();
 	}
 
+    public void switchToGamePanel(Game game) {
+        this.game = game;
+        GamePanel gamePanel = new GamePanel(this, game, 1280, 720);
+        frame.setContentPane(gamePanel);
+        frame.pack();
+    }
+
 	public void switchToMenuPanel() {
 		game = null;
 		MenuPanel menuPanel = new MenuPanel(this);
