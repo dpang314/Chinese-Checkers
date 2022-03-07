@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Position {
+public class Position implements Serializable {
 	private int row, column;
 	public static final int LEFT=0, TOP_LEFT=1, TOP_RIGHT=2, RIGHT=3, BOTTOM_RIGHT=4, BOTTOM_LEFT=5;
 	public static final int[] directions = {LEFT,TOP_LEFT,TOP_RIGHT,RIGHT,BOTTOM_RIGHT,BOTTOM_LEFT};
@@ -54,7 +55,8 @@ public class Position {
 	public String toString() {
 		return row + "-" + column;
 	}
-	public boolean equals(Position p) {
+	public boolean equals(Object o) {
+		Position p = (Position) o;
 		return this.getRow()==p.getRow() && this.getColumn()==p.getColumn();
 	}
 	

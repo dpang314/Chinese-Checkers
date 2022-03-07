@@ -1,9 +1,11 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 
 // Marty
@@ -48,10 +50,10 @@ public class MenuPanel extends JPanel implements ActionListener {
 
 	// Sources
 	private Image emptyButton;
-//	https://cdn1.iconfinder.com/data/icons/interface-59/24/radio-button-off-unchecked-round-circle-512.png
+//	https://cdn1.iconfinder.com/data/icons/interface-59/24/radio-button-off-unchecked-round-circle-512.PNG
 
 	private Image filledButton;
-//	https://cdn1.iconfinder.com/data/icons/thin-ui-1/100/Noun_Project_100Icon_1px_grid_thin_ic_radio_btn_full-512.png
+//	https://cdn1.iconfinder.com/data/icons/thin-ui-1/100/Noun_Project_100Icon_1px_grid_thin_ic_radio_btn_full-512.PNG
 
 	// 0 = dark, 1 = Def, 2 = Human, 3 = Com,
 	private int p1Int = 2;
@@ -406,27 +408,38 @@ public class MenuPanel extends JPanel implements ActionListener {
 				}
 			}
 			int numPlayers = typesAl.size();
-			// true = human
-			// false = computer
-//			for (int z = 0; z < 2; z++) {
-//				if (typesAl.get(z) == 1) {
-//					players[z] = new HumanPlayer(checkColor(z,numPlayers),names[z]);
-//				} else if (typesAl.get(z) == 2) {
-//					//players[z] = new ComputerStratBasic(checkColor(z,numPlayers),null);
-//				} else if (typesAl.get(z) == 3) {
-//					players[z] = new QuinnStrategy(checkColor(z,numPlayers),null);
-//				}
-//			}
 			// set the game screen
 			// pass data from players
-			players[0] = new HumanPlayer(Color.RED,"hi");
+			//players[0] = new HumanPlayer(Color.RED,"hi");
 			//players[1] = new HumanPlayer(Color.BLUE,"test");
-			players[1] = new QuinnStrategy(Color.BLUE, "test");
+//			players[0] = new QuinnStrategy(Color.RED, "test1");
+//			players[1] = new QuinnStrategy(Color.BLUE, "test");
+//			players[2] = new QuinnStrategy(Color.GREEN, "test2");
+//			players[3] = new QuinnStrategy(Color.YELLOW, "test2");
+//			players[4] = new QuinnStrategy(Color.BLACK, "test2");
+//			players[5] = new QuinnStrategy(Color.WHITE, "test2");
+
+			players[0] = new ArushiStrategy(Color.RED, "Arushi");
+			players[1] = new QuinnStrategy(Color.BLUE, "Quinn");
+
 			gui.switchToGamePanel(players, shuffle);
 		}
 		
 		if (eventName.equals("loadB")) {
 			// load code
+			JFileChooser chooser = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter(
+					".chcr save file", "chrc");
+			chooser.setFileFilter(filter);
+			int returnVal = chooser.showOpenDialog(null);
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+				try {
+					Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
+					gui.switchToGamePanel(game);
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			}
 		}
 		
 		if (eventName.equals("exitB")) {
@@ -513,14 +526,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 				checkSubject(3);
 				dif = (String) difficulty.getSelectedItem();
 				if (dif.equals("Easier")) {
-					types[subject - 1] = 2;
+					players[subject - 1] = new ComputerStratBasic(Color.RED, "Computer " + (subject - 1 ));
 					
 					// create computer player
 					// set the difficulty to Easier
 				
 					
 				} else if (dif.equals("Harder")) {
-					types[subject - 1] = 3;
+					players[subject - 1] = new QuinnStrategy(Color.RED, "Computer " + (subject - 1 ));
 					
 					// create computer player
 					// set the difficulty to Harder
@@ -530,8 +543,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 			else if (humSelect) {
 				checkSubject(2);
 				text = name.getText();
-				types[subject - 1] = 1;
-				names[subject - 1] = text;
+				players[subject - 1] = new HumanPlayer(Color.RED, text);
 				humSelect = false;
 			} else if (nonSelect == true) {
 				checkSubject(0);
@@ -562,10 +574,10 @@ public class MenuPanel extends JPanel implements ActionListener {
 	}
 	private void getImages() {
 		// background
-		ImageIcon bg = new ImageIcon("images/bg.png");
+		ImageIcon bg = new ImageIcon("images/bg.PNG");
 		background = bg.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon fb = new ImageIcon("images/filledRadioButton.png");
+		ImageIcon fb = new ImageIcon("images/filledRadioButton.ong");
 		filledButton = fb.getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT);
 		
 		ImageIcon eb = new ImageIcon("images/emptyRadioButton.png");
@@ -574,83 +586,83 @@ public class MenuPanel extends JPanel implements ActionListener {
 		// 4 button colors for 1 - 6
 		ImageIcon p1N = new ImageIcon("images/p1None.PNG");
 		plyN1 = p1N.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p1R = new ImageIcon("images/p1 Com.png");
+		ImageIcon p1R = new ImageIcon("images/p1 Com.PNG");
 		plyR1 = p1R.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p1G = new ImageIcon("images/p1Hum.png");
+		ImageIcon p1G = new ImageIcon("images/p1Hum.PNG");
 		plyG1 = p1G.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p1D = new ImageIcon("images/p1Def.png");
+		ImageIcon p1D = new ImageIcon("images/p1Def.PNG");
 		plyD1 = p1D.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon p2N = new ImageIcon("images/p2None.png");
+		ImageIcon p2N = new ImageIcon("images/p2None.PNG");
 		plyN2 = p2N.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p2R = new ImageIcon("images/p2Com.png");
+		ImageIcon p2R = new ImageIcon("images/p2Com.PNG");
 		plyR2 = p2R.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p2G = new ImageIcon("images/p2Hum.png");
+		ImageIcon p2G = new ImageIcon("images/p2Hum.PNG");
 		plyG2 = p2G.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p2D = new ImageIcon("images/p2Def.png");
+		ImageIcon p2D = new ImageIcon("images/p2Def.PNG");
 		plyD2 = p2D.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon p3N = new ImageIcon("images/p3None.png");
+		ImageIcon p3N = new ImageIcon("images/p3None.PNG");
 		plyN3 = p3N.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p3R = new ImageIcon("images/p3Com.png");
+		ImageIcon p3R = new ImageIcon("images/p3Com.PNG");
 		plyR3 = p3R.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p3G = new ImageIcon("images/p3Hum.png");
+		ImageIcon p3G = new ImageIcon("images/p3Hum.PNG");
 		plyG3 = p3G.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p3D = new ImageIcon("images/p3Def.png");
+		ImageIcon p3D = new ImageIcon("images/p3Def.PNG");
 		plyD3 = p3D.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon p4N = new ImageIcon("images/p4None.png");
+		ImageIcon p4N = new ImageIcon("images/p4None.PNG");
 		plyN4 = p4N.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p4R = new ImageIcon("images/p4Com.png");
+		ImageIcon p4R = new ImageIcon("images/p4Com.PNG");
 		plyR4 = p4R.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p4G = new ImageIcon("images/p4Hum.png");
+		ImageIcon p4G = new ImageIcon("images/p4Hum.PNG");
 		plyG4 = p4G.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p4D = new ImageIcon("images/p4Def.png");
+		ImageIcon p4D = new ImageIcon("images/p4Def.PNG");
 		plyD4 = p4D.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 
-		ImageIcon p5N = new ImageIcon("images/p5None.png");
+		ImageIcon p5N = new ImageIcon("images/p5None.PNG");
 		plyN5 = p5N.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p5R = new ImageIcon("images/p5Com.png");
+		ImageIcon p5R = new ImageIcon("images/p5Com.PNG");
 		plyR5 = p5R.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p5G = new ImageIcon("images/p5Hum.png");
+		ImageIcon p5G = new ImageIcon("images/p5Hum.PNG");
 		plyG5 = p5G.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p5D = new ImageIcon("images/p5Def.png");
+		ImageIcon p5D = new ImageIcon("images/p5Def.PNG");
 		plyD5 = p5D.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon p6N = new ImageIcon("images/p6None.png");
+		ImageIcon p6N = new ImageIcon("images/p6None.PNG");
 		plyN6 = p6N.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p6R = new ImageIcon("images/p6Com.png");
+		ImageIcon p6R = new ImageIcon("images/p6Com.PNG");
 		plyR6 = p6R.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p6G = new ImageIcon("images/p6Hum.png");
+		ImageIcon p6G = new ImageIcon("images/p6Hum.PNG");
 		plyG6 = p6G.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-		ImageIcon p6D = new ImageIcon("images/p6Def.png");
+		ImageIcon p6D = new ImageIcon("images/p6Def.PNG");
 		plyD6 = p6D.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
 		// start load exit
-		ImageIcon st = new ImageIcon("images/buttonStart.png");
+		ImageIcon st = new ImageIcon("images/buttonStart.PNG");
 		startI = st.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon ld = new ImageIcon("images/buttonLoad.png");
+		ImageIcon ld = new ImageIcon("images/buttonLoad.PNG");
 		loadI = ld.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon xt = new ImageIcon("images/buttonExit.png");
+		ImageIcon xt = new ImageIcon("images/buttonExit.PNG");
 		exitI = xt.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
 		// visuals like scrolls dragons logos
 		
-		ImageIcon dr = new ImageIcon("images/dragon.png");
+		ImageIcon dr = new ImageIcon("images/dragon.PNG");
 		dragon = dr.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon lb = new ImageIcon("images/logoBig.png");
+		ImageIcon lb = new ImageIcon("images/logoBig.PNG");
 		logoBig = lb.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon ls = new ImageIcon("images/logoSmall.png");
+		ImageIcon ls = new ImageIcon("images/logoSmall.PNG");
 		logoSmall = ls.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon sc = new ImageIcon("images/scrollMenu.png");
+		ImageIcon sc = new ImageIcon("images/scrollMenu.PNG");
 		scroll = sc.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 ////////////////////////////////////////////////////////////////////////////////////		
-		ImageIcon ar = new ImageIcon("images/arrow.png");
+		ImageIcon ar = new ImageIcon("images/arrow.PNG");
 		arrow = ar.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 	}
 	private void drawImages(Graphics g) {

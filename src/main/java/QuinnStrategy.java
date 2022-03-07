@@ -7,6 +7,7 @@
 
 import java.awt.Color;
 import java.awt.geom.*;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.ArrayDeque;
 import javax.swing.tree.*;
@@ -26,7 +27,7 @@ import javax.swing.tree.*;
  * 	A: no
  */
 
-public class QuinnStrategy extends Player {
+public class QuinnStrategy extends Player implements Serializable {
 
 	//the board it sees
 	Board boardAtTurnStart = null;
@@ -38,16 +39,21 @@ public class QuinnStrategy extends Player {
 	private boolean moveCalculated = false;
 	
 	//holds the position that the strategy is aiming for
-	private Position obj = getObjPos(this.getWR());
+
+	private Position obj;
 	
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
 	}
 	
+	public void assignWinReg(int n) {
+		super.assignWinReg(n);
+		this.obj = getObjPos(this.getColor());
+	}
+	
 	//only for testing
 	public QuinnStrategy() {
 		this(null,null);
-		
 	}
 
 	@Override
@@ -188,9 +194,9 @@ public class QuinnStrategy extends Player {
 		return new Point2D.Double(x,y);
 	}
 	
-	private static Position getObjPos(int winRegIndex) {
+	private static Position getObjPos(Color c) {
 		
-		Position[] winReg = Board.getWinRegion(winRegIndex);
+		Position[] winReg = Board.getWinRegion(c);
 		
 		if(winReg[0]==Board.homeBk[0]) {
 			return new Position(4,12);

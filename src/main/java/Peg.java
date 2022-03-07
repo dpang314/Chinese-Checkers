@@ -1,4 +1,6 @@
-public class Peg implements Cloneable{
+import java.io.Serializable;
+
+public class Peg implements Cloneable, Serializable {
 	private Player owner;
 	private Position pos;
 	

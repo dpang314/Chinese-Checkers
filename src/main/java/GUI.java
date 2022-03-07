@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,10 +24,17 @@ public class GUI implements ActionListener{
 		if (game == null) {
 			game = new Game(players, shuffle);
 		}
-		GamePanel gamePanel = new GamePanel(game, 1280, 720);
+		GamePanel gamePanel = new GamePanel(this, game, 1280, 720);
 		frame.setContentPane(gamePanel);
 		frame.pack();
 	}
+
+    public void switchToGamePanel(Game game) {
+        this.game = game;
+        GamePanel gamePanel = new GamePanel(this, game, 1280, 720);
+        frame.setContentPane(gamePanel);
+        frame.pack();
+    }
 
 	public void switchToMenuPanel() {
 		game = null;
@@ -37,12 +43,16 @@ public class GUI implements ActionListener{
 		frame.pack();
 	}
 
+	public void close() {
+		frame.dispose();
+	}
+
 	public static void main(String[] args) {
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-            JFrame.setDefaultLookAndFeelDecorated(true);
-            new GUI();
-        }
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JFrame.setDefaultLookAndFeelDecorated(true);
+				new GUI();
+			}
     });
   }
 

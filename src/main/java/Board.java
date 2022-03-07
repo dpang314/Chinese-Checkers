@@ -1,8 +1,9 @@
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Board implements Cloneable {
+public class Board implements Cloneable, Serializable {
 	
 	public Board clone() {
 		//EXTREMELY NECESSARY FOR ENCAPSULATION
@@ -132,25 +133,41 @@ public class Board implements Cloneable {
 		
 		Position[] ret = null;
 		
-		if (c==Color.RED) {
+		if (c.equals(Color.RED)) {
 			ret = homeR;
-		} else if (c==Color.BLACK) {
+		} else if (c.equals(Color.BLACK)) {
 			ret = homeBk;
-		} else if (c==Color.GREEN) {
+		} else if (c.equals(Color.GREEN)) {
 			ret = homeG;
-		} else if (c==Color.BLUE) {
+		} else if (c.equals(Color.BLUE)) {
 			ret = homeBu;
-		} else if (c==Color.WHITE) {
+		} else if (c.equals(Color.WHITE)) {
 			ret = homeW;
-		} else if (c==Color.YELLOW) {
+		} else if (c.equals(Color.YELLOW)) {
 			ret = homeY;
 		}
-		
+
 		return ret;
 		
 	}
-	public static Position[] getWinRegion(int i) {
-		return homeAll.get(i);
+	public static Position[] getWinRegion(Color c) {
+		Position[] ret = null;
+
+		if (c.equals(Color.RED)) {
+			ret = homeBu;
+		} else if (c.equals(Color.BLACK)) {
+			ret = homeW;
+		} else if (c.equals(Color.GREEN)) {
+			ret = homeY;
+		} else if (c.equals(Color.BLUE)) {
+			ret = homeR;
+		} else if (c.equals(Color.WHITE)) {
+			ret = homeBk;
+		} else if (c.equals(Color.YELLOW)) {
+			ret = homeG;
+		}
+
+		return ret;
 	}
 	public ArrayList<Position> possibleMoves(Position p, boolean jumpOnly) {  
 		//constraint true if ongoing turn, can only jump

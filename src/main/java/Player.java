@@ -1,7 +1,8 @@
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Player {	
+public abstract class Player implements Serializable {
 	private Color color;
 	private String playerName;
 	private Position[] winReg;
@@ -14,6 +15,7 @@ public abstract class Player {
 		posArr = new ArrayList<Position>();
 	};
 	public abstract Move getMove(Board board);
+	public void setColor(Color c) { this.color = c; };
 	public Color getColor() { return color; }
 	public String getName() { return playerName; }
 	public void addInitalPos(Position pos) {

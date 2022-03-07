@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Move {
+public class Move implements Serializable {
 	private Player owner;
 	private Position startPosition;
 	private Position endPosition;

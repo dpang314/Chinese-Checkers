@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.awt.geom.*;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class GamePanel extends JPanel {
 	private Game game;
+	private GUI gui;
 	private int WIDTH, HEIGHT;
 	private Position selectedPosition;
 	private boolean moved = false;
@@ -20,27 +22,13 @@ public class GamePanel extends JPanel {
 
 	private JButton end, undo, save, quit, exit;
 	private Image backgroundImage, boardImage, menuImage;
-	int BUTTON_LEFT = 920;
-	int BUTTON_BOTTOM = 570;
-	int SPACING = 80;
-	int BUTTON_HEIGHT = 60;
+
+
+
 	boolean repaintButtons = false;
 	
-	private void style(JButton button) {
-		button.setContentAreaFilled(false);
-		button.setFont(CustomFont.getFont().deriveFont(18f));
-		button.setFocusPainted(false);
-	}
-	
-	private void styleDisabled(JButton button) {
-		button.setForeground(Color.GRAY);
-		button.setEnabled(false);
-	}
-	
-	private void styleEnabled(JButton button) {
-		button.setForeground(Color.BLACK);
-		button.setEnabled(true);
-	}
+
+
 	// 1 indexed
 	public static Position getPixels(int row, int column, int RADIUS) {
 		double START_X = (698 / 1.5);
@@ -202,37 +190,6 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	private ActionListener quitAction = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			int confirmed = JOptionPane.showConfirmDialog(GamePanel.this,
-					"Are you sure you want to exit the program?",
-					"Exit", JOptionPane.YES_NO_OPTION);
-			if (confirmed == JOptionPane.YES_OPTION) {
-				save();
-			}
-		}
-	};
-
-	private ActionListener endAction = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			selectedPosition = null;
-			moved = false;
-			movedAdjacent = false;
-			game.endTurn(GamePanel.this);
-			repaintButtons = true;
-			repaint();
-		}
-	};
-
-	private ActionListener undoAction = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			game.undo();
-		}
-	};
-
 	private void save() {
 		int confirmed = JOptionPane.showConfirmDialog(GamePanel.this,
 				"Do you want to save your game?",
@@ -250,18 +207,117 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	private ActionListener saveAction = new ActionListener() {
+	private boolean gameOver = false;
+
+	private void renderComputerMoves() {
+		if (game.winningPlayer() != null) {
+			gameOver = true;
+			repaint();
+		} else if (game.getCurrentPlayer() instanceof QuinnStrategy || game.getCurrentPlayer() instanceof ArushiStrategy) {
+			Move move = game.getTurn();
+			if (move == null) {
+				reset();
+				game.endTurn();
+				repaintButtons = true;
+				repaint();
+				renderComputerMoves();
+			} else {
+				game.movePeg(move);
+				repaintButtons = true;
+				repaint();
+				Timer timer = new Timer(100, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						renderComputerMoves();
+					}
+				});
+				timer.setRepeats(false);
+				timer.start();
+			}
+		}
+	}
+
+	private void reset() {
+		selectedPosition = null;
+		moved = false;
+		movedAdjacent = false;
+	}
+
+	private final ActionListener endAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			reset();
+			game.endTurn();
+			repaintButtons = true;
+			repaint();
+			renderComputerMoves();
+		}
+	};
+
+	private final ActionListener undoAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			reset();
+			game.undo();
+			repaintButtons = true;
+			repaint();
+		}
+	};
+
+	private final ActionListener saveAction = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			save();
 		}
 	};
 
+	private final ActionListener quitAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int confirmed = JOptionPane.showConfirmDialog(GamePanel.this,
+					"Are you sure you want to quit the game?",
+					"Quit", JOptionPane.YES_NO_OPTION);
+			if (confirmed == JOptionPane.YES_OPTION) {
+				save();
+				gui.switchToMenuPanel();
+			}
+		}
+	};
+
+	private final ActionListener exitAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int confirmed = JOptionPane.showConfirmDialog(GamePanel.this,
+					"Are you sure you want to exit the program?",
+					"Exit", JOptionPane.YES_NO_OPTION);
+			if (confirmed == JOptionPane.YES_OPTION) {
+				save();
+				gui.close();
+			}
+		}
+	};
+
+	private static final int BUTTON_LEFT = 920;
+	private static final int BUTTON_BOTTOM = 570;
+	private static final int SPACING = 80;
+	private static final int BUTTON_HEIGHT = 60;
+
+	private void style(JButton button) {
+		button.setContentAreaFilled(false);
+		button.setFont(CustomFont.getFont().deriveFont(18f));
+		button.setFocusPainted(false);
+	}
+
+	private void styleDisabled(JButton button) {
+		button.setForeground(Color.GRAY);
+		button.setEnabled(false);
+	}
+
 	private void initButtons() {
 		end = new JButton("End Turn");
 		end.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 4, 254, BUTTON_HEIGHT);
 		style(end);
-		if (!this.moved) {
+		if (!this.moved || gameOver) {
 			styleDisabled(end);
 		}
 		end.addActionListener(endAction);
@@ -269,14 +325,15 @@ public class GamePanel extends JPanel {
 		undo = new JButton("Undo");
 		undo.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 3, 254, BUTTON_HEIGHT);
 		style(undo);
-		styleDisabled(undo);
+		if (!this.moved || gameOver) {
+			styleDisabled(undo);
+		}
 		undo.addActionListener(undoAction);
 		this.add(undo);
 		save = new JButton("Save");
 		save.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 2, 254, BUTTON_HEIGHT);
 		save.addActionListener(saveAction);
 		style(save);
-		save.addActionListener(saveAction);
 		this.add(save);
 		quit = new JButton("Quit");
 		quit.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING, 254, BUTTON_HEIGHT);
@@ -285,12 +342,13 @@ public class GamePanel extends JPanel {
 		this.add(quit);
 		exit = new JButton("Exit");
 		exit.setBounds(BUTTON_LEFT, BUTTON_BOTTOM, 254, BUTTON_HEIGHT);
+		exit.addActionListener(exitAction);
 		style(exit);
 		this.add(exit);
 	}
 
-	GamePanel(Game game, int WIDTH, int HEIGHT) {
-
+	GamePanel(GUI gui, Game game, int WIDTH, int HEIGHT) {
+		this.gui = gui;
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;
 		this.game = game;
@@ -310,12 +368,24 @@ public class GamePanel extends JPanel {
 			e.printStackTrace();
 		}
 		repaintButtons = true;
+		renderComputerMoves();
 	}
 
 
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+
+		g.drawImage(backgroundImage, 0, 0, null);
+		g.drawImage(boardImage, 0, 0, null);
+		g.drawImage(menuImage, 0, 0, null);
+
+		g.setFont(CustomFont.getFont().deriveFont(20f));
+		if (gameOver) {
+			g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT, 100);
+		} else {
+			g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT, 100);
+		}
 		if (repaintButtons) {
 			for (int i = 0; i < this.getComponentCount(); i++) {
 				if (this.getComponents()[i] instanceof JButton) {
@@ -323,7 +393,7 @@ public class GamePanel extends JPanel {
 					i--;
 				}
 			}
-			initButtons();
+
 
 			for (int i = 0; i < game.getPlayers().length; i++) {
 				if (game.getPlayers()[i] != null) {
@@ -354,14 +424,8 @@ public class GamePanel extends JPanel {
 					}
 				}
 			}
+			initButtons();
 			repaintButtons = false;
 		}
-
-		//g.drawString(game.getCurrentPlayer().getName(), BUTTON_LEFT, BUTTON_BOTTOM);
-
-		g.drawImage(backgroundImage, 0, 0, null);
-		g.drawImage(boardImage, 0, 0, null);
-		g.drawImage(menuImage, 0, 0, null);
-
 	};
 }
