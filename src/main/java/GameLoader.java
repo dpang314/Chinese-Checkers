@@ -24,6 +24,6 @@ public abstract class GameLoader {
 		
 		try {
 			return (Game)ois.readObject();
-		} catch (ClassNotFoundException e) {throw new IOException();}
+		} catch (ClassNotFoundException e) {throw new IOException("Wrong file type or invalid file path.");}
 	}
 }

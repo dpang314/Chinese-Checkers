@@ -6,12 +6,12 @@ public abstract class Player {
 	private String playerName;
 	private Position[] winReg;
 	private int winRegInt;
-	public ArrayList<Position> posArr = new ArrayList<Position>();
+	public ArrayList<Position> posArr;
 	
 	public Player(Color color, String playerName) {
 		this.color=color;
 		this.playerName=playerName;
-		
+		posArr = new ArrayList<Position>();
 	};
 	public abstract Move getMove(Board board);
 	public Color getColor() { return color; }

@@ -10,17 +10,18 @@ public class ComputerStratBasic extends Player{
 	private boolean newBM, newTurn;
 	private int numWiTurn;
 	private ArrayList <Position> moveQue;
-	private Position[] winReg ={new Position(0, 0), 
-		new Position(1, 0), new Position(1, 1), 
-		new Position(2, 0), new Position(2, 1), new Position(2, 2),
-		new Position(3, 0), new Position(3, 1), new Position(3, 2), new Position(3, 3)};;
+	private Position[] winReg;
+//	={new Position(16, 0), 
+//			new Position(15, 0), new Position(15, 1), 
+//			new Position(14, 0), new Position(14, 1), new Position(14, 2),
+//			new Position(13, 0), new Position(13, 1), new Position(13, 2), new Position(13, 3)};
 	public ComputerStratBasic(Color color, String playerName) {
 		super(color, playerName);
 		WRP = new int[2];
 		prevPos = new ArrayList<Position>(); moveQue = new ArrayList<Position>();
 		newBM = false; newTurn = true;
 		numWiTurn=1;
-		//winReg = getWR();
+		winReg = getWR();
 		if (color.equals(Color.green)) {dir='l'; WRP[0] = 4; WRP[1] = 0;}
 		else if (color.equals(Color.black)) {dir='l'; WRP[0] = 12; WRP[1] = 0;}
 		else if (color.equals(Color.white)) {dir='r'; WRP[0] = 4; WRP[1] = 12;}
@@ -143,6 +144,7 @@ public class ComputerStratBasic extends Player{
 							moveQue.add(new Position(bestMove[1][0], bestMove[1][1]));
 						}
 					} else {
+						//int distTraveled = distanceToWRP(Pos, board);
 						int newWeight = distanceToWRP(p, board);
 						//System.out.println("distance: "+newWeight);
 						//System.out.println("PP(0): "+prevPos.get(0));
@@ -207,7 +209,7 @@ public class ComputerStratBasic extends Player{
 			dist+=WRP[1]-newP.getColumn();
 		}
 		if (dir=='u') {
-			while ((board.rowWidths[newP.getRow()])/2>newP.getColumn()) {
+			while ((Board.rowWidths[newP.getRow()])/2>newP.getColumn()) {
 				if (newP.adj(2)!=null) {
 					newP = newP.adj(2);
 				} else {
@@ -215,7 +217,7 @@ public class ComputerStratBasic extends Player{
 				}
 				dist+=1;
 			}
-			while ((board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
+			while ((Board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
 				if (newP.adj(1)!=null) {
 					newP = newP.adj(1);
 				} else {
@@ -226,7 +228,7 @@ public class ComputerStratBasic extends Player{
 			dist+=newP.getRow();
 		}
 		if (dir=='d') {
-			while ((board.rowWidths[newP.getRow()])/2>newP.getColumn()) {
+			while ((Board.rowWidths[newP.getRow()])/2>newP.getColumn()) {
 				if (newP.adj(4)!=null) {
 					newP = newP.adj(4);
 				} else {
@@ -234,7 +236,7 @@ public class ComputerStratBasic extends Player{
 				}
 				dist+=1;
 			}
-			while ((board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
+			while ((Board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
 				if (newP.adj(5)!=null) {
 					newP = newP.adj(5);
 				} else {
@@ -242,16 +244,6 @@ public class ComputerStratBasic extends Player{
 				}
 				dist+=1;
 			}
-//			dist+=newP.getRow();
-//			while (WRP[1]>newP.getRow()) {
-//				newP = newP.adj(4);
-//				dist+=1;
-//			}
-//			while (WRP[1]<newP.getRow()) {
-//				newP = newP.adj(5);
-//				dist+=1;
-//			}
-//			dist+=newP.getRow();
 		}
 		return dist;
 	}
@@ -265,37 +257,37 @@ public class ComputerStratBasic extends Player{
 		return true;
 	}
 	public static void main(String[] args) {
-		//ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
-		//Player[] players = {c1};
+		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
+		Player[] players = {c1};
 		Board b1 = new Board();//players);
 		//System.out.println()
-		ComputerStratBasic c1 = new ComputerStratBasic(Color.blue, "Hannah");
-		Position[] poses = {new Position(6, 2), new Position(5, 3), new Position(4, 5), new Position(3, 0), new Position(3, 2), new Position(1, 1)};
-		for (Position p:poses) {
-			b1.fillPos(p);
-			c1.posArr.add(p);
-		}
-//		while(!c1.hasWon(b1, Color.blue)) {
-//			b1.printBoard();
-//			b1.move(c1.getMove(b1));
-//			
+//		ComputerStratBasic c1 = new ComputerStratBasic(Color.red, "Hannah");
+//		Position[] poses = {new Position(6, 2), new Position(5, 3), new Position(4, 5), new Position(3, 0), new Position(3, 2), new Position(1, 1)};
+//		for (Position p:poses) {
+//			b1.fillPos(p);
+//			c1.posArr.add(p);
 //		}
+		while(!c1.hasWon(b1, Color.red)) {
+			b1.printBoard();
+			b1.move(c1.getMove(b1));
+			
+		}
 		//System.out.println("WR: "+c1.getWR());
-		b1.printBoard();
-//		Move m  = c1.getMove(b1);
-//		while (m!=null) {
-//			System.out.println("Move: "+m);
-//			b1.move(m);
-//			b1.printBoard();
-//			m  = c1.getMove(b1);
+//		b1.printBoard();
+////		Move m  = c1.getMove(b1);
+////		while (m!=null) {
+////			System.out.println("Move: "+m);
+////			b1.move(m);
+////			b1.printBoard();
+////			m  = c1.getMove(b1);
+////		}
+//		for (int i=0; i<9; i++) {
+//			Move m  = c1.getMove(b1);
+//			if (m!=null) {
+//				b1.move(m);
+//				b1.printBoard();
+//			}
 //		}
-		for (int i=0; i<9; i++) {
-			Move m  = c1.getMove(b1);
-			if (m!=null) {
-				b1.move(m);
-				b1.printBoard();
-			}
-		}
 		//b1.move(c1.getMove(b1));
 		//System.out.println(c1.getMove(b1));
 		//b1.printBoard();

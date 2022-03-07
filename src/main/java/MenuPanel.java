@@ -1,13 +1,15 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.*;
 import java.awt.*;
+
 // Marty
 public class MenuPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	private Player[] players;
-	private boolean shuffle;
+	private boolean shuffle = false;
 	private Image background;
 	// images
 	private Image plyN1;
@@ -17,7 +19,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private Image plyN2;
 	private Image plyR2;
 	private Image plyG2;
-	private Image plyD2;	
+	private Image plyD2;
 	private Image plyN3;
 	private Image plyR3;
 	private Image plyG3;
@@ -25,11 +27,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private Image plyN4;
 	private Image plyR4;
 	private Image plyG4;
-	private Image plyD4;	
+	private Image plyD4;
 	private Image plyN5;
 	private Image plyR5;
 	private Image plyG5;
-	private Image plyD5;	
+	private Image plyD5;
 	private Image plyN6;
 	private Image plyR6;
 	private Image plyG6;
@@ -41,12 +43,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private Image logoBig;
 	private Image logoSmall;
 	private Image scroll;
+	private Image shuffly;
 	private Image arrow;
-	
-	// Sources 
+
+	// Sources
 	private Image emptyButton;
 //	https://cdn1.iconfinder.com/data/icons/interface-59/24/radio-button-off-unchecked-round-circle-512.png
-	
+
 	private Image filledButton;
 //	https://cdn1.iconfinder.com/data/icons/thin-ui-1/100/Noun_Project_100Icon_1px_grid_thin_ic_radio_btn_full-512.png
 
@@ -58,9 +61,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private int p5Int = 0;
 	private int p6Int = 0;
 	private int subject = 0;
-	
+
 	private String playerHolder = "";
-	
+
+	private ArrayList <Integer> typesAl = new ArrayList <Integer>(6);
+	private ArrayList <String> namesAl = new ArrayList <String>(6);
+	private Player[] players;
+	private int[] types = {0,0,0,0,0,0};
+	private String[] names = new String[6];
 	private boolean scrolled = false;
 	private boolean humSelect = false;
 	private boolean comSelect = false;
@@ -69,23 +77,23 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private boolean humanFill = false;
 	private boolean compFill = false;
 	private boolean noneFill = false;
-	private boolean override = false;
-	
+
 	private JLabel none;
 	private JLabel computer;
 	private JLabel human;
 	private JLabel playerNum;
 	private JLabel nameInstruct;
 	private JLabel comInstruct;
-	
+	private JLabel shuffleLabel;
+
 	private JTextField name;
-	
+
 	private JComboBox difficulty;
-	
+
 	private JButton hum;
 	private JButton com;
 	private JButton non;
-	
+
 	private JButton P1;
 	private JButton P2;
 	private JButton P3;
@@ -96,17 +104,30 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private JButton load;
 	private JButton exit;
 	private JButton done;
-	
+	private JButton shuffler;
+
 	private Font bigFont;
 	private Font playerFont;
-	
-	MenuPanel() {
+	private GUI gui;
+
+	Timer timer;
+	MenuPanel(GUI gui) {
+		this.gui = gui;
 		setPreferredSize(new Dimension(1280,720));
 		bigFont = CustomFont.getFont().deriveFont(15f);
 		playerFont = CustomFont.getFont().deriveFont(28f);
 		players = new Player[6];
+
 		this.setLayout(null);
-		
+
+		shuffler = new JButton("");
+		shuffler.setBounds(335,115,20,20);
+		shuffler.setActionCommand("Shuffler");
+		shuffler.addActionListener(this);
+		shuffler.setContentAreaFilled(false);
+		shuffler.setBorderPainted(false);
+		this.add(shuffler);
+
 		P1 = new JButton("");
 		P1.setBounds(100,125,180,80);
 		P1.setActionCommand("player1");
@@ -115,7 +136,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P1.setBorderPainted(false);
 		this.add(P1);
 		playerHolder = "Player 1";
-		
+
 		P2 = new JButton("");
 		P2.setBounds(340,180,180,80);
 		P2.setActionCommand("player2");
@@ -124,7 +145,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P2.setBorderPainted(false);
 		this.add(P2);
 		playerHolder = "Player 2";
-		
+
 		P3 = new JButton("");
 		P3.setBounds(158,258,180,80);
 		P3.setActionCommand("player3");
@@ -133,7 +154,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P3.setBorderPainted(false);
 		this.add(P3);
 		playerHolder = "Player 3";
-		
+
 		P4 = new JButton("");
 		P4.setBounds(405,312,180,80);
 		P4.setActionCommand("player4");
@@ -142,7 +163,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P4.setBorderPainted(false);
 		this.add(P4);
 		playerHolder = "Player 4";
-		
+
 		P5 = new JButton("");
 		P5.setBounds(225,410,180,80);
 		P5.setActionCommand("player5");
@@ -151,7 +172,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P5.setBorderPainted(false);
 		this.add(P5);
 		playerHolder = "Player 5";
-		
+
 		P6 = new JButton("");
 		P6.setBounds(458,450,180,80);
 		P6.setActionCommand("player6");
@@ -160,7 +181,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		P6.setBorderPainted(false);
 		this.add(P6);
 		playerHolder = "Player 6";
-		
+
 		start = new JButton("");
 		start.setBounds(540,605,180,80);
 		start.setActionCommand("startB");
@@ -168,7 +189,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		start.setContentAreaFilled(false);
 		start.setBorderPainted(false);
 		this.add(start);
-		
+
 		load = new JButton("");
 		load.setBounds(195,597,180,80);
 		load.setActionCommand("loadB");
@@ -176,7 +197,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		load.setContentAreaFilled(false);
 		load.setBorderPainted(false);
 		this.add(load);
-		
+
 		exit = new JButton("");
 		exit.setBounds(872,597,180,80);
 		exit.setActionCommand("exitB");
@@ -184,10 +205,10 @@ public class MenuPanel extends JPanel implements ActionListener {
 		exit.setContentAreaFilled(false);
 		exit.setBorderPainted(false);
 		this.add(exit);
-		
+
 		/////////////////////////////////////////
 		// DOPE STUFF
-		
+
 		hum = new JButton();
 		hum.setBounds(745,260,20,20);
 		hum.setActionCommand("hum");
@@ -196,7 +217,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		hum.setBorderPainted(false);
 		this.add(hum);
 		hum.setVisible(false);
-		
+
 		com = new JButton();
 		com.setBounds(745,310,20,20);
 		com.setActionCommand("com");
@@ -205,7 +226,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		com.setBorderPainted(false);
 		this.add(com);
 		com.setVisible(false);
-		
+
 		non = new JButton();
 		non.setBounds(745,360,20,20);
 		non.setActionCommand("non");
@@ -214,43 +235,49 @@ public class MenuPanel extends JPanel implements ActionListener {
 		non.setBorderPainted(false);
 		this.add(non);
 		non.setVisible(false);
-		
+
 		/////////////////////////////////////////////
-		
+
 		human = new JLabel("Human");
 		human.setBounds(800,260,300,20);
 		human.setFont(bigFont);
 		this.add(human);
 		human.setVisible(false);
-		
+
 		computer = new JLabel("Computer");
 		computer.setBounds(800,310,300,20);
 		computer.setFont(bigFont);
 		this.add(computer);
 		computer.setVisible(false);
-		
+
 		none = new JLabel("None");
 		none.setBounds(800,360,300,20);
 		none.setFont(bigFont);
 		this.add(none);
 		none.setVisible(false);
-		
+
 		//////////////////////////////////////////////
-		
+
 		nameInstruct = new JLabel("Enter your name:");
 		nameInstruct.setFont(bigFont);
 		nameInstruct.setBounds(813,382,300,60);
 		this.add(nameInstruct);
 		nameInstruct.setVisible(false);
-		
+
 		comInstruct = new JLabel("Set Difficulty:");
 		comInstruct.setBounds(817,382,300,60);
 		comInstruct.setFont(bigFont);
 		this.add(comInstruct);
 		comInstruct.setVisible(false);
-		
+
+		shuffleLabel = new JLabel("Shuffle Colors");
+		shuffleLabel.setBounds(380,110,200,30);
+		shuffleLabel.setFont(bigFont);
+		this.add(shuffleLabel);
+		shuffleLabel.setVisible(true);
+
 		//////////////////////////////////////////////
-		
+
 		String feed[] = {"Easier", "Harder"};
 		difficulty = new JComboBox(feed);
 		difficulty.setBounds(750,430,255,30);
@@ -258,16 +285,16 @@ public class MenuPanel extends JPanel implements ActionListener {
 		difficulty.setActionCommand("difficulty");
 		difficulty.addActionListener(this);
 		difficulty.setVisible(false);
-		
+
 		name = new JTextField("   ");
 		name.setBounds(750,430,255,30);
 		this.add(name);
 		name.setActionCommand("name");
 		name.addActionListener(this);
 		name.setVisible(false);
-		
+
 		///////////////////////////////////////////////
-		
+
 		done = new JButton("Done");
 		done.setBounds(770,465,200,50);
 		done.setFont(bigFont);
@@ -276,16 +303,16 @@ public class MenuPanel extends JPanel implements ActionListener {
 		done.addActionListener(this);
 		done.setContentAreaFilled(false);
 		done.setVisible(false);
-		
+
 		playerNum = new JLabel("");
 		playerNum.setBounds(820,200,250,30);
 		playerNum.setFont(playerFont);
 		this.add(playerNum);
 		playerNum.setVisible(false);
-		
-		
+
+
 		getImages();
-		
+
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -296,7 +323,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		if (shuffle) {
 			// shuffle the status
 		}
-		
+
 	}
 	public void actionPerformed(ActionEvent e) {
 		String eventName = e.getActionCommand();
@@ -307,41 +334,95 @@ public class MenuPanel extends JPanel implements ActionListener {
 			scrolled = true;
 			p1Int = 1;
 			playerHolder = "Player 1";
+			P2.setVisible(false);
+			P3.setVisible(false);
+			P4.setVisible(false);
+			P5.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player2")) {
 			subject = 2;
 			scrolled = true;
 			p2Int = 1;
 			playerHolder = "Player 2";
+			P1.setVisible(false);
+			P3.setVisible(false);
+			P4.setVisible(false);
+			P5.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player3")) {
 			subject = 3;
 			scrolled = true;
 			p3Int = 1;
 			playerHolder = "Player 3";
+			P1.setVisible(false);
+			P2.setVisible(false);
+			P4.setVisible(false);
+			P5.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player4")) {
 			subject = 4;
 			scrolled = true;
 			p4Int = 1;
 			playerHolder = "Player 4";
+			P1.setVisible(false);
+			P2.setVisible(false);
+			P3.setVisible(false);
+			P5.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player5")) {
 			subject = 5;
 			scrolled = true;
 			p5Int = 1;
 			playerHolder = "Player 5";
+			P1.setVisible(false);
+			P2.setVisible(false);
+			P3.setVisible(false);
+			P4.setVisible(false);
+			P6.setVisible(false);
 		}
 		if (eventName.equals("player6")) {
 			subject = 6;
 			scrolled = true;
 			p6Int = 1;
 			playerHolder = "Player 6";
+			P1.setVisible(false);
+			P2.setVisible(false);
+			P3.setVisible(false);
+			P4.setVisible(false);
+			P5.setVisible(false);
 		}
-		
+
 		if (eventName.equals("startB")) {
+			for (int x = 0; x < 6; x++) {
+				if (names[x] != null) {
+					namesAl.add(names[x]);
+				}
+				if (types[x] != 0) {
+					typesAl.add(types[x]);
+				}
+			}
+			int numPlayers = typesAl.size();
+			// true = human
+			// false = computer
+//			for (int z = 0; z < 2; z++) {
+//				if (typesAl.get(z) == 1) {
+//					players[z] = new HumanPlayer(checkColor(z,numPlayers),names[z]);
+//				} else if (typesAl.get(z) == 2) {
+//					//players[z] = new ComputerStratBasic(checkColor(z,numPlayers),null);
+//				} else if (typesAl.get(z) == 3) {
+//					players[z] = new QuinnStrategy(checkColor(z,numPlayers),null);
+//				}
+//			}
 			// set the game screen
 			// pass data from players
+			players[0] = new HumanPlayer(Color.RED,"hi");
+			//players[1] = new HumanPlayer(Color.BLUE,"test");
+			players[1] = new QuinnStrategy(Color.BLUE, "test");
+			gui.switchToGamePanel(players, shuffle);
 		}
 		
 		if (eventName.equals("loadB")) {
@@ -353,6 +434,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 			System.exit(0);
 		}
 		
+		if (eventName.equals("Shuffler")) {
+			if (shuffle) {
+				shuffle = false;
+			} else if (!shuffle) {
+				shuffle = true;
+			}
+		}
 		///////////////////////////////////////////////////
 		
 		if (eventName.equals("hum")) {
@@ -362,6 +450,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 			humanFill = true;
 			compFill = false;
 			noneFill = false;
+			doneStopper = true;
 		}
 		if (eventName.equals("com")) {
 			comSelect = true;
@@ -370,6 +459,8 @@ public class MenuPanel extends JPanel implements ActionListener {
 			compFill = true;
 			humanFill = false;
 			noneFill = false;
+			doneStopper = true;
+			name.setText("   ");
 		}
 		if (eventName.equals("non")) {
 			nonSelect = true;
@@ -422,14 +513,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 				checkSubject(3);
 				dif = (String) difficulty.getSelectedItem();
 				if (dif.equals("Easier")) {
-				
+					types[subject - 1] = 2;
 					
 					// create computer player
 					// set the difficulty to Easier
 				
 					
 				} else if (dif.equals("Harder")) {
-					
+					types[subject - 1] = 3;
 					
 					// create computer player
 					// set the difficulty to Harder
@@ -439,15 +530,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 			else if (humSelect) {
 				checkSubject(2);
 				text = name.getText();
-				
-//				players[subject - 1] = new HumanPlayer();
-				// create human player
-				// set player name to whatever the text is
-
+				types[subject - 1] = 1;
+				names[subject - 1] = text;
 				humSelect = false;
 			} else if (nonSelect == true) {
 				checkSubject(0);
 			}
+			
 			scrolled = false;
 			subject = 0;
 			comSelect = false;
@@ -461,7 +550,12 @@ public class MenuPanel extends JPanel implements ActionListener {
 			humanFill = false;
 			compFill = false;
 			noneFill = false;
-			
+			P1.setVisible(true);
+			P2.setVisible(true);
+			P3.setVisible(true);
+			P4.setVisible(true);
+			P5.setVisible(true);
+			P6.setVisible(true);
 			
 		}
 		repaint();
@@ -637,10 +731,10 @@ public class MenuPanel extends JPanel implements ActionListener {
 		
 	}
 	private void reaction(Graphics g) {
-		if (!doneStopper) {
-			done.setVisible(true);
-		} else {
-			done.setVisible(false);
+		if (shuffle) {
+			g.drawImage(filledButton,335,115,this);
+		} else if (!shuffle) {
+			g.drawImage(emptyButton,335,115,this);
 		}
 		if (scrolled) {
 			non.setVisible(true);
@@ -672,18 +766,12 @@ public class MenuPanel extends JPanel implements ActionListener {
 			comInstruct.setVisible(false);
 			name.setVisible(true);
 			difficulty.setVisible(false);
-			if (override) {
-				doneStopper = true;
-			}
 		}
 		if (comSelect) {
 			nameInstruct.setVisible(false);
 			comInstruct.setVisible(true);
 			difficulty.setVisible(true);
 			name.setVisible(false);
-			if (override) {
-				doneStopper = true;
-			}
 		}
 		if (nonSelect) {
 			nameInstruct.setVisible(false);
@@ -701,8 +789,12 @@ public class MenuPanel extends JPanel implements ActionListener {
 		if (noneFill) {
 			g.drawImage(filledButton,745,360,this);
 		}
+		if (!doneStopper) {
+			done.setVisible(true);
+		} else {
+			done.setVisible(false);
+		}
 	}
-
 	private void checkSubject(int type) {
 		if (subject == 1) {
 			p1Int = type;
@@ -722,6 +814,47 @@ public class MenuPanel extends JPanel implements ActionListener {
 		if (subject == 6) {
 			p6Int = type;
 		}
+	}
+	private Color checkColor(int subject, int size) {
+		if (size == 6) {
+			if (subject == 1) {
+				return Color.RED;
+			} else if (subject == 2) {
+				return Color.BLUE;
+			} else if (subject == 3) {
+				return Color.YELLOW;
+			} else if (subject == 4) {
+				return Color.GREEN;
+			} else if (subject == 5) {
+				return Color.BLACK;
+			} else if (subject == 6) {
+				return Color.WHITE;
+			}
+		} else if (size == 4) {
+			if (subject == 1) {
+				return Color.YELLOW;
+			} else if (subject == 2) {
+				return Color.GREEN;
+			} else if (subject == 3) {
+				return Color.BLACK;
+			} else if (subject == 4) {
+				return Color.WHITE;
+			}
+		} else if (size == 2) {
+			if (subject == 1) {
+				return Color.RED;
+			} else if (subject == 2) {
+				return Color.BLUE;
+			}
+		}
+		
+		return null;
+	}
+	private void setColors() {
+		if (players[0] != null && players[1] != null && players[2] != null && players[3] != null && players[4] != null && players[5] != null ){ // 6 players
+			
+		}
+		
 	}
 }
 

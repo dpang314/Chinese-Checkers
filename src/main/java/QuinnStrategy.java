@@ -38,7 +38,7 @@ public class QuinnStrategy extends Player {
 	private boolean moveCalculated = false;
 	
 	//holds the position that the strategy is aiming for
-	private Position obj;
+	private Position obj = getObjPos(this.getWR());
 	
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
@@ -47,6 +47,7 @@ public class QuinnStrategy extends Player {
 	//only for testing
 	public QuinnStrategy() {
 		this(null,null);
+		
 	}
 
 	@Override
@@ -75,11 +76,6 @@ public class QuinnStrategy extends Player {
 		
 		return optimalJumpChain.poll();
 		
-	}
-	
-	//sets the target objective position based on the 
-	public void setTargetColor(Color c) {
-		obj = getObjPos(c);
 	}
 	
 	//creates a queue of moves by iterating over the positions and looking at two at a time
@@ -192,18 +188,21 @@ public class QuinnStrategy extends Player {
 		return new Point2D.Double(x,y);
 	}
 	
-	private static Position getObjPos(Color c) {
-		if(c==Color.BLACK) {
+	private static Position getObjPos(int winRegIndex) {
+		
+		Position[] winReg = Board.getWinRegion(winRegIndex);
+		
+		if(winReg[0]==Board.homeBk[0]) {
 			return new Position(4,12);
-		} else if (c==Color.GREEN) {
+		} else if (winReg[0]==Board.homeG[0]) {
 			return new Position(12,12);
-		} else if (c==Color.BLUE) {
+		} else if (winReg[0]==Board.homeBu[0]) {
 			return new Position(16,0);
-		} else if (c==Color.WHITE) {
+		} else if (winReg[0]==Board.homeW[0]) {
 			return new Position(12,0);
-		} else if (c==Color.YELLOW) {
+		} else if (winReg[0]==Board.homeY[0]) {
 			return new Position(4,0);
-		} else if (c==Color.RED) {
+		} else if (winReg[0]==Board.homeR[0]) {
 			return new Position (0,0);
 		} else {
 			return null;
@@ -217,8 +216,6 @@ public class QuinnStrategy extends Player {
 	//returns a double representing the percent difference between a and b
 	private static double percentDiff(double a, double b) {
 		double numDiff = b-a;
-//		System.out.println("b " + b);
-//		System.out.println("a " + a);
 		return numDiff/Math.abs(a) * 100;
 	}
 	
@@ -266,13 +263,13 @@ public class QuinnStrategy extends Player {
 	}
 	
 	public static void main(String[] args) {	
-		QuinnStrategy myStrategy = new QuinnStrategy();
+		
 		Board b = new Board();
+		QuinnStrategy myStrategy = new QuinnStrategy(Color.BLUE, "Quinn");
 		b.fillPos(Board.homeBk);
 		b.fillPos(Board.homeY);
 		b.fillPos(Board.homeW);
 		b.fillPos(Board.homeG);
-		myStrategy.setTargetColor(Color.RED);
 				
 		for(Position p : Board.homeBu) {
 			myStrategy.posArr.add(p);

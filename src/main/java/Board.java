@@ -65,16 +65,23 @@ public class Board implements Cloneable {
 		new Position(14, 0), new Position(14, 1), new Position(14, 2),
 		new Position(13, 0), new Position(13, 1), new Position(13, 2), new Position(13, 3)
 	};
-	public static final ArrayList<Position[]> homeAll = new ArrayList<Position[]>();
+	
+	public static final ArrayList<Position[]> homeAll = makeHomeAll();
+	
+	private static ArrayList<Position[]> makeHomeAll() {
+		ArrayList<Position[]> homeAll = new ArrayList<Position[]>();
+		Collections.addAll(homeAll, homeR, homeBu, homeBk, homeW, homeG, homeY);
+		return homeAll;
+	}
 	
 	public Board(Player[] players) {
-		Collections.addAll(homeAll, homeR, homeBu, homeBk, homeW, homeG, homeY);
 		for (int i=0; i<players.length; i++) {
-			populateReg(getHomeRegion(players[i].getColor()), players[i]);
-			int WR = (homeAll.indexOf(getHomeRegion(players[i].getColor()))%2==0) ? homeAll.indexOf(getHomeRegion(players[i].getColor()))+1 : homeAll.indexOf(getHomeRegion(players[i].getColor()))-1;
-			players[i].assignWinRegInt(WR);
-			players[i].assignWinReg(homeAll.get(WR));
-			
+			if (!(players[i] == null)) {
+				populateReg(getHomeRegion(players[i].getColor()), players[i]);
+				int WR = (homeAll.indexOf(getHomeRegion(players[i].getColor()))%2==0) ? homeAll.indexOf(getHomeRegion(players[i].getColor()))+1 : homeAll.indexOf(getHomeRegion(players[i].getColor()))-1;
+				players[i].assignWinRegInt(WR);
+				players[i].assignWinReg(homeAll.get(WR));
+			}
 		}
 	}
 	
