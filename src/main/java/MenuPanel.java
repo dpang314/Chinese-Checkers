@@ -412,15 +412,15 @@ public class MenuPanel extends JPanel implements ActionListener {
 			// pass data from players
 			//players[0] = new HumanPlayer(Color.RED,"hi");
 			//players[1] = new HumanPlayer(Color.BLUE,"test");
-//			players[0] = new QuinnStrategy(Color.RED, "test1");
-//			players[1] = new QuinnStrategy(Color.BLUE, "test");
-//			players[2] = new QuinnStrategy(Color.GREEN, "test2");
-//			players[3] = new QuinnStrategy(Color.YELLOW, "test2");
-//			players[4] = new QuinnStrategy(Color.BLACK, "test2");
-//			players[5] = new HumanPlayer(Color.WHITE, "test2");
+			players[0] = new QuinnStrategy(Color.RED, "test1");
+			players[1] = new QuinnStrategy(Color.BLUE, "test");
+			players[2] = new QuinnStrategy(Color.GREEN, "test2");
+			players[3] = new QuinnStrategy(Color.YELLOW, "test2");
+			players[4] = new QuinnStrategy(Color.BLACK, "test2");
+			players[5] = new QuinnStrategy(Color.WHITE, "test2");
 
-			players[0] = new HumanPlayer(Color.RED, "player");
-			players[1] = new QuinnStrategy(Color.RED, "computer");
+//			players[0] = new HumanPlayer(Color.RED, "player");
+//			players[1] = new QuinnStrategy(Color.RED, "computer");
 
 			gui.switchToGamePanel(players, shuffle);
 		}
