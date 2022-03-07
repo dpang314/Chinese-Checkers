@@ -213,7 +213,7 @@ public class GamePanel extends JPanel {
 		if (game.winningPlayer() != null) {
 			gameOver = true;
 			repaint();
-		} else if (game.getCurrentPlayer() instanceof QuinnStrategy) {
+		} else if (game.getCurrentPlayer() instanceof QuinnStrategy || game.getCurrentPlayer() instanceof ArushiStrategy) {
 			Move move = game.getTurn();
 			if (move == null) {
 				reset();

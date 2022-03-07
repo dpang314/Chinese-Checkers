@@ -2,23 +2,9 @@ import java.awt.Color;
 import java.util.*;
 
 public class ArushiStrategy extends Player {
-	private Position [] pegHolder = new Position [10];
-	private Board testBoard;
 
-	public ArushiStrategy (Color color, String playerName, Board board) {
+	public ArushiStrategy (Color color, String playerName) {
 		super(color, playerName);
-		testBoard = board.clone();
-
-		int pegIndex=0;
-
-		for (Peg [] pegArr : testBoard.getPegs()) {
-			for (Peg peg : pegArr) {
-				if (peg.getOwner()==this) {
-					pegHolder[pegIndex] = peg.getPos();
-					pegIndex++;
-				}
-			}
-		}
 	}
 
 	public boolean isHuman() {
@@ -33,8 +19,8 @@ public class ArushiStrategy extends Player {
 
 		for (int i=0; i<=9; i++) {
 			ArrayList<Position> pegStep = new ArrayList<Position>(0);
-			pegStep.add(pegHolder[i]);
-			pegStep.add(generateConfs(pegHolder[i], board));
+			pegStep.add(this.posArr.get(i));
+			pegStep.add(generateConfs(this.posArr.get(i), board));
 			neighborConfs.add(pegStep);
 		}
 
@@ -56,9 +42,9 @@ public class ArushiStrategy extends Player {
 		}
 
 		Position endPos = neighborConfs.get(smallestRWInd).get(1);
-		Move thisTurn = new Move(pegHolder[smallestRWInd], endPos, this);
+		Move thisTurn = new Move(this.posArr.get(smallestRWInd), endPos, this);
 
-		pegHolder[smallestRWInd]=endPos;
+		this.posArr.set(smallestRWInd, endPos);
 
 		return thisTurn;
 
@@ -71,7 +57,7 @@ public class ArushiStrategy extends Player {
 		Position [] simulation = new Position[10];
 		for (int i=0; i<=9; i++) {
 			if (i!=tracker) {
-				simulation[i]=pegHolder[i];
+				simulation[i]=this.posArr.get(i);
 			} else {
 				simulation[i]=newPos;
 			}
