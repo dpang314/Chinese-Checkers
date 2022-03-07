@@ -236,7 +236,7 @@ public class Board implements Cloneable, Serializable {
 	public void move(Move move) {
 		Position startPos = move.getStartPosition();
 		Position endPos = move.getEndPosition();
-
+		System.out.println(startPos+", "+endPos);
 		//checks that the peg exists and can move to the specified location
 		if(boardPos[startPos.getRow()][startPos.getColumn()]==null || !canMove(startPos,endPos,false)) {
 			throw new RuntimeException("Invalid move. startPos is null or cannot move there.");
