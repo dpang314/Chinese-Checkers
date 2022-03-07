@@ -39,16 +39,21 @@ public class QuinnStrategy extends Player implements Serializable {
 	private boolean moveCalculated = false;
 	
 	//holds the position that the strategy is aiming for
-	private Position obj = getObjPos(this.getColor());
+
+	private Position obj;
 	
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
 	}
 	
+	public void assignWinReg(int n) {
+		super.assignWinReg(n);
+		this.obj = getObjPos(this.getColor());
+	}
+	
 	//only for testing
 	public QuinnStrategy() {
 		this(null,null);
-		
 	}
 
 	@Override
