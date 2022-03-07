@@ -192,7 +192,9 @@ public class ArushiStrategy extends Player {
 			tipInd = 0;
 		}
 		//finds the goal position based on player color
-		Position[] winArea = testBoard.homeAll[this.getWR()];
+		
+		Position[] winArea = Board.homeAll.get(this.getWR());
+		
 		Position goal = winArea[tipInd];
 		//Gets current peg's position
 		//estimates distance by row/column
