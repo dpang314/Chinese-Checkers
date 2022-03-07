@@ -419,7 +419,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 //			players[4] = new QuinnStrategy(Color.BLACK, "test2");
 //			players[5] = new QuinnStrategy(Color.WHITE, "test2");
 
-			players[0] = new ArushiStrategy(Color.RED, "Arushi");
+			players[0] = new ComputerStratBasic(Color.RED, "Simple");
 			players[1] = new QuinnStrategy(Color.BLUE, "Quinn");
 
 			gui.switchToGamePanel(players, shuffle);
