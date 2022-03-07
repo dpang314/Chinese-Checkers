@@ -39,11 +39,8 @@ public class QuinnStrategy extends Player implements Serializable {
 	private boolean moveCalculated = false;
 	
 	//holds the position that the strategy is aiming for
-<<<<<<< Updated upstream
-	private Position obj = getObjPos(this.getColor());
-=======
+
 	private Position obj;
->>>>>>> Stashed changes
 	
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
@@ -51,7 +48,7 @@ public class QuinnStrategy extends Player implements Serializable {
 	
 	public void assignWinReg(int n) {
 		super.assignWinReg(n);
-		this.obj = getObjPos(this.getWR());
+		this.obj = getObjPos(this.getColor());
 	}
 	
 	//only for testing
