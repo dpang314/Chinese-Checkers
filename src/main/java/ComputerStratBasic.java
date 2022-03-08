@@ -176,6 +176,7 @@ public class ComputerStratBasic extends Player{
 					} else {
 						//int distTraveled = distanceToWRP(Pos, board);
 						int newWeight = distanceToWRP(p, board);
+						newWeight = newWeight*2-distanceToWRP(ogPos, board);
 						//System.out.println("distance: "+newWeight);
 						//System.out.println("PP(0): "+prevPos.get(0));
 						if (indexOf(winReg, prevPos.get(0))!=-1) {newWeight+=3;}
