@@ -33,7 +33,7 @@ public class Game implements Serializable {
 		  {}, {},
 		  { Color.RED, Color.BLUE },
 		  { Color.RED, Color.GREEN, Color.WHITE },
-		  { Color.BLACK, Color.GREEN, Color.WHITE, Color.YELLOW },
+		  { Color.BLACK, Color.GREEN, Color.WHITE, Color.YELLOW }, {},
 		  { Color.RED, Color.BLACK, Color.GREEN, Color.BLUE, Color.WHITE, Color.YELLOW }
   };
 
@@ -62,8 +62,7 @@ public class Game implements Serializable {
 	    //sets history and turn counter to base form, creates a board with given players
 	    this.history = new Stack<Move>();
 	    this.turn = 0;
-	    this.board = new Board(players);
-	
+
 	    //Shuffles turn order
 	    if (shuffle) {
 	      //Second players array with all null elements
@@ -86,36 +85,34 @@ public class Game implements Serializable {
 			  playersCopy[k]=players[i];
 	      }
 
-//		  int count = 0;
-//		  for (int i = 0; i < playersCopy.length; i++) {
-//			  if (playersCopy[i] != null) {
-//				  if (playersCopy[i] instanceof HumanPlayer) {
-//					  playersCopy[i] = new HumanPlayer(colorAssignments[numPlayers][count], playersCopy[i].getName());
-//				  } else if (playersCopy[i] instanceof QuinnStrategy)
-//				  playersCopy[i] =
-//				  playersCopy[i].setColor();
-//				  count++;
-//
-//			  }
-//		  }
 	      //Sets players to players2 so the game will now reference the random turn order
 	      players = playersCopy;
-	
-	      //If shuffled, the first element will NOT necessarily be a player; so it will
-	      //iterate through the array until it finds a real player to set the first player
-	      //to
-	      int i = 0;
-	      while (players[i]==null){
-	        i++;
-	      }
-	      currentPlayer = players[i];
-	      playerTurn = i;
-	      first = i;
-	    }
-	    //otherwise, the first player should be the first element
-	    else
-	      currentPlayer = players[0];
 
+	    }
+		int count = 0;
+		for (int i = 0; i < players.length; i++) {
+			if (players[i] != null) {
+				if (players[i] instanceof HumanPlayer) {
+					players[i] = new HumanPlayer(colorAssignments[numPlayers][count], players[i].getName());
+				} else if (players[i] instanceof QuinnStrategy) {
+					players[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
+				}
+				count++;
+			}
+		}
+		System.out.println(this.players[0]);
+		//If shuffled, the first element will NOT necessarily be a player; so it will
+		//iterate through the array until it finds a real player to set the first player
+		//to
+		int i = 0;
+		while (players[i]==null){
+			i++;
+		}
+		currentPlayer = players[i];
+		playerTurn = i;
+		first = i;
+
+		this.board = new Board(players);
 	};
 
 	public Move getTurn() {
@@ -145,10 +142,6 @@ public class Game implements Serializable {
 
 		if (playerTurn == first)
 			turn++;
-		
-	}
-	
-	public void save() {
 		
 	}
 	

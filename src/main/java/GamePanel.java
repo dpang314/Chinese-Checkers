@@ -233,8 +233,7 @@ public class GamePanel extends JPanel {
 				if (endPosition == null) {
 					endPosition = move.getEndPosition();
 				}
-				System.out.println(move
-				);
+				System.out.println(move);
 				game.movePeg(move);
 				repaintButtons = true;
 				repaint();

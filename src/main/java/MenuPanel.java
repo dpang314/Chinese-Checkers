@@ -119,6 +119,8 @@ public class MenuPanel extends JPanel implements ActionListener {
 		bigFont = CustomFont.getFont().deriveFont(15f);
 		playerFont = CustomFont.getFont().deriveFont(28f);
 		players = new Player[6];
+		players[0] = new HumanPlayer(Color.RED, "Player 1");
+		players[1] = new QuinnStrategy(Color.RED, "Computer 1");
 
 		this.setLayout(null);
 
@@ -407,20 +409,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 					typesAl.add(types[x]);
 				}
 			}
-			int numPlayers = typesAl.size();
-			// set the game screen
-			// pass data from players
-			//players[0] = new HumanPlayer(Color.RED,"hi");
-			//players[1] = new HumanPlayer(Color.BLUE,"test");
-//			players[0] = new QuinnStrategy(Color.RED, "test1");
-//			players[1] = new QuinnStrategy(Color.BLUE, "test");
-//			players[2] = new QuinnStrategy(Color.GREEN, "test2");
-//			players[3] = new QuinnStrategy(Color.YELLOW, "test2");
-//			players[4] = new QuinnStrategy(Color.BLACK, "test2");
-//			players[5] = new QuinnStrategy(Color.WHITE, "test2");
-
-			players[0] = new ComputerStratBasic(Color.RED, "Simple");
-			players[1] = new QuinnStrategy(Color.BLUE, "Quinn");
 
 			gui.switchToGamePanel(players, shuffle);
 		}
@@ -666,8 +654,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 		arrow = ar.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 	}
 	private void drawImages(Graphics g) {
-
-		
 		if (!scrolled) {
 			g.drawImage(logoBig,0,0,this);
 			g.drawImage(dragon,0,0,this);
@@ -826,47 +812,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 		if (subject == 6) {
 			p6Int = type;
 		}
-	}
-	private Color checkColor(int subject, int size) {
-		if (size == 6) {
-			if (subject == 1) {
-				return Color.RED;
-			} else if (subject == 2) {
-				return Color.BLUE;
-			} else if (subject == 3) {
-				return Color.YELLOW;
-			} else if (subject == 4) {
-				return Color.GREEN;
-			} else if (subject == 5) {
-				return Color.BLACK;
-			} else if (subject == 6) {
-				return Color.WHITE;
-			}
-		} else if (size == 4) {
-			if (subject == 1) {
-				return Color.YELLOW;
-			} else if (subject == 2) {
-				return Color.GREEN;
-			} else if (subject == 3) {
-				return Color.BLACK;
-			} else if (subject == 4) {
-				return Color.WHITE;
-			}
-		} else if (size == 2) {
-			if (subject == 1) {
-				return Color.RED;
-			} else if (subject == 2) {
-				return Color.BLUE;
-			}
-		}
-		
-		return null;
-	}
-	private void setColors() {
-		if (players[0] != null && players[1] != null && players[2] != null && players[3] != null && players[4] != null && players[5] != null ){ // 6 players
-			
-		}
-		
 	}
 }
 
