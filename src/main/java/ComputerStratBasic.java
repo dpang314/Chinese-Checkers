@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 
 public class ComputerStratBasic extends Player{
 	//private int[][] winLine; //{{x1, x2}, {y1, y2}}

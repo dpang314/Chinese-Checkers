@@ -209,19 +209,32 @@ public class GamePanel extends JPanel {
 
 	private boolean gameOver = false;
 
+	private Position endPosition;
+
 	private void renderComputerMoves() {
 		if (game.winningPlayer() != null) {
 			gameOver = true;
 			repaint();
+			endPosition = null;
 		} else if (game.getCurrentPlayer() instanceof QuinnStrategy || game.getCurrentPlayer() instanceof ArushiStrategy || game.getCurrentPlayer() instanceof ComputerStratBasic) {
 			Move move = game.getTurn();
-			if (move == null) {
+			if (move == null || (
+					endPosition != null &&
+					!endPosition.equals(move.getStartPosition())
+					)) {
 				reset();
 				game.endTurn();
 				repaintButtons = true;
 				repaint();
+				endPosition = null;
 				renderComputerMoves();
+
 			} else {
+				if (endPosition == null) {
+					endPosition = move.getEndPosition();
+				}
+				System.out.println(move
+				);
 				game.movePeg(move);
 				repaintButtons = true;
 				repaint();

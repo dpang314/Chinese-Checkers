@@ -47,7 +47,7 @@ public class QuinnStrategy extends Player implements Serializable {
 	}
 	
 	public void assignWinReg(int n) {
-		super.assignWinReg(n);
+		super.assignWinRegInt(n);
 		this.obj = getObjPos(this.getColor());
 	}
 	
