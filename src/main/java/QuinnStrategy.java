@@ -45,19 +45,13 @@ public class QuinnStrategy extends Player implements Serializable {
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
 	}
-	
-	public void assignWinReg(int n) {
-		super.assignWinRegInt(n);
-		this.obj = getObjPos(this.getColor());
-	}
-	
-	//only for testing
-	public QuinnStrategy() {
-		this(null,null);
-	}
 
 	@Override
 	public Move getMove(Board board) {
+		
+		if(obj == null) {
+			this.setObjPos();
+		}
 		
 		//if no move has been found yet, set the board state and find a move
 		if(!moveCalculated) {
@@ -194,24 +188,22 @@ public class QuinnStrategy extends Player implements Serializable {
 		return new Point2D.Double(x,y);
 	}
 	
-	private static Position getObjPos(Color c) {
+	private void setObjPos() {
 		
-		Position[] winReg = Board.getWinRegion(c);
+		Position[] winReg = this.getWR();
 		
 		if(winReg[0]==Board.homeBk[0]) {
-			return new Position(4,12);
+			this.obj = new Position(4,12);
 		} else if (winReg[0]==Board.homeG[0]) {
-			return new Position(12,12);
+			this.obj = new Position(12,12);
 		} else if (winReg[0]==Board.homeBu[0]) {
-			return new Position(16,0);
+			this.obj = new Position(16,0);
 		} else if (winReg[0]==Board.homeW[0]) {
-			return new Position(12,0);
+			this.obj = new Position(12,0);
 		} else if (winReg[0]==Board.homeY[0]) {
-			return new Position(4,0);
+			this.obj = new Position(4,0);
 		} else if (winReg[0]==Board.homeR[0]) {
-			return new Position (0,0);
-		} else {
-			return null;
+			this.obj = new Position (0,0);
 		}
 	}
 	
