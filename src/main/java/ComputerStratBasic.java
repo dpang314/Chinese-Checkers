@@ -45,10 +45,10 @@ public class ComputerStratBasic extends Player{
 			int[][] bestMove= new int[3][2]; //{{r1, c1}, {r2, c2} {weight, distance travelled}}
 			bestMove[2][0]=1000;
 			for (int i=0; i<posArr.size(); i++) {
-				if (!posArr.get(i).equals(new Position(0, 0))) {
+				if (!posArr.get(i).equals(new Position(WRP[0], WRP[1]))) {
 					prevPos.clear();//
 					newBM = false;
-					bestMove = goodMove2(posArr.get(i), bestMove, board, false);
+					bestMove = goodMove2(posArr.get(i), bestMove, board, false, posArr.get(i));
 					if(newBM) {
 						bestMove[0][0] = posArr.get(i).getRow();
 						bestMove[0][1] = posArr.get(i).getColumn();
@@ -141,7 +141,7 @@ public class ComputerStratBasic extends Player{
 		}
 		return mq;
 	}
-	private int[][] goodMove2(Position Pos, int[][] bestMove, Board board, boolean jumpOnly){
+	private int[][] goodMove2(Position Pos, int[][] bestMove, Board board, boolean jumpOnly, Position ogPos){
 		if (indexOf(prevPos, Pos)==-1) {
 			prevPos.add(Pos);
 			//System.out.println("added to PP: "+Pos);
@@ -167,7 +167,7 @@ public class ComputerStratBasic extends Player{
 						}
 					}
 					if (pM2.size()>0) {
-						bestMove=goodMove2(p, bestMove, board, true);
+						bestMove=goodMove2(p, bestMove, board, true, ogPos);
 						if (newBM) {
 							//System.out.println("adding to MQ: "+p+", "+new Position(bestMove[1][0], bestMove[1][1]));
 							moveQue.add(p);

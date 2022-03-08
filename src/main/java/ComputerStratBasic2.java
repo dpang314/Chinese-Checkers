@@ -30,6 +30,20 @@ public class ComputerStratBasic2 extends Player{
 			prevMove=null;
 			return null;
 		}
+		if (newTurn) {
+			for (int i=0; i<posArr.size(); i++) {
+				if (!posArr.get(i).equals(new Position(WRP[0], WRP[1]))) {
+					prevPos.clear();//
+					newBM = false;
+					bestMove = goodMove2(posArr.get(i), bestMove, board, false);
+					if(newBM) {
+						bestMove[0][0] = posArr.get(i).getRow();
+						bestMove[0][1] = posArr.get(i).getColumn();
+						moveQue.add(0, new Position(bestMove[0][0], bestMove[0][1]));
+					}
+				}
+			}
+		}
 		
 		return null;
 	}
@@ -41,8 +55,8 @@ public class ComputerStratBasic2 extends Player{
 		}
 		return -1;
 	}
-	private int[][] goodMove2(Position Pos, Board board, boolean jumpOnly){
-		int[][] bestMove= new int[3][2]; //{{r1, c1}, {r2, c2} {weight, distance travelled}}
+	private ArrayList<Position> goodMove2(Position Pos, Board board, boolean jumpOnly){
+		ArrayList<Position> bestMove= new ArrayList<Position>(); //{{r1, c1}, {r2, c2} {weight, distance travelled}}
 		bestMove[2][0]=1000;
 		
 		return bestMove;
