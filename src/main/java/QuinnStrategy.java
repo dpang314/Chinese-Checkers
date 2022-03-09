@@ -21,13 +21,24 @@ import javax.swing.tree.*;
  * goes relative to the corner of the target triangle. Distances
  * are weighted with a quadratic scalar to prioritize moving
  * the pegs that are farthest away.
- * 
+ */
+
+/*
  * FAQ
  * 	Q: will you change it so it looks at future moves too?
  * 	A: no
  */
 
 public class QuinnStrategy extends Player implements Serializable {
+	
+	//weighting values, do not mess with unless you're Quinn
+	protected static double valueThreshold = 10;
+	protected static double scale = 1;
+	
+	protected static void setWeighting(double valueThreshold, double scale) {
+		QuinnStrategy.valueThreshold = valueThreshold;
+		QuinnStrategy.scale = scale; 
+	}
 
 	//the board it sees
 	Board boardAtTurnStart = null;
@@ -74,10 +85,8 @@ public class QuinnStrategy extends Player implements Serializable {
 			currentFastestPath = 0;
 		}
 		
-//		System.out.println(this.getName() + " has been asked for a move.");
 		Move move = optimalJumpChain.poll();
 		
-//		System.out.println(this.getName() + " has given " + move);
 		return move;
 		
 	}
@@ -227,8 +236,6 @@ public class QuinnStrategy extends Player implements Serializable {
 	private static double scaledDist(Position p, Position obj) {
 		
 		//distance beyond which getting closer becomes more valuable
-		final double valueThreshold = 7;
-		final double scale = 50;
 		final int power = 2;
 		
 		//objective point
@@ -265,6 +272,7 @@ public class QuinnStrategy extends Player implements Serializable {
 							boardAtTurnStart.isOccupied(reqObj.getBL().getBR()) &&
 							boardAtTurnStart.isOccupied(nuisance.getTL()) &&
 							boardAtTurnStart.isOccupied(nuisance.getTR()) &&
+							boardAtTurnStart.isOccupied(nuisance) &&
 							(!boardAtTurnStart.isOccupied(nuisance.getTR().getR()) ||
 							!boardAtTurnStart.isOccupied(nuisance.getTR().getL()));
 		
@@ -297,6 +305,7 @@ public class QuinnStrategy extends Player implements Serializable {
 							boardAtTurnStart.isOccupied(reqObj.getTL().getTR()) &&
 							boardAtTurnStart.isOccupied(nuisance.getBL()) &&
 							boardAtTurnStart.isOccupied(nuisance.getBR()) &&
+							boardAtTurnStart.isOccupied(nuisance) &&
 							(!boardAtTurnStart.isOccupied(nuisance.getBR().getR()) ||
 							!boardAtTurnStart.isOccupied(nuisance.getBR().getL()));
 		
@@ -313,6 +322,5 @@ public class QuinnStrategy extends Player implements Serializable {
 		
 		return false;
 	}
-	
 	
 }
