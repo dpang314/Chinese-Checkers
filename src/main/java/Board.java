@@ -110,7 +110,7 @@ public class Board implements Cloneable, Serializable {
 	}
 	
 	public boolean isOccupied(Position p) {
-		return boardPos[p.getRow()][p.getColumn()]!=null;
+		return p==null || boardPos[p.getRow()][p.getColumn()]!=null;
 	}
 	
 	public void fillPos(Position p) {
@@ -124,8 +124,6 @@ public class Board implements Cloneable, Serializable {
 		boardPos[p.getRow()][p.getColumn()] = null;
 		
 	}
-
-	
 	public void fillPos(Position[] arr) {
 		for (Position p : arr) {
 			this.fillPos(p);
@@ -236,13 +234,20 @@ public class Board implements Cloneable, Serializable {
 		}
 		return -1;
 	}
-	public void move(Move move) {
+	public void move(Move move) throws Exception {
+		
+		if(move==null) {
+			return;
+		}
+		
 		Position startPos = move.getStartPosition();
 		Position endPos = move.getEndPosition();
-		System.out.println(startPos+", "+endPos);
 		//checks that the peg exists and can move to the specified location
-		if(boardPos[startPos.getRow()][startPos.getColumn()]==null || !canMove(startPos,endPos,false)) {
-			throw new RuntimeException("Invalid move. startPos is null or cannot move there.");
+		if(boardPos[startPos.getRow()][startPos.getColumn()]==null) {
+			throw new RuntimeException("Invalid move. startPos is null.");
+		}
+		if ( !canMove(startPos,endPos,false)) {
+			throw new RuntimeException("Invalid Move. " + startPos + " cannot move to " + endPos);
 		}
 		
 		boardPos[endPos.getRow()][endPos.getColumn()] = boardPos[startPos.getRow()][startPos.getColumn()]; //check copy vs ref
@@ -250,6 +255,7 @@ public class Board implements Cloneable, Serializable {
 		
 		//updates the move-maker's array of positions
 		move.getOwner().posArr.set(indexOf(move.getOwner().posArr, startPos), endPos);
+
 	}
 	
 	private void populateReg(Position[] region, Player p) {
