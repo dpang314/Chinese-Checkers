@@ -4,7 +4,7 @@ import java.util.*;
 public class ArushiStrategy extends Player {
 	
 	private int callGM=0;
-	private 
+	private ArrayList<Position> moveQueue;
 	public ArushiStrategy (Color color, String playerName) {
 		super(color, playerName);
 	}
@@ -14,45 +14,18 @@ public class ArushiStrategy extends Player {
 	}
 
 	public Move getMove(Board board) {
-		
+		int limit = moveQueue.size();
+		int bestIndex;
+		Move currentMove;
 		//when you've called get move queue size-1 times (0 to queue size-2):
 			//set calledGM to 0
 			//set the move arrayList to an empty arrayList
 		//neighborConfs: the states of the board we consider
 		//within one turn
-		ArrayList<ArrayList<Position>> neighborConfs = 
-				new ArrayList<ArrayList<Position>>(0);
-
-		for (int i=0; i<=9; i++) {
-			ArrayList<Position> pegStep = new ArrayList<Position>(0);
-			pegStep.add(this.posArr.get(i));
-			pegStep.add(generateConfs(this.posArr.get(i), board));
-			neighborConfs.add(pegStep);
-		}
-
-		double [] rwDists = new double[10];
-
-		for (int i=0; i<=9; i++) {
-			rwDists[i]=randomWalk(i, neighborConfs.get(i).get(1), board);
-		}
-
-		//find the smallest randomWalk distance average
-
-		double smallestRW=(double) Double.MAX_VALUE;
-		int smallestRWInd=0;
-		for (int i=0; i<=9; i++) {
-			if (rwDists[i]<smallestRW) {
-				smallestRWInd=i;
-				smallestRW=rwDists[i];
-			}
-		}
-
-		Position endPos = neighborConfs.get(smallestRWInd).get(1);
-		Move thisTurn = new Move(neighborConfs.get(smallestRWInd).get(0), endPos, this);
-
-		this.posArr.set(smallestRWInd, endPos);
-
-		return thisTurn;
+		if (callGM==0) {
+			bestIndex=calculateMove(board);
+			moveQueue=confQueue(this.posArr.get(bestIndex), board);
+		} else if (callGM)
 
 	}
 	
@@ -85,8 +58,6 @@ public class ArushiStrategy extends Player {
 		}
 
 		//Move thisTurn = new Move(neighborConfs.get(smallestRWInd).get(0), endPos, this);
-
-		this.posArr.set(smallestRWInd, endPos);
 
 		return smallestRWInd;
 	}
