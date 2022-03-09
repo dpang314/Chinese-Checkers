@@ -234,7 +234,7 @@ public class Board implements Cloneable, Serializable {
 		}
 		return -1;
 	}
-	public void move(Move move) throws Exception {
+	public void move(Move move) {
 		
 		if(move==null) {
 			return;
