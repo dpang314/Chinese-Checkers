@@ -74,9 +74,10 @@ public class QuinnStrategy extends Player implements Serializable {
 			currentFastestPath = 0;
 		}
 		
+//		System.out.println(this.getName() + " has been asked for a move.");
 		Move move = optimalJumpChain.poll();
-		System.out.println(this.getName() + " " + move);
 		
+//		System.out.println(this.getName() + " has given " + move);
 		return move;
 		
 	}
@@ -312,4 +313,6 @@ public class QuinnStrategy extends Player implements Serializable {
 		
 		return false;
 	}
+	
+	
 }
