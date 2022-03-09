@@ -36,6 +36,11 @@ public class Board implements Cloneable, Serializable {
 		return boardPos;
 	}
 	
+	public static final Color[] colors = new Color[] {
+		Color.blue, Color.white, Color.yellow, Color.red, Color.black, Color.green
+	};
+	
+	
 	//only so that the various directional position methods can be static
 	public static final int[] rowWidths = {1,2,3,4,13,12,11,10,9,10,11,12,13,4,3,2,1};
 	
@@ -130,46 +135,48 @@ public class Board implements Cloneable, Serializable {
 		}
 	}
 	
-	public Position[] getHomeRegion(Color c) {
-		
-		Position[] ret = null;
-		
+	public static Color getOpposingColor(Color c) {
+		if(c==Color.BLUE) {
+			return Color.RED;
+		} else if (c==Color.WHITE) {
+			return Color.BLACK;
+		} else if (c==Color.YELLOW) {
+			return Color.GREEN;
+		} else if (c==Color.RED) {
+			return Color.BLUE;
+		} else if (c==Color.BLACK) {
+			return Color.WHITE;
+		} else if (c==Color.GREEN) {
+			return Color.YELLOW;
+		}
+		return null;
+	}
+	
+	public static Position[] getHomeRegion(Color c) {
+
 		if (c.equals(Color.RED)) {
-			ret = homeR;
+			return homeR;
 		} else if (c.equals(Color.BLACK)) {
-			ret = homeBk;
+			return homeBk;
 		} else if (c.equals(Color.GREEN)) {
-			ret = homeG;
+			return homeG;
 		} else if (c.equals(Color.BLUE)) {
-			ret = homeBu;
+			return homeBu;
 		} else if (c.equals(Color.WHITE)) {
-			ret = homeW;
+			return homeW;
 		} else if (c.equals(Color.YELLOW)) {
-			ret = homeY;
+			return homeY;
 		}
 
-		return ret;
+		return null;
 		
 	}
 	public static Position[] getWinRegion(Color c) {
-		Position[] ret = null;
-
-		if (c.equals(Color.RED)) {
-			ret = homeBu;
-		} else if (c.equals(Color.BLACK)) {
-			ret = homeW;
-		} else if (c.equals(Color.GREEN)) {
-			ret = homeY;
-		} else if (c.equals(Color.BLUE)) {
-			ret = homeR;
-		} else if (c.equals(Color.WHITE)) {
-			ret = homeBk;
-		} else if (c.equals(Color.YELLOW)) {
-			ret = homeG;
-		}
-
-		return ret;
+		
+		return getHomeRegion(getOpposingColor(c));
+		
 	}
+	
 	public ArrayList<Position> possibleMoves(Position p, boolean jumpOnly) {  
 		//constraint true if ongoing turn, can only jump
 		
