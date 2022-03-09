@@ -2,7 +2,9 @@ import java.awt.Color;
 import java.util.*;
 
 public class ArushiStrategy extends Player {
-
+	
+	private int callGM=0;
+	private 
 	public ArushiStrategy (Color color, String playerName) {
 		super(color, playerName);
 	}
@@ -12,6 +14,10 @@ public class ArushiStrategy extends Player {
 	}
 
 	public Move getMove(Board board) {
+		
+		//when you've called get move queue size-1 times (0 to queue size-2):
+			//set calledGM to 0
+			//set the move arrayList to an empty arrayList
 		//neighborConfs: the states of the board we consider
 		//within one turn
 		ArrayList<ArrayList<Position>> neighborConfs = 
@@ -42,12 +48,48 @@ public class ArushiStrategy extends Player {
 		}
 
 		Position endPos = neighborConfs.get(smallestRWInd).get(1);
-		Move thisTurn = new Move(this.posArr.get(smallestRWInd), endPos, this);
+		Move thisTurn = new Move(neighborConfs.get(smallestRWInd).get(0), endPos, this);
 
 		this.posArr.set(smallestRWInd, endPos);
 
 		return thisTurn;
 
+	}
+	
+	private int calculateMove(Board board) {
+		ArrayList<ArrayList<Position>> neighborConfs = 
+				new ArrayList<ArrayList<Position>>(0);
+
+		for (int i=0; i<=9; i++) {
+			ArrayList<Position> pegStep = new ArrayList<Position>(0);
+			pegStep.add(this.posArr.get(i));
+			pegStep.add(generateConfs(this.posArr.get(i), board));
+			neighborConfs.add(pegStep);
+		}
+
+		double [] rwDists = new double[10];
+
+		for (int i=0; i<=9; i++) {
+			rwDists[i]=randomWalk(i, neighborConfs.get(i).get(1), board);
+		}
+
+		//find the smallest randomWalk distance average
+
+		double smallestRW=(double) Double.MAX_VALUE;
+		int smallestRWInd=0;
+		for (int i=0; i<=9; i++) {
+			if (rwDists[i]<smallestRW) {
+				smallestRWInd=i;
+				smallestRW=rwDists[i];
+			}
+		}
+
+		Position endPos = neighborConfs.get(smallestRWInd).get(1);
+		//Move thisTurn = new Move(neighborConfs.get(smallestRWInd).get(0), endPos, this);
+
+		this.posArr.set(smallestRWInd, endPos);
+
+		return thisTurn;
 	}
 
 	private double randomWalk(int tracker, Position newPos, Board board) {
@@ -136,6 +178,61 @@ public class ArushiStrategy extends Player {
 		return next;
 	}
 
+	private ArrayList<Position> confQueue(Position pos, Board current) {
+		ArrayList<Position> moves = new ArrayList<Position>();
+		moves.add(pos);
+		Position next = new Position(pos.getRow(), pos.getColumn());
+		int movingPegDist = pegDistance(pos);
+		ArrayList<Position> possMoves = current.possibleMoves(pos, false);
+
+		if (possMoves.size()>0) {
+			int nextMoveIndex=0;
+			boolean goodStep=false;
+			for (int i=0; i<possMoves.size(); i++) {
+				int possDist = pegDistance(possMoves.get(i));
+				if (possDist<=movingPegDist) {
+					movingPegDist=possDist;
+					nextMoveIndex=i;
+					goodStep=true;
+				}
+			}
+
+			if (goodStep) {
+				next=possMoves.get(nextMoveIndex);
+				moves.add(next);
+				//stop if the best next configuration via this greedy alg is an adjacent step
+				if (checkHop(pos, next)) {
+					//next=possMoves.get(nextMoveIndex);
+					boolean improvingJumps=true;
+					Position newCurr = possMoves.get(nextMoveIndex); //newCurr: new current pos within that turn
+					int currDist = pegDistance(newCurr);
+					while (improvingJumps) {
+						ArrayList<Position> jumps = current.possibleJumpMoves(newCurr);
+						nextMoveIndex = 0;
+						goodStep=false;
+						for (int i=0; i<jumps.size(); i++) {
+							int possDist = pegDistance(jumps.get(i));
+							if (possDist<=currDist) {
+								nextMoveIndex=i;
+								currDist=possDist;
+								goodStep=true;
+							}
+						}
+
+						if (goodStep) {
+							newCurr = jumps.get(nextMoveIndex);
+							moves.add(newCurr);
+						} else {
+							improvingJumps=false;
+						}
+					}
+				}
+			}
+		}
+
+		return moves;
+	}
+
 	//this is for one hop within a turn-not a chain of hops
 	private boolean checkHop (Position start, Position end) {
 		boolean isHop=false;
@@ -178,9 +275,9 @@ public class ArushiStrategy extends Player {
 			tipInd = 0;
 		}
 		//finds the goal position based on player color
-		
+
 		Position[] winArea = Board.homeAll.get(this.getWR());
-		
+
 		Position goal = winArea[tipInd];
 		//Gets current peg's position
 		//estimates distance by row/column

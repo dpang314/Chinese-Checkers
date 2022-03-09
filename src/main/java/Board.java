@@ -12,7 +12,7 @@ public class Board implements Cloneable, Serializable {
 		
 		Peg[][] newState = boardPos.clone();
 		for(int r = 0; r<newState.length; r++) {
-			for(int c = 0; c<newState[r].length; r++) {
+			for(int c = 0; c<newState[r].length; c++) {
 				if(newState[r][c]==null)
 					newState[r][c] = null;
 				else

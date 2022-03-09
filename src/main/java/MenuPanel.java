@@ -119,9 +119,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		bigFont = CustomFont.getFont().deriveFont(15f);
 		playerFont = CustomFont.getFont().deriveFont(28f);
 		players = new Player[6];
-		players[0] = new HumanPlayer(Color.RED, "Player 1");
-		players[1] = new QuinnStrategy(Color.RED, "Computer 1");
-
+		
 		this.setLayout(null);
 
 		shuffler = new JButton("");
@@ -401,14 +399,17 @@ public class MenuPanel extends JPanel implements ActionListener {
 		}
 
 		if (eventName.equals("startB")) {
-			for (int x = 0; x < 6; x++) {
-				if (names[x] != null) {
-					namesAl.add(names[x]);
-				}
-				if (types[x] != 0) {
-					typesAl.add(types[x]);
-				}
-			}
+//			for (int x = 0; x < 6; x++) {
+//				if (names[x] != null) {
+//					namesAl.add(names[x]);
+//				}
+//				if (types[x] != 0) {
+//					typesAl.add(types[x]);
+//				}
+//			}
+			players[0] = new ArushiStrategy(Color.RED, "MCMC 1");
+			players[1] = new ArushiStrategy(Color.BLUE, "MCMC 2");
+
 
 			gui.switchToGamePanel(players, shuffle);
 		}
