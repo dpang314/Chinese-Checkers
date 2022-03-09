@@ -45,19 +45,13 @@ public class QuinnStrategy extends Player implements Serializable {
 	public QuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
 	}
-	
-	public void assignWinReg(int n) {
-		super.assignWinRegInt(n);
-		this.obj = getObjPos(this.getColor());
-	}
-	
-	//only for testing
-	public QuinnStrategy() {
-		this(null,null);
-	}
 
 	@Override
 	public Move getMove(Board board) {
+		
+		if(obj == null) {
+			this.setObjPos();
+		}
 		
 		//if no move has been found yet, set the board state and find a move
 		if(!moveCalculated) {
@@ -80,7 +74,10 @@ public class QuinnStrategy extends Player implements Serializable {
 			currentFastestPath = 0;
 		}
 		
-		return optimalJumpChain.poll();
+		Move move = optimalJumpChain.poll();
+		System.out.println(this.getName() + " " + move);
+		
+		return move;
 		
 	}
 	
@@ -155,11 +152,13 @@ public class QuinnStrategy extends Player implements Serializable {
 		double valueComp = percentDiff(currentBestValue,currentValue);
 		
 		//if the move is better or equivalent but faster, it becomes the current optimal chain
-		boolean betterMove = valueComp>2.0;
+		boolean betterMove = valueComp>1.0;
 		boolean sameMoveFaster = Math.abs(valueComp)<=2.0 && currentChainLength<currentFastestPath;
 		
-		boolean isFringeCaseMove = checkFringeCase0(currentGrandMove);
+		boolean isFringeCaseMove = isFringeCase(currentGrandMove);
 		if(betterMove||sameMoveFaster||isFringeCaseMove) { 
+			//things that it does if the move is optimal
+			
 			optimalSpotChain = path;
 			currentBestValue = currentValue;
 			currentFastestPath = currentChainLength;
@@ -194,24 +193,22 @@ public class QuinnStrategy extends Player implements Serializable {
 		return new Point2D.Double(x,y);
 	}
 	
-	private static Position getObjPos(Color c) {
+	private void setObjPos() {
 		
-		Position[] winReg = Board.getWinRegion(c);
+		Position[] winReg = this.getWR();
 		
 		if(winReg[0]==Board.homeBk[0]) {
-			return new Position(4,12);
+			this.obj = new Position(4,12);
 		} else if (winReg[0]==Board.homeG[0]) {
-			return new Position(12,12);
+			this.obj = new Position(12,12);
 		} else if (winReg[0]==Board.homeBu[0]) {
-			return new Position(16,0);
+			this.obj = new Position(16,0);
 		} else if (winReg[0]==Board.homeW[0]) {
-			return new Position(12,0);
+			this.obj = new Position(12,0);
 		} else if (winReg[0]==Board.homeY[0]) {
-			return new Position(4,0);
+			this.obj = new Position(4,0);
 		} else if (winReg[0]==Board.homeR[0]) {
-			return new Position (0,0);
-		} else {
-			return null;
+			this.obj = new Position (0,0);
 		}
 	}
 	
@@ -230,7 +227,7 @@ public class QuinnStrategy extends Player implements Serializable {
 		
 		//distance beyond which getting closer becomes more valuable
 		final double valueThreshold = 7;
-		final double scale = 100;
+		final double scale = 50;
 		final int power = 2;
 		
 		//objective point
@@ -245,63 +242,74 @@ public class QuinnStrategy extends Player implements Serializable {
 		return distance;
 	}
 	
-	// ----- ANNOYING FRINGE CASE METHODS -----
+	// ----- ANNOYING FRINGE CASE METHOD(S) -----
+	
+	private boolean isFringeCase(Move m) {
+		return checkFringeCase0(m) ||
+				checkFringeCase1(m);
+	}
+	
 	private boolean checkFringeCase0(Move m) {
 		Position start = m.getStartPosition();
 		Position end = m.getEndPosition();
 		
 		Position nuisance = new Position(4,6);
+		Position reqObj = new Position(0,0);
 		
-		if(!(start.equals(nuisance) &&
-			boardAtTurnStart.isOccupied(start.getTL()) &&
-			boardAtTurnStart.isOccupied(start.getTR()))) 
-		{
+		boolean fillCond = boardAtTurnStart.isOccupied(reqObj) &&
+							boardAtTurnStart.isOccupied(reqObj.getBL()) &&
+							boardAtTurnStart.isOccupied(reqObj.getBR()) &&
+							boardAtTurnStart.isOccupied(reqObj.getBL().getBL()) &&
+							boardAtTurnStart.isOccupied(reqObj.getBL().getBR()) &&
+							boardAtTurnStart.isOccupied(reqObj.getBL().getBR()) &&
+							boardAtTurnStart.isOccupied(nuisance.getTL()) &&
+							boardAtTurnStart.isOccupied(nuisance.getTR()) &&
+							(!boardAtTurnStart.isOccupied(nuisance.getTR().getR()) ||
+							!boardAtTurnStart.isOccupied(nuisance.getTR().getL()));
+		
+		if(!fillCond) {
 			return false;
 		}
 		
-		boolean left = boardAtTurnStart.isOccupied(start.getTL().getL());
-		if(!left && end.equals(start.getL())) { 
-			return true;
-		} else if (left && end.equals(start.getR())) {
+		if(!boardAtTurnStart.isOccupied(nuisance.getTR().getR()) && start.equals(nuisance.getTL()) && end.equals(nuisance.getTR().getR())) {
 			return true;
 		}
+		if(!boardAtTurnStart.isOccupied(nuisance.getTL().getL()) && start.equals(nuisance.getTR()) && end.equals(nuisance.getTL().getL())) {
+			return true;
+		}
+		
 		return false;
 	}
 	
-	public static void main(String[] args) {	
+	private boolean checkFringeCase1(Move m) {
+		Position start = m.getStartPosition();
+		Position end = m.getEndPosition();
 		
-		Board b = new Board();
-		QuinnStrategy myStrategy = new QuinnStrategy(Color.BLUE, "Quinn");
-		b.fillPos(Board.homeBk);
-		b.fillPos(Board.homeY);
-		b.fillPos(Board.homeW);
-		b.fillPos(Board.homeG);
-				
-		for(Position p : Board.homeBu) {
-			myStrategy.posArr.add(p);
-			b.fillPos(p);
+		Position nuisance = new Position(12,6);
+		Position reqObj = new Position(16,0);
+		
+		boolean fillCond = boardAtTurnStart.isOccupied(reqObj) &&
+							boardAtTurnStart.isOccupied(reqObj.getTL()) &&
+							boardAtTurnStart.isOccupied(reqObj.getTR()) &&
+							boardAtTurnStart.isOccupied(reqObj.getTL().getTL()) &&
+							boardAtTurnStart.isOccupied(reqObj.getTL().getTR()) &&
+							boardAtTurnStart.isOccupied(reqObj.getTL().getTR()) &&
+							boardAtTurnStart.isOccupied(nuisance.getBL()) &&
+							boardAtTurnStart.isOccupied(nuisance.getBR()) &&
+							(!boardAtTurnStart.isOccupied(nuisance.getBR().getR()) ||
+							!boardAtTurnStart.isOccupied(nuisance.getBR().getL()));
+		
+		if(!fillCond) {
+			return false;
 		}
 		
-		System.out.println("GAME START!");
-		b.printBoard();
-		
-		//prints move stack
-		Move move;
-		do {
-			move = myStrategy.getMove(b);
-			
-			if(move!=null) {
-				b.move(move);
-				b.printBoard();
-				System.out.println("TURN MADE!");
-			} else {
-//				System.out.println("TURN ENDED!");
-			}
-		try {
-			Thread.sleep(75);
-		} catch (InterruptedException e) {
-			System.err.println(e.getMessage());
+		if(!boardAtTurnStart.isOccupied(nuisance.getBR().getR()) && start.equals(nuisance.getBL()) && end.equals(nuisance.getBR().getR())) {
+			return true;
 		}
-		} while (true);	
+		if(!boardAtTurnStart.isOccupied(nuisance.getBL().getL()) && start.equals(nuisance.getBR()) && end.equals(nuisance.getBL().getL())) {
+			return true;
+		}
+		
+		return false;
 	}
 }

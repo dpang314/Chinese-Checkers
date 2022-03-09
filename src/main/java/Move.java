@@ -23,6 +23,6 @@ public class Move implements Serializable {
 		return endPosition;
 	}
 	public String toString() {
-		return "[" + owner + "]" + " " + startPosition + " to " + endPosition;
+		return "[" + owner.getName() + "]" + " " + startPosition + " to " + endPosition;
 	}
 }
