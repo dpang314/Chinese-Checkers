@@ -292,9 +292,31 @@ public class Board implements Cloneable, Serializable {
 	private String replaceLine(int row) {
 		String ret = printerTemplate[row];
 		for(int i = 0; i<rowWidths[row]; i++) {
-			ret = ret.replaceFirst("\\$", isOccupied(new Position(row,i))?"🅑":"ⵔ");
+			ret = ret.replaceFirst("\\$", isOccupied(new Position(row,i))?getColorChar(this.boardPos[row][i].getOwner().getColor()):"ⵔ");
 		}
 		return ret;
+	}
+	
+	private String getColorChar(Color c) {
+		if(c==Color.blue) {
+			return "🅑";
+		}
+		if(c==Color.white) {
+			return "🅦";
+		}
+		if(c==Color.yellow) {
+			return "🅨";
+		}
+		if(c==Color.red) {
+			return "🅡";
+		}
+		if(c==Color.black) {
+			return "🅚";
+		}
+		if(c==Color.green) {
+			return "🅖";
+		}
+		return "◉";
 	}
 	
 	public void printBoard() {
