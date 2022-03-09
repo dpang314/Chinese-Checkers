@@ -84,12 +84,11 @@ public class ArushiStrategy extends Player {
 			}
 		}
 
-		Position endPos = neighborConfs.get(smallestRWInd).get(1);
 		//Move thisTurn = new Move(neighborConfs.get(smallestRWInd).get(0), endPos, this);
 
 		this.posArr.set(smallestRWInd, endPos);
 
-		return thisTurn;
+		return smallestRWInd;
 	}
 
 	private double randomWalk(int tracker, Position newPos, Board board) {
