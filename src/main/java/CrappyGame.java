@@ -14,14 +14,16 @@ public class CrappyGame {
 		black = new QuinnStrategy(Color.BLACK, "BLACK");
 		green = new QuinnStrategy(Color.GREEN, "GREEN");
 		
+		
+		{
 		/*
 		 * PLEASE DON'T CHANGE ANYTHING
 		 * BESIDES THIS BLOCK OF CODE
 		 * UNLESS YOU KNOW WHAT YOU'RE DOING
-		 */
-		{
+		 */	
 		msDelay = 0; //the delay between each move, in ms
-		players = new Player[] {blue};
+		players = new Player[] {blue, red};
+		
 		}
 		
 		
@@ -39,7 +41,7 @@ public class CrappyGame {
 			if(p.getWR()==null) break;
 			playerMove = p.getMove(board);
 			board.move(playerMove);
-			if(verbose) board.printBoard();
+			if(verbose&&playerMove!=null) board.printBoard();
 			
 		} while (playerMove!=null);
 		
@@ -93,6 +95,6 @@ public class CrappyGame {
 	}
 	
 	public static void main(String[] args) {
-		doGame(true);
+		System.out.println(doGame(true));
 	}
 }
