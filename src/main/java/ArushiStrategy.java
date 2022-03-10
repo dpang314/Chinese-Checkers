@@ -22,7 +22,13 @@ public class ArushiStrategy extends Player {
 		if (callGM==0) {
 			bestIndex=calculateMove(board);
 			moveQueue=confQueue(this.posArr.get(bestIndex), board);
+			
+			if (moveQueue.size()>=2) {
 			currentMove = new Move(moveQueue.get(0), moveQueue.get(1), this);
+			
+			} else {
+				currentMove=null;
+			}
 		} else if (callGM<=moveQueue.size()-1 && callGM>1) {
 			currentMove = new Move(moveQueue.get(callGM-1), moveQueue.get(callGM), this);
 		} else {
