@@ -230,9 +230,10 @@ public class GamePanel extends JPanel {
 				renderComputerMoves();
 
 			} else {
-				if (endPosition == null) {
-					endPosition = move.getEndPosition();
-				}
+//				if (endPosition == null) {
+//					endPosition = move.getEndPosition();
+//				}
+				endPosition = move.getEndPosition();
 				System.out.println(move
 				);
 				game.movePeg(move);

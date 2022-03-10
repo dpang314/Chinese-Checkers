@@ -11,6 +11,7 @@ public class ComputerStratBasic extends Player{
 	private ArrayList <Position> moveQue;
 	private Position[] winReg;
 	private Move prevMove;
+	private Move prevM2;
 //	={new Position(16, 0), 
 //			new Position(15, 0), new Position(15, 1), 
 //			new Position(14, 0), new Position(14, 1), new Position(14, 2),
@@ -29,17 +30,27 @@ public class ComputerStratBasic extends Player{
 		else if (color.equals(Color.yellow)) {dir='r'; WRP[0] = 12; WRP[1] = 12;}
 		else if (color.equals(Color.blue)) {dir='u'; WRP[0] = 0; WRP[1] = 0;}
 		else {dir='d'; WRP[0] = 16; WRP[1] = 0;}
-		//System.out.println(new Position(0, 0).equals(new Position(0, 0)));
+		System.out.println("WR: "+winReg);
 	}
 	
 	@Override //pass null when done turn
 	public Move getMove(Board board) {
+		winReg = getWR();
 		if (endTurn) {
 			endTurn=false;
+			prevM2 = new Move(prevMove.getStartPosition(), prevMove.getEndPosition(), this);
 			prevMove=null;
+			newTurn=true;
+			numWiTurn=1;
+			System.out.println("Turn ended @ 1");
 			return null;
 		}
 		if (newTurn) {
+			if (prevMove!=null) {
+				prevM2 = new Move(prevMove.getStartPosition(), prevMove.getEndPosition(), this);
+				//prevMove=null;
+			}
+			System.out.println("New Turn");
 			prevPos.clear();
 			moveQue.clear();
 			int[][] bestMove= new int[3][2]; //{{r1, c1}, {r2, c2} {weight, distance travelled}}
@@ -47,6 +58,7 @@ public class ComputerStratBasic extends Player{
 			for (int i=0; i<posArr.size(); i++) {
 				if (!posArr.get(i).equals(new Position(WRP[0], WRP[1]))) {
 					prevPos.clear();//
+					System.out.println("Testing pos: "+posArr.get(i));
 					newBM = false;
 					bestMove = goodMove2(posArr.get(i), bestMove, board, false, posArr.get(i));
 					if(newBM) {
@@ -69,13 +81,24 @@ public class ComputerStratBasic extends Player{
 					numWiTurn=1;
 					newTurn = true;
 				}
-				prevMove = new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
-				return prevMove;
+				if ((prevMove==null) || prevMove.getEndPosition().equals(new Position(bestMove[0][0], bestMove[0][1]))) {
+					prevMove = new Move(new Position(bestMove[0][0], bestMove[0][1]), new Position(bestMove[1][0], bestMove[1][1]), this);
+					System.out.println("return Move @ 1: "+prevMove);
+					return prevMove;
+				}else {
+					System.out.println("MQ problem: "+moveQue);
+				}
 			}
 		}
 		newTurn = false;
 		if (numWiTurn==moveQue.size()) {
-			prevMove=null;
+			//prevM2 = new Move(prevMove.getStartPosition(), prevMove.getEndPosition(), this);
+			//System.out.println("Pm2: "+prevM2);
+			//prevMove=null;
+			newTurn=true;
+			endTurn=true;
+			numWiTurn=1;
+			System.out.println("Turn ended @ 2");
 			return null;
 		}
 		Position ret = moveQue.get(numWiTurn-1);
@@ -94,12 +117,27 @@ public class ComputerStratBasic extends Player{
 		if (indexOf(board.possibleMoves(ret, true), ret2)==-1) {
 			numWiTurn=1;
 			newTurn = true;
+			prevM2 = new Move(prevMove.getStartPosition(), prevMove.getEndPosition(), this);
 			prevMove=null;
+			System.out.println("Turn ended @ 3");
 			return null;
 		}
 		System.out.println("out here: "+indexOf(board.possibleMoves(ret, true), ret2));
-		prevMove = new Move(ret, ret2, this);
-		return prevMove;
+		if ((prevMove==null) || (prevMove.getEndPosition().equals(ret)&& indexOf(board.possibleMoves(ret, true), ret2)!=-1)) {
+			prevMove = new Move(ret, ret2, this);
+			System.out.println("return Move @ 2: "+prevMove);
+			return prevMove;
+		}else {
+			System.out.println("MQ problem: "+moveQue);
+			newTurn=true;
+			prevM2 = new Move(prevMove.getStartPosition(), prevMove.getEndPosition(), this);
+			prevMove=null;
+			numWiTurn=1;
+			System.out.println("Turn ended @ 4");
+			return null;
+		}
+//		prevMove = new Move(ret, ret2, this);
+//		return prevMove;
 	}
 	private int indexOf(ArrayList<Position> PP, Position check) {
 		for (int i=0; i<PP.size(); i++) {
@@ -166,6 +204,7 @@ public class ComputerStratBasic extends Player{
 							//else{System.out.println("kept as possible move: "+pM2.get(i));}
 						}
 					}
+					//if (pM2.size()>0 && !(pM2.size()==1 && distanceToWRP(pM2.get(0), board)>distanceToWRP(p, board))) {
 					if (pM2.size()>0) {
 						bestMove=goodMove2(p, bestMove, board, true, ogPos);
 						if (newBM) {
@@ -178,18 +217,23 @@ public class ComputerStratBasic extends Player{
 						int newWeight = distanceToWRP(p, board);
 						newWeight = newWeight*2-distanceToWRP(ogPos, board);
 						//System.out.println("distance: "+newWeight);
-						//System.out.println("PP(0): "+prevPos.get(0));
-						if (indexOf(winReg, prevPos.get(0))!=-1) {newWeight+=3;}
+						//System.out.println("From "+prevPos.get(0)+"to "+p);
+						if (indexOf(winReg, prevPos.get(0))!=-1) {newWeight+=15;} //3
+						//System.out.println("weighting: "+newWeight);
 						if (!(indexOf(winReg, Pos)!=-1 && indexOf(winReg, p)==-1)) {
 							if (distanceToWRP(Pos, board)>=distanceToWRP(p, board)) {
-								if (newWeight<bestMove[2][0] || (newWeight==bestMove[2][0] && distanceToWRP(Pos, board)>bestMove[2][1])) {
-								//if (newWeight<bestMove[2][0] || (newWeight==bestMove[2][0] && distanceToWRP(Pos, board)>bestMove[2][1]) || (indexOf(winReg, new Position(bestMove[0][0], bestMove[0][1]))!=-1 && distanceToWRP(Pos, board)>bestMove[2][1])) {
-									//System.out.println("new best move: "+Pos+" to "+p+" with w: "+newWeight);
-									newBM=true;
-									//bestMove[0][0] = row;bestMove[0][1] = col;
-									bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
-									bestMove[2][0] = newWeight;
-									bestMove[2][1] = distanceToWRP(new Position(row, col), board);
+								if (prevM2==null || (!prevM2.getStartPosition().equals(p) && !prevM2.getEndPosition().equals(p)) ){
+									if (newWeight<bestMove[2][0] || (newWeight==bestMove[2][0] && distanceToWRP(Pos, board)>bestMove[2][1])) {
+										if (prevM2!=null) {
+										System.out.println("prevMove EndPos: "+prevM2.getEndPosition()+", "+"moving to: "+p);}
+									//if (newWeight<bestMove[2][0] || (newWeight==bestMove[2][0] && distanceToWRP(Pos, board)>bestMove[2][1]) || (indexOf(winReg, new Position(bestMove[0][0], bestMove[0][1]))!=-1 && distanceToWRP(Pos, board)>bestMove[2][1])) {
+										//System.out.println("new best move: "+Pos+" to "+p+" with w: "+newWeight);
+										newBM=true;
+										//bestMove[0][0] = row;bestMove[0][1] = col;
+										bestMove[1][0] = p.getRow();bestMove[1][1] = p.getColumn();
+										bestMove[2][0] = newWeight;
+										bestMove[2][1] = distanceToWRP(new Position(row, col), board);
+									}
 								}
 							}
 						}

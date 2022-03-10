@@ -25,6 +25,7 @@ public class ComputerStratBasic2 extends Player{
 		else {dir='d'; WRP[0] = 16; WRP[1] = 0;}
 	}
 	public Move getMove(Board board) {
+		winReg = getWR();
 		if (endTurn) {
 			endTurn=false;
 			prevMove=null;

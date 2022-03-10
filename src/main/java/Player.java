@@ -23,6 +23,7 @@ public abstract class Player implements Serializable {
 	}
 	public void assignWinReg(Position[] WR) {
 		winReg=WR;
+		System.out.println("WR from P: "+winReg[0]);
 	}
 	public void assignWinRegInt(int WR) {
 		winRegInt=WR;
