@@ -220,8 +220,9 @@ public class ArushiStrategy extends Player {
 				}
 
 			}
-
+		}
 			return moves;
+		
 		}
 
 		//this is for one hop within a turn-not a chain of hops
