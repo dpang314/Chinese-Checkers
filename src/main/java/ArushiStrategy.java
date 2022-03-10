@@ -19,13 +19,11 @@ public class ArushiStrategy extends Player {
 		//when you've called get move queue size-1 times (0 to queue size-2):
 			//set calledGM to 0
 			//set the move arrayList to an empty arrayList
-		//neighborConfs: the states of the board we consider
-		//within one turn
 		if (callGM==0) {
 			bestIndex=calculateMove(board);
 			moveQueue=confQueue(this.posArr.get(bestIndex), board);
 			currentMove = new Move(moveQueue.get(0), moveQueue.get(1), this);
-		} else if (callGM<=moveQueue.size()-1) {
+		} else if (callGM<=moveQueue.size()-1 && callGM>1) {
 			currentMove = new Move(moveQueue.get(callGM-1), moveQueue.get(callGM), this);
 		} else {
 			callGM=0;
