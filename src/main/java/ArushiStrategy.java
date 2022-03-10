@@ -86,15 +86,20 @@ public class ArushiStrategy extends Player {
 		double avgDistEst=0;
 
 		for (int r=1; r<=numRW; r++) {
+			//make an array that's a copy of simulation
+			Position [] copySIM = new Position[10];
+			for (int j=0; j<=9; j++) {
+				copySIM[j]=simulation[j];
+			}
 			for (int l=1; l<=length; l++) {
 				int randInd = (int) (Math.random()*9+0); //int btwn 0, 9 inclusive
-				Position next = generateConfs(simulation[randInd], tbRW);
+				Position next = generateConfs(copySIM[randInd], tbRW);
 				tbRW.fillPos(next);
 				//empty the position in tbRW that simulation[randInd] was initially in
-				tbRW.clearPos(simulation[randInd]);
-				simulation[randInd]=next;
+				tbRW.clearPos(copySIM[randInd]);
+				copySIM[randInd]=next;
 			}
-			avgDistEst+=sumDistances(simulation);
+			avgDistEst+=sumDistances(copySIM);
 		}
 
 		avgDistEst/=numRW;
