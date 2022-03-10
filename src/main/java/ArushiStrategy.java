@@ -2,9 +2,10 @@ import java.awt.Color;
 import java.util.*;
 
 public class ArushiStrategy extends Player {
-	
+
 	private int callGM=0;
 	private ArrayList<Position> moveQueue;
+
 	public ArushiStrategy (Color color, String playerName) {
 		super(color, playerName);
 	}
@@ -17,15 +18,15 @@ public class ArushiStrategy extends Player {
 		int bestIndex;
 		Move currentMove;
 		//when you've called get move queue size-1 times (0 to queue size-2):
-			//set calledGM to 0
-			//set the move arrayList to an empty arrayList
+		//set calledGM to 0
+		//set the move arrayList to an empty arrayList
 		if (callGM==0) {
 			bestIndex=calculateMove(board);
 			moveQueue=confQueue(this.posArr.get(bestIndex), board);
-			
+
 			if (moveQueue.size()>=2) {
-			currentMove = new Move(moveQueue.get(0), moveQueue.get(1), this);
-			
+				currentMove = new Move(moveQueue.get(0), moveQueue.get(1), this);
+
 			} else {
 				currentMove=null;
 			}
@@ -36,11 +37,11 @@ public class ArushiStrategy extends Player {
 			moveQueue = new ArrayList<Position>();
 			currentMove=null;
 		}
-		
+
 		return currentMove;
 
 	}
-	
+
 	private int calculateMove(Board board) {
 		ArrayList<ArrayList<Position>> neighborConfs = 
 				new ArrayList<ArrayList<Position>>(0);
@@ -184,7 +185,10 @@ public class ArushiStrategy extends Player {
 				}
 			}
 
-			if (goodStep) {
+			next=pos;
+			if (!goodStep) {
+				moves.add(next);
+			} else {
 				next=possMoves.get(nextMoveIndex);
 				moves.add(next);
 				//stop if the best next configuration via this greedy alg is an adjacent step
@@ -214,67 +218,67 @@ public class ArushiStrategy extends Player {
 						}
 					}
 				}
+
 			}
+
+			return moves;
 		}
 
-		return moves;
-	}
+		//this is for one hop within a turn-not a chain of hops
+		private boolean checkHop (Position start, Position end) {
+			boolean isHop=false;
 
-	//this is for one hop within a turn-not a chain of hops
-	private boolean checkHop (Position start, Position end) {
-		boolean isHop=false;
-
-		if (start.getRow()==end.getRow()) {
-			if (Math.abs(start.getColumn()-end.getColumn()) == 2) {
+			if (start.getRow()==end.getRow()) {
+				if (Math.abs(start.getColumn()-end.getColumn()) == 2) {
+					isHop = true;
+				}
+			} else if (Math.abs(start.getRow()-end.getRow()) == 2) {
 				isHop = true;
 			}
-		} else if (Math.abs(start.getRow()-end.getRow()) == 2) {
-			isHop = true;
+
+			return isHop;
 		}
 
-		return isHop;
-	}
+		//instead of typing out the same for loop many times, this makes the code 
+		//much easier to read.
+		private int sumDistances(Position [] pegs) {
+			int sumDist=0;
+			for (int i=0; i<=9; i++) {
+				Position pos = pegs[i];
+				sumDist+=pegDistance(pos);
+			}
 
-	//instead of typing out the same for loop many times, this makes the code 
-	//much easier to read.
-	private int sumDistances(Position [] pegs) {
-		int sumDist=0;
-		for (int i=0; i<=9; i++) {
-			Position pos = pegs[i];
-			sumDist+=pegDistance(pos);
+			return sumDist;
 		}
 
-		return sumDist;
-	}
+		private int pegDistance(Position pos) {
 
-	private int pegDistance(Position pos) {
+			int distanceEst = 0;
+			int winReg = this.getWR();
 
-		int distanceEst = 0;
-		int winReg = this.getWR();
+			//Finds the index of the tip of each win region
+			//since getting pieces into the tip is ideal
 
-		//Finds the index of the tip of each win region
-		//since getting pieces into the tip is ideal
+			int tipInd = 0;
+			if (winReg==2||winReg==4)
+				tipInd = 3;
+			else {
+				tipInd = 0;
+			}
+			//finds the goal position based on player color
 
-		int tipInd = 0;
-		if (winReg==2||winReg==4)
-			tipInd = 3;
-		else {
-			tipInd = 0;
+			Position[] winArea = Board.homeAll.get(this.getWR());
+
+			Position goal = winArea[tipInd];
+			//Gets current peg's position
+			//estimates distance by row/column
+			distanceEst = Math.abs(pos.getRow()-goal.getRow())+
+					Math.abs(pos.getColumn()-goal.getColumn());
+
+			return distanceEst;
 		}
-		//finds the goal position based on player color
 
-		Position[] winArea = Board.homeAll.get(this.getWR());
 
-		Position goal = winArea[tipInd];
-		//Gets current peg's position
-		//estimates distance by row/column
-		distanceEst = Math.abs(pos.getRow()-goal.getRow())+
-				Math.abs(pos.getColumn()-goal.getColumn());
 
-		return distanceEst;
 	}
-
-
-
-}
 
