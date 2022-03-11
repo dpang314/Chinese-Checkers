@@ -18,17 +18,18 @@ public class ArushiStrategy extends Player {
 
 	public Move getMove(Board board) {
 		int bestIndex;
-		Move currentMove;
 		//when you've called get move queue size-1 times (0 to queue size-2):
 		//set calledGM to 0
 		//set the move arrayList to an empty arrayList
 		if (!moveCalc) {
 			moveCalc=true;
 			bestIndex=calculateMove(board);
-
+			optimalJumpChain=confQueue(generateConfArr(this.posArr.get(bestIndex), board));
 		} else if (optimalJumpChain.size()==0) {
-
+			moveCalc=false;
 		}
+		
+		return optimalJumpChain.poll();
 
 	}
 
@@ -156,7 +157,7 @@ public class ArushiStrategy extends Player {
 		return next;
 	}
 
-	private ArrayDeque<Move> confQueue(ArrayList<Position> posArr, Board current) {
+	private ArrayDeque<Move> confQueue(ArrayList<Position> posArr) {
 		ArrayDeque<Move> ret = new ArrayDeque<Move>();
 		for(int i = 0; i<posArr.size()-1; i++) {
 			Move newJump = new Move(posArr.get(i), posArr.get(i), this);
