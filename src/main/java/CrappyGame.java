@@ -14,8 +14,8 @@ public class CrappyGame {
 		black = new QuinnStrategy(Color.BLACK, "BLACK");
 		green = new QuinnStrategy(Color.GREEN, "GREEN");
 		
-		
 		{
+			
 		/*
 		 * PLEASE DON'T CHANGE ANYTHING
 		 * BESIDES THIS BLOCK OF CODE
