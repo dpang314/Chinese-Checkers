@@ -15,6 +15,7 @@ public abstract class Player implements Serializable {
 		posArr = new ArrayList<Position>();
 	};
 	public abstract Move getMove(Board board);
+	public abstract boolean isComputer();
 	public void setColor(Color c) { this.color = c; };
 	public Color getColor() { return color; }
 	public String getName() { return playerName; }
