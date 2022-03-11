@@ -55,18 +55,21 @@ public class ComputerStratBasic2 extends Player{
 		newTurn = false;
 		if (moveQue.size()==2) {
 			endTurn=true;
-			return new Move(moveQue.get(0), moveQue.get(1), this);
+			prevMove = new Move(moveQue.get(0), moveQue.get(1), this);
+			return prevMove;
 		}
-		Move ret = new Move(moveQue.get(0), moveQue.get(1), this);
+		prevMove = new Move(moveQue.get(0), moveQue.get(1), this);
 		moveQue.remove(0);
-		return ret;
+		return prevMove;
 	}
 	private ArrayList<Position> getMoveablePos(Position p, Board board){
 		ArrayList<Position> toPickFrom = new ArrayList<Position>();
 		ArrayList<Position> pm = board.possibleMoves(p, false);
 		for (Position pos:pm) {
 			if (distanceToWRP(pos, board)>=distanceToWRP(p, board)) {
-				toPickFrom.add(pos);
+				if (!pos.equals(prevMove.getStartPosition())) {
+					toPickFrom.add(pos);
+				}
 			}
 		}
 		return toPickFrom;
