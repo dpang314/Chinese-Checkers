@@ -3,8 +3,6 @@ import java.util.*;
 
 public class ArushiStrategy extends Player {
 
-	private int callGM=0;
-	private ArrayList<Position> moveQueue;
 	private ArrayDeque<Move> optimalJumpChain;
 	private boolean moveCalc=false;
 
@@ -30,7 +28,6 @@ public class ArushiStrategy extends Player {
 		}
 		
 		return optimalJumpChain.poll();
-
 	}
 
 	private int calculateMove(Board board) {
@@ -159,10 +156,12 @@ public class ArushiStrategy extends Player {
 
 	private ArrayDeque<Move> confQueue(ArrayList<Position> posArr) {
 		ArrayDeque<Move> ret = new ArrayDeque<Move>();
-		for(int i = 0; i<posArr.size()-1; i++) {
-			Move newJump = new Move(posArr.get(i), posArr.get(i), this);
+		
+		for (int i = 0; i<posArr.size()-1; i++) {
+			Move newJump = new Move(posArr.get(i), posArr.get(i+1), this);
 			ret.add(newJump);
 		}
+		
 		return ret;
 	}
 
