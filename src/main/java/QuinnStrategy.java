@@ -29,12 +29,25 @@ import javax.swing.tree.*;
  * 	A: no
  */
 
-public class QuinnStrategy extends ComputerStrategy implements Serializable {
+public class QuinnStrategy extends Player implements Serializable {
 	
-	//weighting values, do not mess with unless you're Quinn
+	/*
+	 * The distance from the objective position
+	 * after which moving pegs in that outer zone
+	 * becomes more valueable. Designed to encourage
+	 * moving faraway pegs before close pegs to
+	 * prevent peg stranding
+	 */
 	protected static double valueThreshold = 10;
+	
+	/*
+	 * How much it starts scaling up in that threshold,
+	 * higher values mean it's more valuable to move 
+	 * the pegs in that area
+	 */
 	protected static double scale = 1;
 	
+	//a method to set these aforementioned weighting values
 	protected static void setWeighting(double valueThreshold, double scale) {
 		QuinnStrategy.valueThreshold = valueThreshold;
 		QuinnStrategy.scale = scale; 
@@ -50,7 +63,6 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 	private boolean moveCalculated = false;
 	
 	//holds the position that the strategy is aiming for
-
 	private Position obj;
 	
 	public QuinnStrategy(Color color, String playerName) {
@@ -60,6 +72,11 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 	@Override
 	public Move getMove(Board board) {
 		
+		/* 
+		 * if it's the first time the strategy has been used
+		 * the objective towards which the pegs are moving
+		 * is updated
+		 */
 		if(obj == null) {
 			this.setObjPos();
 		}
@@ -71,7 +88,14 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 				for(Position p : this.posArr) {
 					investigateMoves(p);
 				}
-			} catch (Exception e) {}
+			} 
+			/*
+			 * this catch block will
+			 * trigger if an
+			 * explicitly defined
+			 * fringe case is found
+			 */
+			catch (Exception e) {}
 			
 			optimalJumpChain = createMoveQueue(optimalSpotChain);
 			moveCalculated = true;
@@ -85,6 +109,7 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 			currentFastestPath = 0;
 		}
 		
+		//polls the jumpc
 		Move move = optimalJumpChain.poll();
 		
 		return move;
@@ -135,6 +160,13 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 			}
 		}
 		
+		/*
+		 * checks if the path is optimal
+		 * assuming that the current path
+		 * is not just a single position
+		 * (which it would be if this node is
+		 * a root node)
+		 */
 		if(!node.isRoot()) {	
 			checkAndUpdateIfOptimal(path);
 		}		
@@ -203,6 +235,14 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 		return new Point2D.Double(x,y);
 	}
 	
+	/*
+	 * looks at the win region of this player
+	 * (which is assigned by the game or board
+	 * or something idk) and sees what the color is,
+	 * then assigns the objective position.
+	 * The objective position is the farthest/deepest
+	 * position in the win region.
+	 */
 	private void setObjPos() {
 		
 		Position[] winReg = this.getWR();
@@ -222,6 +262,16 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 		}
 	}
 	
+	/*
+	 * a method that returns the distance-weighted
+	 * value of a possibly techincally invalid super-
+	 * move from the peg's starting position to its
+	 * ending position. This doesn't involve in-between
+	 * jumps or steps or anything. "Move" is only a
+	 * parameter because it's a nice representation of
+	 * a jump from an initial position to an final position
+	 * of a single peg.
+	 */
 	private double grandMoveValue(Move move) {
 		return scaledDist(move.getStartPosition(),obj)-scaledDist(move.getEndPosition(),obj);
 	}
@@ -235,7 +285,6 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 	//applies a quadratic scalar to the found distance
 	private static double scaledDist(Position p, Position obj) {
 		
-		//distance beyond which getting closer becomes more valuable
 		final int power = 2;
 		
 		//objective point
