@@ -1,5 +1,5 @@
 import java.awt.Color;
-public class CrappyGame {
+public class NoGUIGame {
 	private static QuinnStrategy blue, white, yellow, red, black, green;
 	private static Board board;
 	private static Player[] players;
@@ -40,7 +40,7 @@ public class CrappyGame {
 			
 			if(p.getWR()==null) break;
 			playerMove = p.getMove(board);
-			board.move(playerMove);
+			board.move(playerMove, false);
 			if(verbose&&playerMove!=null) board.printBoard();
 			
 		} while (playerMove!=null);
