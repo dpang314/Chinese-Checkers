@@ -1,7 +1,7 @@
 //import java.awt.Color;
 //import java.util.*;
 //
-//public class ArushiStrategy extends Player {
+//public class ArushiStrategy extends ComputerStrategy {
 //
 //	public ArushiStrategy (Color color, String playerName) {
 //		super(color, playerName);

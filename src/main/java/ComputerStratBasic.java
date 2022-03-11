@@ -1,7 +1,7 @@
 import java.awt.Color;
 import java.util.ArrayList;
 
-public class ComputerStratBasic extends Player{
+public class ComputerStratBasic extends ComputerStrategy{
 	//private int[][] winLine; //{{x1, x2}, {y1, y2}}
 	private char dir;
 	private int[] WRP; //{row, col}

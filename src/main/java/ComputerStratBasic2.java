@@ -1,6 +1,6 @@
 import java.awt.Color;
 import java.util.ArrayList;
-public class ComputerStratBasic2 extends Player{
+public class ComputerStratBasic2 extends ComputerStrategy{
 	private char dir;
 	private int[] WRP; //{row, col}
 	private ArrayList<Position> prevPos;

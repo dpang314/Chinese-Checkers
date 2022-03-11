@@ -29,7 +29,7 @@ import javax.swing.tree.*;
  * 	A: no
  */
 
-public class QuinnStrategy extends Player implements Serializable {
+public class QuinnStrategy extends ComputerStrategy implements Serializable {
 	
 	//weighting values, do not mess with unless you're Quinn
 	protected static double valueThreshold = 10;

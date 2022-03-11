@@ -207,13 +207,10 @@ public class GamePanel extends JPanel {
 
 	private boolean gameOver = false;
 
-	private Position endPosition;
-
 	private void renderComputerMoves() {
 		if (game.winningPlayer() != null) {
 			gameOver = true;
 			repaint();
-			endPosition = null;
 		} else if (game.getCurrentPlayer() instanceof QuinnStrategy || game.getCurrentPlayer() instanceof ComputerStratBasic) {
 			Move move = game.getTurn();
 			if (move == null) {
@@ -221,11 +218,15 @@ public class GamePanel extends JPanel {
 				game.endTurn();
 				repaintButtons = true;
 				repaint();
-				endPosition = null;
+				Timer timer = new Timer(100, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						renderComputerMoves();
+					}
+				});
+				timer.setRepeats(false);
+				timer.start();
 			} else {
-				if (endPosition == null) {
-					endPosition = move.getEndPosition();
-				}
 				game.movePeg(move);
 				repaintButtons = true;
 				repaint();
@@ -321,7 +322,7 @@ public class GamePanel extends JPanel {
 		end = new JButton("End Turn");
 		end.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 4, 254, BUTTON_HEIGHT);
 		style(end);
-		if (!game.canEndTurn()) {
+		if (!game.canEndTurn() || game.getCurrentPlayer() instanceof ComputerStrategy) {
 			styleDisabled(end);
 		}
 		end.addActionListener(endAction);
@@ -329,7 +330,8 @@ public class GamePanel extends JPanel {
 		undo = new JButton("Undo");
 		undo.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 3, 254, BUTTON_HEIGHT);
 		style(undo);
-		if ((!game.canUndoMini() && !game.canUndoTurns()) || gameOver) {
+		if (((!game.canUndoMini() && !game.canUndoTurns()) || gameOver)
+				|| game.getCurrentPlayer() instanceof ComputerStrategy) {
 			styleDisabled(undo);
 		}
 		undo.addActionListener(undoAction);
