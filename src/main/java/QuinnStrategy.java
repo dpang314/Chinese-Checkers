@@ -29,7 +29,7 @@ import javax.swing.tree.*;
  * 	A: no
  */
 
-public class QuinnStrategy extends Player implements Serializable {
+public class QuinnStrategy extends ComputerStrategy implements Serializable {
 	
 	/*
 	 * The distance from the objective position
