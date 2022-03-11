@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.Serializable;
 
 public class Position implements Serializable {
@@ -31,9 +32,9 @@ public class Position implements Serializable {
 		}
 		}
 	}
-	public boolean isAdjacentPos(Position p2) {
+	public boolean isAdjacentPos(Position p) {
 		for(int direction : Position.directions) {
-			if (this.adj(direction)!=null && this.adj(direction).equals(p2)) {
+			if (this.adj(direction)!=null && this.adj(direction).equals(p)) {
 				return true;
 			}
 		}
@@ -147,6 +148,108 @@ public class Position implements Serializable {
 		}
 		
 		return ret;
+	}
+	
+	public Position getAL(Color alignment) {
+		if(alignment==Color.BLUE) {
+			return this.getR();
+		} else if (alignment==Color.WHITE) {
+			return this.getBR();
+		} else if (alignment==Color.YELLOW) {
+			return this.getBL();
+		} else if (alignment==Color.RED) {
+			return this.getL();
+		} else if (alignment==Color.BLACK) {
+			return this.getTL();
+		} else if (alignment==Color.GREEN) {
+			return this.getTR();
+		}
+		throw new RuntimeException("Invalid alignment color.");
+	}
+	
+	public Position getAFL(Color alignment) {
+		if(alignment==Color.BLUE) {
+			return this.getBR();
+		} else if (alignment==Color.WHITE) {
+			return this.getBL();
+		} else if (alignment==Color.YELLOW) {
+			return this.getL();
+		} else if (alignment==Color.RED) {
+			return this.getTL();
+		} else if (alignment==Color.BLACK) {
+			return this.getTR();
+		} else if (alignment==Color.GREEN) {
+			return this.getR();
+		}
+		throw new RuntimeException("Invalid alignment color.");
+	}
+	
+	public Position getAFR(Color alignment) {
+		if(alignment==Color.BLUE) {
+			return this.getBL();
+		} else if (alignment==Color.WHITE) {
+			return this.getL();
+		} else if (alignment==Color.YELLOW) {
+			return this.getTL();
+		} else if (alignment==Color.RED) {
+			return this.getTR();
+		} else if (alignment==Color.BLACK) {
+			return this.getR();
+		} else if (alignment==Color.GREEN) {
+			return this.getBR();
+		}
+		throw new RuntimeException("Invalid alignment color.");
+	}
+	
+	public Position getAR(Color alignment) {
+		if(alignment==Color.BLUE) {
+			return this.getL();
+		} else if (alignment==Color.WHITE) {
+			return this.getTL();
+		} else if (alignment==Color.YELLOW) {
+			return this.getTR();
+		} else if (alignment==Color.RED) {
+			return this.getR();
+		} else if (alignment==Color.BLACK) {
+			return this.getBR();
+		} else if (alignment==Color.GREEN) {
+			return this.getBL();
+		}
+		throw new RuntimeException("Invalid alignment color.");
+	}
+	
+	public Position getABR(Color alignment) {
+		if(alignment==Color.BLUE) {
+			return this.getTL();
+		} else if (alignment==Color.WHITE) {
+			return this.getTR();
+		} else if (alignment==Color.YELLOW) {
+			return this.getR();
+		} else if (alignment==Color.RED) {
+			return this.getBR();
+		} else if (alignment==Color.BLACK) {
+			return this.getBL();
+		} else if (alignment==Color.GREEN) {
+			return this.getL();
+		}
+		throw new RuntimeException("Invalid alignment color.");
+	}
+	
+	public Position getABL(Color alignment) {
+		if(alignment==Color.BLUE) {
+			return this.getTR();
+		} else if (alignment==Color.WHITE) {
+			return this.getR();
+		} else if (alignment==Color.YELLOW) {
+			return this.getBR();
+		} else if (alignment==Color.RED) {
+			return this.getBL();
+		} else if (alignment==Color.BLACK) {
+			return this.getL();
+		} else if (alignment==Color.GREEN) {
+			return this.getTL();
+		}
+		throw new RuntimeException("Invalid alignment color.");
 	}
 
 	private static final boolean left = false, right = true;
