@@ -1,6 +1,5 @@
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Stack;
+import java.util.*;
 import java.awt.Color;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +24,6 @@ public class Game implements Serializable {
   private int numPlayers;
   //tracks the final start and end position of the peg you moved on your turn
   //this is the move that is added to the history stack
-  private Move finalMove = null;
   //tracks moves within one turn; cleared at the end of every turn
   private Stack<Move> miniHistory = new Stack<Move>();
 
@@ -121,16 +119,16 @@ public class Game implements Serializable {
 	}
   
 	public void endTurn() {
+		initiallySelected = null;
+		jumped = false;
 		//Doesn't add a move to the stack if
 		//there is no player in the slot
-		if (finalMove!=null)
-			history.add(finalMove);
+		history.add(new Move(miniHistory.get(0).getStartPosition(),
+				miniHistory.get(miniHistory.size()-1).getEndPosition()
+				,currentPlayer));
 		//Resets final move and clears minihistory stack
 		//at the end of every turn
-		finalMove = null;
-		for (int i = 0; i<miniHistory.size();i++) {
-			miniHistory.remove(i);
-		}
+		miniHistory.clear();
 		//If not at the limit
 		playerTurn++;
 		playerTurn %= 6;
@@ -144,54 +142,135 @@ public class Game implements Serializable {
 			turn++;
 		
 	}
-	
+
+	public boolean canUndoMini() {
+		return !miniHistory.isEmpty();
+	}
+
+	public boolean canUndoTurns() {
+		// Makes sure there is only 1 human player and the current player
+		// has made at least 1 earlier turn
+		return !humans && history.size() >= numPlayers;
+	}
+
+	// If multiple human players, can only undo minihistory
+	// If minihistory empty, undo entire turns
 	public void undo() {
 		Move undoingMove;
 		//If the player has made a move this turn, undoes only the FinalMove without
 		//referencing history
-		if (miniHistory.size()>0) {
+		if (canUndoMini()) {
 			//Creates a move to pass to board which is just a reverse of the 
 			//current turn's move
-			undoingMove = new Move(finalMove.getEndPosition(),
-					finalMove.getStartPosition(), currentPlayer);
-			board.move(undoingMove);
-			for (int i = 0; i<miniHistory.size();i++) {
-				miniHistory.remove(i);
-			}
+			Move lastMove = miniHistory.pop();
+			undoingMove = new Move(lastMove.getEndPosition(),
+					lastMove.getStartPosition(), currentPlayer);
+			board.move(undoingMove, true);
 		}
 		//If there were no moves made this turn, and there are no other human players,
 		//undoes to the beginning of your previous turn.
-		else if (!humans) {
-				//Undoes every move which was not made by the current 
-				//player between the current turn and the start of the 
-				//current player's last turn
-				int k = history.capacity()-1;
-				//iterates through each real player's move since the start of the
-				//current player's previous turn
-				for (int i = 0; i<numPlayers; i++){
-					Move undidMove = history.get(k-i);
-					undoingMove = new Move(undidMove.getEndPosition(),undidMove.getStartPosition()
-							,undidMove.getOwner());
-					board.move(undoingMove);
-					history.remove(k-i);
-			    }
-				//Sets turn counter back however many turns were skipped
-				turn-=numPlayers;
+		else if (canUndoTurns()) {
+			for (int i = 0; i < numPlayers; i++) {
+				Move undidMove = history.pop();
+				undoingMove = new Move(undidMove.getEndPosition(),undidMove.getStartPosition()
+						,undidMove.getOwner());
+				board.move(undoingMove, true);
+			}
+			miniHistory.clear();
+			//Sets turn counter back however many turns were skipped
+			turn-=numPlayers;
 		}
 	}
-	
-	
-	
-	public void movePeg(Move move) {
-		board.move(move);
+
+	private boolean jumped = false;
+
+	public boolean movePeg(Move move) {
+		// First move of turn
+		if (board.possibleJumpMoves(move.getStartPosition()) != null &&
+				board.possibleJumpMoves(move.getStartPosition()).contains(move.getEndPosition())) {
+			jumped = true;
+		}
+		board.move(move, false);
 		//adds the move to the mini stack for this turn
 		miniHistory.add(move);
-		//sets the finalMove to the current start and end position of the peg
-		//over the entire turn
-		finalMove = new Move(miniHistory.get(0).getStartPosition(),
-				miniHistory.get(miniHistory.size()-1).getEndPosition()
-				,currentPlayer);
+		return true;
 	};
+
+	public boolean movePeg(Position endPosition) {
+		// First move of turn
+		Position startPosition = selectedPosition();
+		if (board.possibleJumpMoves(startPosition) != null &&
+				board.possibleJumpMoves(startPosition).contains(endPosition)) {
+			jumped = true;
+		}
+		Move move = new Move(startPosition, endPosition, currentPlayer);
+		board.move(move, false);
+		//adds the move to the mini stack for this turn
+		miniHistory.add(move);
+		initiallySelected = null;
+		return true;
+	};
+
+	Position initiallySelected = null;
+
+    public Position selectedPosition() {
+		if (miniHistory.isEmpty()) {
+			return initiallySelected != null ? initiallySelected : null;
+		}
+		return miniHistory.peek().getEndPosition();
+    }
+
+	public Position startPosition() {
+		if (miniHistory.isEmpty()) {
+			return initiallySelected != null ? initiallySelected : null;
+		}
+		return miniHistory.get(0).getStartPosition();
+	}
+
+	public void select(Position p) {
+		initiallySelected = p;
+	}
+
+	public boolean canEndTurn() {
+		return !miniHistory.isEmpty() && !selectedPosition().equals(startPosition());
+	}
+
+
+
+	public ArrayList<Position> getPossibleMoves() {
+		if (selectedPosition() == null ||
+				!miniHistory.isEmpty() && !jumped) return new ArrayList<Position>();
+		if (miniHistory.isEmpty()) {
+			return board.possibleMoves(selectedPosition(), false);
+		} else {
+			return board.possibleMoves(selectedPosition(), true);
+		}
+	}
+
+	public HashMap<Position, Color> getNonClickablePegs() {
+		HashMap<Position, Color> ret = new HashMap<>();
+		for (int i = 0; i < players.length; i++) {
+			if (players[i] != null) {
+				for (Position p : players[i].posArr) {
+					if ((selectedPosition() == null && playerTurn != i) ||
+							(selectedPosition() != null && !p.equals(selectedPosition()))) {
+						ret.put(p, players[i].getColor());
+					}
+				}
+			}
+		}
+		return ret;
+	}
+
+	public ArrayList<Position> getClickablePegs() {
+        System.out.println(selectedPosition());
+		if (selectedPosition() == null) return currentPlayer.posArr;
+		else {
+			ArrayList<Position> ret = new ArrayList<>();
+			ret.add(selectedPosition());
+			return ret;
+		}
+	}
   
   //(1)red to (4)blue
   //(6)yellow to (3)green

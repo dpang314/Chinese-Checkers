@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.awt.geom.*;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class GamePanel extends JPanel {
@@ -142,6 +143,7 @@ public class GamePanel extends JPanel {
 						GamePanel.this.selectedPosition = pos;
 						GamePanel.this.repaintButtons = true;
 						GamePanel.this.repaint();
+						game.select(pos);
 					}
 				});
 			}
@@ -155,7 +157,7 @@ public class GamePanel extends JPanel {
 	class HighlightButton extends JButton {
 		private Ellipse2D border;
 
-		public HighlightButton(Position position, boolean adjacent) {
+		public HighlightButton(Position position) {
 			// Image is a square with a circle
 			ImageIcon icon = positionHighlight;
 			int RADIUS = icon.getIconHeight();
@@ -173,14 +175,10 @@ public class GamePanel extends JPanel {
 			this.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					game.movePeg(new Move(selectedPosition, position, game.getCurrentPlayer()));
+					game.movePeg(position);
 					GamePanel.this.repaintButtons = true;
 					GamePanel.this.repaint();
-					selectedPosition = position;
 					moved = true;
-					if (adjacent) {
-						movedAdjacent = true;
-					}
 				}
 			});
 		}
@@ -216,24 +214,18 @@ public class GamePanel extends JPanel {
 			gameOver = true;
 			repaint();
 			endPosition = null;
-		} else if (game.getCurrentPlayer() instanceof QuinnStrategy || game.getCurrentPlayer() instanceof ArushiStrategy || game.getCurrentPlayer() instanceof ComputerStratBasic) {
+		} else if (game.getCurrentPlayer() instanceof QuinnStrategy || game.getCurrentPlayer() instanceof ComputerStratBasic) {
 			Move move = game.getTurn();
-			if (move == null || (
-					endPosition != null &&
-					!endPosition.equals(move.getStartPosition())
-					)) {
+			if (move == null) {
 				reset();
 				game.endTurn();
 				repaintButtons = true;
 				repaint();
 				endPosition = null;
-				renderComputerMoves();
-
 			} else {
 				if (endPosition == null) {
 					endPosition = move.getEndPosition();
 				}
-				System.out.println(move);
 				game.movePeg(move);
 				repaintButtons = true;
 				repaint();
@@ -329,7 +321,7 @@ public class GamePanel extends JPanel {
 		end = new JButton("End Turn");
 		end.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 4, 254, BUTTON_HEIGHT);
 		style(end);
-		if (!this.moved || gameOver) {
+		if (!game.canEndTurn()) {
 			styleDisabled(end);
 		}
 		end.addActionListener(endAction);
@@ -337,7 +329,7 @@ public class GamePanel extends JPanel {
 		undo = new JButton("Undo");
 		undo.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 3, 254, BUTTON_HEIGHT);
 		style(undo);
-		if (!this.moved || gameOver) {
+		if ((!game.canUndoMini() && !game.canUndoTurns()) || gameOver) {
 			styleDisabled(undo);
 		}
 		undo.addActionListener(undoAction);
@@ -406,35 +398,17 @@ public class GamePanel extends JPanel {
 				}
 			}
 
+			// not highlighted
+			game.getNonClickablePegs().forEach((position, color) -> {
+				this.add(new PegButton(position, color, false));
+			});
 
-			for (int i = 0; i < game.getPlayers().length; i++) {
-				if (game.getPlayers()[i] != null) {
-					for (Position pos : game.getPlayers()[i].posArr) {
-						PegButton pb = new PegButton(pos, game.getPlayers()[i].getColor(),
-								(moved == false && game.getPlayers()[i].getColor().equals(game.getCurrentPlayer().getColor())) ||
-										(moved && !movedAdjacent && pos.equals(selectedPosition)));
-						this.add(pb);
-					}
-				}
-			}
-			if (selectedPosition != null) {
-				if (moved) {
-					if (!movedAdjacent) {
-						ArrayList<Position> jump = game.getBoard().possibleJumpMoves(selectedPosition);
-						for (int i = 0; i < jump.size(); i++) {
-							this.add(new HighlightButton(jump.get(i), false));
-						}
-					}
-				} else {
-					ArrayList<Position> jump = game.getBoard().possibleJumpMoves(selectedPosition);
-					ArrayList<Position> adjacent = game.getBoard().possibleAdjacentMoves(selectedPosition);
-					for (int i = 0; i < jump.size(); i++) {
-						this.add(new HighlightButton(jump.get(i), false));
-					}
-					for (int i = 0; i < adjacent.size(); i++) {
-						this.add(new HighlightButton(adjacent.get(i), true));
-					}
-				}
+			game.getClickablePegs().forEach((position) -> {
+				this.add(new PegButton(position, game.getCurrentPlayer().getColor(), true));
+			});
+
+			for (Position p : game.getPossibleMoves()) {
+				this.add(new HighlightButton(p));
 			}
 			initButtons();
 			repaintButtons = false;

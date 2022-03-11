@@ -241,7 +241,7 @@ public class Board implements Cloneable, Serializable {
 		}
 		return -1;
 	}
-	public void move(Move move) {
+	public void move(Move move, boolean undo) {
 		
 		if(move==null) {
 			return;
@@ -253,7 +253,8 @@ public class Board implements Cloneable, Serializable {
 		if(boardPos[startPos.getRow()][startPos.getColumn()]==null) {
 			throw new RuntimeException("Invalid move. startPos is null.");
 		}
-		if ( !canMove(startPos,endPos,false)) {
+		// Undo can combine multiple jumps into one move, which would cause an error
+		if ( !canMove(startPos,endPos,false) && !undo) {
 			throw new RuntimeException("Invalid Move. " + startPos + " cannot move to " + endPos);
 		}
 		
