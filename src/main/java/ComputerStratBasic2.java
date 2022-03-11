@@ -26,6 +26,7 @@ public class ComputerStratBasic2 extends Player{
 		else {dir='d'; WRP[0] = 16; WRP[1] = 0;}
 	}
 	public Move getMove(Board board) {
+		System.out.println("getting move");
 		winReg = getWR();
 		if (endTurn) {
 			endTurn=false;
@@ -34,8 +35,15 @@ public class ComputerStratBasic2 extends Player{
 		}
 		if (newTurn) {
 			Random rand = new Random();
-			Position p = posArr.get(rand.nextInt(8));
-			ArrayList<Position> pm = board.possibleMoves(p, false);
+			ArrayList<Position> tpf = new ArrayList<Position>();
+			for (Position pos: posArr) {
+				if (board.possibleMoves(pos, false).size()>0) {
+					tpf.add(pos);
+				}
+			}
+			Position p = tpf.get(rand.nextInt(tpf.size()));
+			System.out.println("picked pos: "+p);
+			//ArrayList<Position> pm = board.possibleMoves(p, false);
 			ArrayList<Position> toPickFrom = getMoveablePos(p, board);
 			while (toPickFrom.size()==0) {
 				p = posArr.get(rand.nextInt(8));
