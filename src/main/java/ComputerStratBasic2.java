@@ -4,9 +4,8 @@ import java.util.Random;
 public class ComputerStratBasic2 extends Player{
 	private char dir;
 	private int[] WRP; //{row, col}
-	private ArrayList<Position> prevPos;
-	private boolean newBM, newTurn, endTurn;
-	private int numWiTurn;
+	//private ArrayList<Position> prevPos;
+	private boolean newTurn, endTurn;
 	private ArrayList <Position> moveQue;
 	private Position[] winReg;
 	private Move prevMove;
@@ -14,9 +13,11 @@ public class ComputerStratBasic2 extends Player{
 		super(color, playerName);
 		System.out.println(color);
 		WRP = new int[2];
-		prevPos = new ArrayList<Position>(); moveQue = new ArrayList<Position>();
-		newBM = false; newTurn = true; endTurn=false;
-		numWiTurn=1;
+		//prevPos = new ArrayList<Position>(); 
+		moveQue = new ArrayList<Position>();
+		//newBM = false;
+		newTurn = true; endTurn=false;
+		//numWiTurn=1;
 		winReg = getWR();
 		if (color.equals(Color.green)) {dir='l'; WRP[0] = 4; WRP[1] = 0;}
 		else if (color.equals(Color.black)) {dir='l'; WRP[0] = 12; WRP[1] = 0;}
@@ -31,6 +32,7 @@ public class ComputerStratBasic2 extends Player{
 		if (endTurn) {
 			endTurn=false;
 			newTurn=true;
+			moveQue.clear();
 			return null;
 		}
 		if (newTurn) {
@@ -43,7 +45,6 @@ public class ComputerStratBasic2 extends Player{
 			}
 			Position p = tpf.get(rand.nextInt(tpf.size()));
 			System.out.println("picked pos: "+p);
-			//ArrayList<Position> pm = board.possibleMoves(p, false);
 			ArrayList<Position> toPickFrom = getMoveablePos(p, board);
 			while (toPickFrom.size()==0) {
 				p = posArr.get(rand.nextInt(8));
