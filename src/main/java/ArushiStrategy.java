@@ -5,6 +5,8 @@ public class ArushiStrategy extends Player {
 
 	private int callGM=0;
 	private ArrayList<Position> moveQueue;
+	private ArrayDeque<Move> optimalJumpChain;
+	private boolean moveCalc=false;
 
 	public ArushiStrategy (Color color, String playerName) {
 		super(color, playerName);
@@ -20,25 +22,13 @@ public class ArushiStrategy extends Player {
 		//when you've called get move queue size-1 times (0 to queue size-2):
 		//set calledGM to 0
 		//set the move arrayList to an empty arrayList
-		if (callGM==0) {
+		if (!moveCalc) {
+			moveCalc=true;
 			bestIndex=calculateMove(board);
-			moveQueue=confQueue(this.posArr.get(bestIndex), board);
 
-			if (moveQueue.size()>=2) {
-				currentMove = new Move(moveQueue.get(0), moveQueue.get(1), this);
+		} else if (optimalJumpChain.size()==0) {
 
-			} else {
-				currentMove=null;
-			}
-		} else if (callGM<=moveQueue.size()-1 && callGM>1) {
-			currentMove = new Move(moveQueue.get(callGM-1), moveQueue.get(callGM), this);
-		} else {
-			callGM=0;
-			moveQueue = new ArrayList<Position>();
-			currentMove=null;
 		}
-
-		return currentMove;
 
 	}
 
@@ -166,9 +156,17 @@ public class ArushiStrategy extends Player {
 		return next;
 	}
 
-	private ArrayList<Position> confQueue(Position pos, Board current) {
-		ArrayList<Position> moves = new ArrayList<Position>();
-		moves.add(pos);
+	private ArrayDeque<Move> confQueue(ArrayList<Position> posArr, Board current) {
+		ArrayDeque<Move> ret = new ArrayDeque<Move>();
+		for(int i = 0; i<posArr.size()-1; i++) {
+			Move newJump = new Move(posArr.get(i), posArr.get(i), this);
+			ret.add(newJump);
+		}
+		return ret;
+	}
+
+	private ArrayList<Position> generateConfArr(Position pos, Board current) {
+		ArrayList<Position> path = new ArrayList<Position>();
 		Position next = new Position(pos.getRow(), pos.getColumn());
 		int movingPegDist = pegDistance(pos);
 		ArrayList<Position> possMoves = current.possibleMoves(pos, false);
@@ -181,19 +179,18 @@ public class ArushiStrategy extends Player {
 				if (possDist<=movingPegDist) {
 					movingPegDist=possDist;
 					nextMoveIndex=i;
+					next=possMoves.get(nextMoveIndex);
 					goodStep=true;
 				}
 			}
 
-			next=pos;
-			if (!goodStep) {
-				moves.add(next);
-			} else {
-				next=possMoves.get(nextMoveIndex);
-				moves.add(next);
+			path.add(next);
+
+
+			if (goodStep) {
 				//stop if the best next configuration via this greedy alg is an adjacent step
-				if (checkHop(pos, next)) {
-					//next=possMoves.get(nextMoveIndex);
+				if (checkHop(pos, possMoves.get(nextMoveIndex))) {
+					next=possMoves.get(nextMoveIndex);
 					boolean improvingJumps=true;
 					Position newCurr = possMoves.get(nextMoveIndex); //newCurr: new current pos within that turn
 					int currDist = pegDistance(newCurr);
@@ -212,17 +209,18 @@ public class ArushiStrategy extends Player {
 
 						if (goodStep) {
 							newCurr = jumps.get(nextMoveIndex);
-							moves.add(newCurr);
 						} else {
 							improvingJumps=false;
 						}
 					}
-				}
 
+					next = newCurr;
+
+				}
+			} else {
+				path.add(next);
 			}
-		}
-			return moves;
-		
+			return path;
 		}
 
 		//this is for one hop within a turn-not a chain of hops
