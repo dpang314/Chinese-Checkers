@@ -179,6 +179,13 @@ public class ComputerStratBasic extends Player{
 		}
 		return mq;
 	}
+	private int pegsInWR() {
+		int count=0;
+		for (Position p: posArr) {
+			count = (indexOf(winReg, p)!=-1) ? count+=1:count;
+		}
+		return count;
+	}
 	private int[][] goodMove2(Position Pos, int[][] bestMove, Board board, boolean jumpOnly, Position ogPos){
 		if (indexOf(prevPos, Pos)==-1) {
 			prevPos.add(Pos);
@@ -218,8 +225,24 @@ public class ComputerStratBasic extends Player{
 						newWeight = newWeight*2-distanceToWRP(ogPos, board);
 						//System.out.println("distance: "+newWeight);
 						//System.out.println("From "+prevPos.get(0)+"to "+p);
-						if (indexOf(winReg, prevPos.get(0))!=-1) {newWeight+=15;} //3
+						if (pegsInWR()>=8) {
+//							if (distanceToWRP(p, board)>8) {
+//								newWeight=newWeight/2;
+//							}
+							if (farthestPeg(ogPos, board)) {
+								newWeight=2;
+							}
+						}
+							
+						if (indexOf(winReg, prevPos.get(0))!=-1) {
+							if (pegsInWR()>=8) {
+								if (!letMoveInWR(p, Pos)) {
+									newWeight+=15;
+								}
+							} else {newWeight+=15;}
+						} //3
 						//System.out.println("weighting: "+newWeight);
+						
 						if (!(indexOf(winReg, Pos)!=-1 && indexOf(winReg, p)==-1)) {
 							if (distanceToWRP(Pos, board)>=distanceToWRP(p, board)) {
 								if (prevM2==null || (!prevM2.getStartPosition().equals(p) && !prevM2.getEndPosition().equals(p)) ){
@@ -242,6 +265,50 @@ public class ComputerStratBasic extends Player{
 			}
 		}
 		return bestMove;
+	}
+	private boolean farthestPeg(Position ogPos, Board board) {
+		int dist = distanceToWRP(ogPos, board);
+		for (Position p: posArr) {
+			if (distanceToWRP(p, board)<dist) {
+				return false;
+			}
+		}
+		return true;
+	}
+	private boolean letMoveInWR(Position p, Position Pos) {
+		if (dir=='u' &&p.getRow()>Pos.getRow()) {
+			return true;
+		} else if (dir=='d'&&p.getRow()<Pos.getRow()) {
+			return true;
+		} else if (getColor().equals(Color.yellow)) {
+			if (p.getRow()==Pos.getRow() && p.getRow()<Pos.getRow()) {
+				return true;
+			} if (p.getRow()>Pos.getRow() && p.getRow()==Pos.getRow()) {
+				return true;
+			}
+		} 
+		else if (getColor().equals(Color.white)) {
+			if (p.getRow()==Pos.getRow() && p.getRow()<Pos.getRow()) {
+				return true;
+			} if (p.getRow()<Pos.getRow() && p.getRow()==Pos.getRow()) {
+				return true;
+			}
+		} 
+		else if (getColor().equals(Color.black)){
+			if (p.getRow()==Pos.getRow() && p.getRow()>Pos.getRow()) {
+				return true;
+			} if (p.getRow()>Pos.getRow() && p.getRow()==Pos.getRow()) {
+				return true;
+			}
+		}
+		else {
+			if (p.getRow()==Pos.getRow() && p.getRow()>Pos.getRow()) {
+				return true;
+			} if (p.getRow()<Pos.getRow() && p.getRow()==Pos.getRow()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	private int distanceToWRP(Position p, Board board) {
 		int dist=0;

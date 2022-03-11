@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Random;
 public class ComputerStratBasic2 extends Player{
 	private char dir;
 	private int[] WRP; //{row, col}
@@ -28,25 +29,47 @@ public class ComputerStratBasic2 extends Player{
 		winReg = getWR();
 		if (endTurn) {
 			endTurn=false;
-			prevMove=null;
+			newTurn=true;
 			return null;
 		}
 		if (newTurn) {
-			for (int i=0; i<posArr.size(); i++) {
-				if (!posArr.get(i).equals(new Position(WRP[0], WRP[1]))) {
-					prevPos.clear();//
-					newBM = false;
-					bestMove = goodMove2(posArr.get(i), bestMove, board, false);
-					if(newBM) {
-						bestMove[0][0] = posArr.get(i).getRow();
-						bestMove[0][1] = posArr.get(i).getColumn();
-						moveQue.add(0, new Position(bestMove[0][0], bestMove[0][1]));
-					}
+			Random rand = new Random();
+			Position p = posArr.get(rand.nextInt(8));
+			ArrayList<Position> pm = board.possibleMoves(p, false);
+			ArrayList<Position> toPickFrom = getMoveablePos(p, board);
+			while (toPickFrom.size()==0) {
+				p = posArr.get(rand.nextInt(8));
+				toPickFrom = getMoveablePos(p, board);
+			}
+			Position p2 = toPickFrom.get(rand.nextInt(toPickFrom.size()));
+			moveQue.add(p);
+			moveQue.add(p2);
+			while (board.possibleMoves(p2, true).size()>0) {
+				ArrayList<Position> pm2 = getMoveablePos(p2, board);
+				if (pm2.size()>0) {
+					p2 = toPickFrom.get(rand.nextInt(toPickFrom.size()));
+					moveQue.add(p2);
 				}
 			}
 		}
-		
-		return null;
+		newTurn = false;
+		if (moveQue.size()==2) {
+			endTurn=true;
+			return new Move(moveQue.get(0), moveQue.get(1), this);
+		}
+		Move ret = new Move(moveQue.get(0), moveQue.get(1), this);
+		moveQue.remove(0);
+		return ret;
+	}
+	private ArrayList<Position> getMoveablePos(Position p, Board board){
+		ArrayList<Position> toPickFrom = new ArrayList<Position>();
+		ArrayList<Position> pm = board.possibleMoves(p, false);
+		for (Position pos:pm) {
+			if (distanceToWRP(pos, board)>=distanceToWRP(p, board)) {
+				toPickFrom.add(pos);
+			}
+		}
+		return toPickFrom;
 	}
 	private int indexOf(ArrayList<Position> PP, Position check) {
 		for (int i=0; i<PP.size(); i++) {
@@ -56,11 +79,81 @@ public class ComputerStratBasic2 extends Player{
 		}
 		return -1;
 	}
-	private ArrayList<Position> goodMove2(Position Pos, Board board, boolean jumpOnly){
-		ArrayList<Position> bestMove= new ArrayList<Position>(); //{{r1, c1}, {r2, c2} {weight, distance travelled}}
-		bestMove[2][0]=1000;
-		
-		return bestMove;
+	private int distanceToWRP(Position p, Board board) {
+		int dist=0;
+		Position newP = new Position(p.getRow(), p.getColumn());
+		//System.out.println("position: "+newP);
+		if (dir=='l') {
+			while (WRP[0]>newP.getRow()) {
+				newP = newP.adj(5);
+				dist+=1;
+			}
+			while (WRP[0]<newP.getRow()) {
+				newP = newP.adj(1);
+				dist+=1;
+			}
+			dist+=newP.getColumn();
+		}
+		if (dir=='r') {
+			while (WRP[0]>newP.getRow()) {
+				newP = newP.adj(4);
+				dist+=1;
+			}
+			while (WRP[0]<newP.getRow()) {
+				newP = newP.adj(2);
+				dist+=1;
+			}
+			dist+=WRP[1]-newP.getColumn();
+		}
+		if (dir=='u') {
+			while (!(WRP[0]==newP.getRow()&&WRP[1]==newP.getColumn())) {
+				while ((Board.rowWidths[newP.getRow()])/2>=newP.getColumn()) {
+					if (newP.adj(2)!=null) {
+						newP = newP.adj(2);
+					} else {
+						newP = newP.adj(3); 
+					}
+					dist+=1;
+				}
+				while ((Board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
+					if (newP.adj(1)!=null) {
+						newP = newP.adj(1);
+					} else {
+						newP = newP.adj(0); 
+					}
+					dist+=1;
+				}
+			}
+			//dist+=newP.getRow();
+		}
+		if (dir=='d') {
+			//System.out.println(Board.rowWidths[newP.getRow()]/2+", "+newP.getColumn());
+			while (!(WRP[0]==newP.getRow()&&WRP[1]==newP.getColumn())) {
+				while ((Board.rowWidths[newP.getRow()])/2>=newP.getColumn()) {
+					if (newP.adj(4)!=null) {
+						newP = newP.adj(4);
+					} else {
+						newP = newP.adj(3); 
+					}
+					if (newP==null) {
+						return dist;
+					}
+					dist+=1;
+				}
+				while ((Board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
+					if (newP.adj(5)!=null) {
+						newP = newP.adj(5);
+					} else {
+						newP = newP.adj(0); 
+					}
+					if (newP==null) {
+						return dist;
+					}
+					dist+=1;
+				}
+			}
+		}
+		return dist;
 	}
 
 }
