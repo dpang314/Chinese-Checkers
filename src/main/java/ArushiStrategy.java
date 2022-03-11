@@ -167,6 +167,7 @@ public class ArushiStrategy extends Player {
 
 	private ArrayList<Position> generateConfArr(Position pos, Board current) {
 		ArrayList<Position> path = new ArrayList<Position>();
+
 		Position next = new Position(pos.getRow(), pos.getColumn());
 		int movingPegDist = pegDistance(pos);
 		ArrayList<Position> possMoves = current.possibleMoves(pos, false);
@@ -179,18 +180,18 @@ public class ArushiStrategy extends Player {
 				if (possDist<=movingPegDist) {
 					movingPegDist=possDist;
 					nextMoveIndex=i;
-					next=possMoves.get(nextMoveIndex);
 					goodStep=true;
+					next=possMoves.get(nextMoveIndex);
 				}
 			}
-
+			
 			path.add(next);
-
 
 			if (goodStep) {
 				//stop if the best next configuration via this greedy alg is an adjacent step
-				if (checkHop(pos, possMoves.get(nextMoveIndex))) {
+				if (!(checkHop(pos, possMoves.get(nextMoveIndex)))) {
 					next=possMoves.get(nextMoveIndex);
+				} else {
 					boolean improvingJumps=true;
 					Position newCurr = possMoves.get(nextMoveIndex); //newCurr: new current pos within that turn
 					int currDist = pegDistance(newCurr);
@@ -213,15 +214,14 @@ public class ArushiStrategy extends Player {
 							improvingJumps=false;
 						}
 					}
-
-					next = newCurr;
-
 				}
-			} else {
-				path.add(next);
 			}
-			return path;
+		} else {
+			path.add(next);
 		}
+
+		return path;
+	}
 
 		//this is for one hop within a turn-not a chain of hops
 		private boolean checkHop (Position start, Position end) {
