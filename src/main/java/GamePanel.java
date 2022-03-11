@@ -211,7 +211,7 @@ public class GamePanel extends JPanel {
 		if (game.winningPlayer() != null) {
 			gameOver = true;
 			repaint();
-		} else if (game.getCurrentPlayer() instanceof QuinnStrategy || game.getCurrentPlayer() instanceof ComputerStratBasic) {
+		} else if (game.getCurrentPlayer().isComputer()) {
 			Move move = game.getTurn();
 			if (move == null) {
 				reset();

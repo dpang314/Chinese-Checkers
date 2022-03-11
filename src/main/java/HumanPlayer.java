@@ -9,4 +9,9 @@ public class HumanPlayer extends Player implements Serializable {
 	public Move getMove(Board board) {
 		return null;
 	}
+
+	@Override
+	public boolean isComputer() {
+		return false;
+	}
 }
