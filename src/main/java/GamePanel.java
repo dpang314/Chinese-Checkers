@@ -223,6 +223,7 @@ public class GamePanel extends JPanel {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				JOptionPane.showMessageDialog(GamePanel.this, "File saved successfully", "Saved", JOptionPane.INFORMATION_MESSAGE);
 				return true;
 			}
 			return false;
