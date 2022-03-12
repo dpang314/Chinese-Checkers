@@ -207,17 +207,17 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 		
 		Position[] winReg = this.getWR();
 		
-		if(winReg[0]==Board.homeBk[0]) {
+		if(winReg[0].equals(Board.homeBk[0])) {
 			this.obj = new Position(4,12);
-		} else if (winReg[0]==Board.homeG[0]) {
+		} else if (winReg[0].equals(Board.homeG[0])) {
 			this.obj = new Position(12,12);
-		} else if (winReg[0]==Board.homeBu[0]) {
+		} else if (winReg[0].equals(Board.homeBu[0])) {
 			this.obj = new Position(16,0);
-		} else if (winReg[0]==Board.homeW[0]) {
+		} else if (winReg[0].equals(Board.homeW[0])) {
 			this.obj = new Position(12,0);
-		} else if (winReg[0]==Board.homeY[0]) {
+		} else if (winReg[0].equals(Board.homeY[0])) {
 			this.obj = new Position(4,0);
-		} else if (winReg[0]==Board.homeR[0]) {
+		} else if (winReg[0].equals(Board.homeR[0])) {
 			this.obj = new Position (0,0);
 		}
 	}
@@ -261,7 +261,7 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 		Position start = m.getStartPosition();
 		Position end = m.getEndPosition();
 		
-		Position nuisance = new Position(4,6);
+		Position nuisance = this.obj.getABL(Board.getOpposingColor(getColor()));
 		Position reqObj = new Position(0,0);
 		
 		boolean fillCond = boardAtTurnStart.isOccupied(reqObj) &&
