@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -188,28 +189,49 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	private void save() {
+	private boolean save() {
 		int confirmed = JOptionPane.showConfirmDialog(GamePanel.this,
 				"Do you want to save your game?",
 				"Save", JOptionPane.YES_NO_OPTION);
 		if (confirmed == JOptionPane.YES_OPTION) {
-			JFileChooser fileChooser = new JFileChooser();
+			JFileChooser fileChooser = new JFileChooser() {
+				@Override
+				public void approveSelection() {
+					File file = getSelectedFile();
+					if (file.exists() && getDialogType() == SAVE_DIALOG) {
+						int result = JOptionPane.showConfirmDialog(this, "A save file with this name already exists. Do you want to overwrite it?", "Duplicate file name", JOptionPane.YES_NO_CANCEL_OPTION);
+						if (result == JOptionPane.YES_OPTION) {
+							super.approveSelection();
+						} else if (result == JOptionPane.CANCEL_OPTION) {
+							super.cancelSelection();
+						}
+					} else {
+						super.approveSelection();
+					}
+				}
+			};
+			fileChooser.setFileFilter(new FileNameExtensionFilter("chcr", "chcr"));
+			fileChooser.setSelectedFile(new File("save.chcr"));
 			if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				try {
-					GameLoader.writeGameToFile(game, file.getPath());
+					if (!file.getPath().endsWith(".chcr")) {
+						GameLoader.writeGameToFile(game, file.getPath() + ".chcr");
+					} else {
+						GameLoader.writeGameToFile(game, file.getPath());
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				return true;
 			}
+			return false;
 		}
+		return true;
 	}
-
-	private boolean gameOver = false;
 
 	private void renderComputerMoves() {
 		if (game.winningPlayer() != null) {
-			gameOver = true;
 			repaint();
 		} else if (game.getCurrentPlayer().isComputer()) {
 			Move move = game.getTurn();
@@ -283,8 +305,11 @@ public class GamePanel extends JPanel {
 					"Are you sure you want to quit the game?",
 					"Quit", JOptionPane.YES_NO_OPTION);
 			if (confirmed == JOptionPane.YES_OPTION) {
-				save();
-				gui.switchToMenuPanel();
+				if (!game.gameOver()) {
+					if (save()) {
+						gui.switchToMenuPanel();
+					}
+				}
 			}
 		}
 	};
@@ -296,8 +321,11 @@ public class GamePanel extends JPanel {
 					"Are you sure you want to exit the program?",
 					"Exit", JOptionPane.YES_NO_OPTION);
 			if (confirmed == JOptionPane.YES_OPTION) {
-				save();
-				gui.close();
+				if (!game.gameOver()) {
+					if (save()) {
+						gui.close();
+					}
+				}
 			}
 		}
 	};
@@ -330,7 +358,7 @@ public class GamePanel extends JPanel {
 		undo = new JButton("Undo");
 		undo.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 3, 254, BUTTON_HEIGHT);
 		style(undo);
-		if (((!game.canUndoMini() && !game.canUndoTurns()) || gameOver)
+		if (((!game.canUndoMini() && !game.canUndoTurns()) || game.gameOver())
 				|| game.getCurrentPlayer() instanceof ComputerStrategy) {
 			styleDisabled(undo);
 		}
@@ -340,6 +368,9 @@ public class GamePanel extends JPanel {
 		save.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 2, 254, BUTTON_HEIGHT);
 		save.addActionListener(saveAction);
 		style(save);
+		if (game.winningPlayer() != null) {
+			styleDisabled(save);
+		}
 		this.add(save);
 		quit = new JButton("Quit");
 		quit.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING, 254, BUTTON_HEIGHT);
@@ -387,7 +418,7 @@ public class GamePanel extends JPanel {
 		g.drawImage(menuImage, 0, 0, null);
 
 		g.setFont(CustomFont.getFont().deriveFont(20f));
-		if (gameOver) {
+		if (game.gameOver()) {
 			g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT, 100);
 		} else {
 			g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT, 100);

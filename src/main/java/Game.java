@@ -293,6 +293,10 @@ public class Game implements Serializable {
     	return ret;
 	};
 
+    public boolean gameOver() {
+    	return winningPlayer() != null;
+	}
+
 	public Player getCurrentPlayer() {
 		return currentPlayer;
 	}

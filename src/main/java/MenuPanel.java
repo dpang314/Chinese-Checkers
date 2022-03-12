@@ -417,8 +417,9 @@ public class MenuPanel extends JPanel implements ActionListener {
 			// load code
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					".chcr save file", "chrc");
+					".chcr save file", "chcr");
 			chooser.setFileFilter(filter);
+			chooser.setAcceptAllFileFilterUsed(false);
 			int returnVal = chooser.showOpenDialog(null);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				try {
