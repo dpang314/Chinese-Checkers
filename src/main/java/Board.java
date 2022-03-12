@@ -136,24 +136,23 @@ public class Board implements Cloneable, Serializable {
 	}
 	
 	public static Color getOpposingColor(Color c) {
-		if(c==Color.BLUE) {
+		if(c.equals(Color.BLUE)) {
 			return Color.RED;
-		} else if (c==Color.WHITE) {
+		} else if (c.equals(Color.WHITE)) {
 			return Color.BLACK;
-		} else if (c==Color.YELLOW) {
+		} else if (c.equals(Color.YELLOW)) {
 			return Color.GREEN;
-		} else if (c==Color.RED) {
+		} else if (c.equals(Color.RED)) {
 			return Color.BLUE;
-		} else if (c==Color.BLACK) {
+		} else if (c.equals(Color.BLACK)) {
 			return Color.WHITE;
-		} else if (c==Color.GREEN) {
+		} else if (c.equals(Color.GREEN)) {
 			return Color.YELLOW;
 		}
 		return null;
 	}
 	
 	public static Position[] getHomeRegion(Color c) {
-
 		if (c.equals(Color.RED)) {
 			return homeR;
 		} else if (c.equals(Color.BLACK)) {
