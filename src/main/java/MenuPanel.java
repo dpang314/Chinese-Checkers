@@ -1,9 +1,13 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -111,6 +115,91 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private Font bigFont;
 	private Font playerFont;
 	private GUI gui;
+
+	private static enum PlayerType {
+		COMPUTER_EASY,
+		COMPUTER_HARD,
+		HUMAN,
+		SELECTING, // If previously none, but now initializing type
+		NONE
+	}
+
+	private static HashMap<String, ImageIcon> icons = new HashMap<>();
+
+	private static final double SCALE = 1.5;
+
+	private static void addImageIcon(String name) throws IOException {
+		icons.put(name, new ImageIcon(ImageIO.read(new File("images/menu/" + name + ".PNG"))
+				.getScaledInstance(24, 24, Image.SCALE_DEFAULT)));
+	}
+
+	private static void loadIcons() {
+		try {
+			addImageIcon("player1Human");
+			addImageIcon("player2Human");
+			addImageIcon("player3Human");
+			addImageIcon("player4Human");
+			addImageIcon("player5Human");
+			addImageIcon("player6Human");
+
+			addImageIcon("player1Computer");
+			addImageIcon("player2Computer");
+			addImageIcon("player3Computer");
+			addImageIcon("player4Computer");
+			addImageIcon("player5Computer");
+			addImageIcon("player6Computer");
+
+			addImageIcon("player1None");
+			addImageIcon("player2None");
+			addImageIcon("player3None");
+			addImageIcon("player4None");
+			addImageIcon("player5None");
+			addImageIcon("player6None");
+
+			addImageIcon("player1Selecting");
+			addImageIcon("player2Selecting");
+			addImageIcon("player3Selecting");
+			addImageIcon("player4Selecting");
+			addImageIcon("player5Selecting");
+			addImageIcon("player6Selecting");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private ImageIcon getPlayerCloudIcon(int number, PlayerType playerType) {
+		if (playerType.equals(PlayerType.COMPUTER_EASY) || playerType.equals(PlayerType.COMPUTER_HARD)) {
+			return icons.get("player" + number + "Computer");
+		}
+		// TODO add other types
+		return null;
+	}
+
+	private class PlayerButton extends JButton {
+		private Ellipse2D border;
+		private PlayerType playerType = PlayerType.NONE;
+
+		public PlayerButton(int playerNumber) {
+			ImageIcon icon = getPlayerCloudIcon(playerNumber, playerType);
+			this.setFocusPainted(false);
+			this.setIcon(icon);
+			this.setBorderPainted(false);
+			this.setContentAreaFilled(false);
+
+
+			this.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+				}
+			});
+		}
+
+		public boolean contains(int x, int y) {
+			return border.contains(x, y);
+		}
+
+	}
 
 	Timer timer;
 	MenuPanel(GUI gui) {
