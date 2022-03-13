@@ -26,4 +26,5 @@ public abstract class Player implements Serializable {
 	public int getWR() {
 		return winReg;
 	}
+	
 }

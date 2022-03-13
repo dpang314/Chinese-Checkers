@@ -3,11 +3,17 @@ import java.util.*;
 
 public class ArushiStrategy extends Player {
 
-	private ArrayDeque<Move> optimalJumpChain;
+	private ArrayList<Move> optimalJumpChain = new ArrayList<Move>(); //could just make an arrayList
 	private boolean moveCalc=false;
+	private Position [] myPegs = new Position[10];
 
 	public ArushiStrategy (Color color, String playerName) {
 		super(color, playerName);
+		/*
+		for (int i=0; i<this.posArr.size(); i++) {
+			myPegs[i]=posArr.get(i);
+		}
+		*/
 	}
 
 	public boolean isHuman() {
@@ -15,7 +21,8 @@ public class ArushiStrategy extends Player {
 	}
 
 	public Move getMove(Board board) {
-		int bestIndex;
+		int bestIndex=0;
+		Move currentMove;
 		//when you've called get move queue size-1 times (0 to queue size-2):
 		//set calledGM to 0
 		//set the move arrayList to an empty arrayList
@@ -23,11 +30,25 @@ public class ArushiStrategy extends Player {
 			moveCalc=true;
 			bestIndex=calculateMove(board);
 			optimalJumpChain=confQueue(generateConfArr(this.posArr.get(bestIndex), board));
-		} else if (optimalJumpChain.size()==0) {
+			
+		} 
+
+		if (optimalJumpChain.size()==0) {
+			currentMove=null;
 			moveCalc=false;
+		} else {
+			currentMove=optimalJumpChain.get(0);
+			optimalJumpChain.remove(0);
+			posArr.set(bestIndex, currentMove.getEndPosition());
+			/*
+			Position fin = currentMove.getEndPosition();
+			Position modify = this.posArr.get(bestIndex);
+			System.out.println(this.getName()+" moved from "+modify+" to "+fin);
+			modify = new Position(fin.getRow(), fin.getColumn());
+			*/
 		}
 
-		return optimalJumpChain.poll();
+		return currentMove;
 	}
 
 	private int calculateMove(Board board) {
@@ -59,40 +80,50 @@ public class ArushiStrategy extends Player {
 		}
 
 		//Move thisTurn = new Move(neighborConfs.get(smallestRWInd).get(0), endPos, this);
-
+		
+		
+		//for testing only:
+		
+		/*
+		System.out.println(this.getName()+" position "+
+				this.posArr.get(smallestRWInd)+" returns the smallestRWAvg");
+		*/
+		
+		/*
+		Position next = generateConfs(this.posArr.get(smallestRWInd), board);
+		System.out.println(this.getName()+": "+this.posArr.get(smallestRWInd)+" moves to "+next);
+		*/
 		return smallestRWInd;
 	}
 
 	private double randomWalk(int tracker, Position newPos, Board board) {
 		int length=5;
 		double numRW=5;
-		Board tbRW = board.clone(); //tbRW=test board random walk
-		Position [] simulation = new Position[10];
-		for (int i=0; i<=9; i++) {
-			if (i!=tracker) {
-				simulation[i]=this.posArr.get(i);
-			} else {
-				simulation[i]=newPos;
-			}
-		}
 
 		double avgDistEst=0;
 
 		for (int r=1; r<=numRW; r++) {
-			//make an array that's a copy of simulation
-			Position [] copySIM = new Position[10];
+			//make an array of posns to simulate a randomWalk for
+			Position [] simulation = new Position[10];
 			for (int j=0; j<=9; j++) {
-				copySIM[j]=simulation[j];
+				if (j!=tracker) {
+					Position p = this.posArr.get(j);
+					simulation[j]=new Position(p.getRow(), p.getColumn());
+				} else {
+					simulation[j]=new Position(newPos.getRow(), newPos.getColumn());
+				}
 			}
+			//clone board
+			Board tbRW = board.clone(); //tbRW=test board randomWalk
 			for (int l=1; l<=length; l++) {
 				int randInd = (int) (Math.random()*9+0); //int btwn 0, 9 inclusive
-				Position next = generateConfs(copySIM[randInd], tbRW);
+				Position next = generateConfs(simulation[randInd], tbRW);
 				tbRW.fillPos(next);
 				//empty the position in tbRW that simulation[randInd] was initially in
-				tbRW.clearPos(copySIM[randInd]);
-				copySIM[randInd]=next;
+				tbRW.clearPos(simulation[randInd]);
+				simulation[randInd]=new Position(next.getRow(), next.getColumn());
 			}
-			avgDistEst+=sumDistances(copySIM);
+			avgDistEst+=sumDistances(simulation);
 		}
 
 		avgDistEst/=numRW;
@@ -101,6 +132,7 @@ public class ArushiStrategy extends Player {
 	}
 
 
+	//looks like generateConfs is being passed a null position
 	private Position generateConfs(Position pos, Board current) {
 		Position next = new Position(pos.getRow(), pos.getColumn());
 		int movingPegDist = pegDistance(pos);
@@ -150,17 +182,20 @@ public class ArushiStrategy extends Player {
 				}
 			}
 		}
-
+		
 		return next;
 	}
 
-	private ArrayDeque<Move> confQueue(ArrayList<Position> posArr) {
-		ArrayDeque<Move> ret = new ArrayDeque<Move>();
+	private ArrayList<Move> confQueue(ArrayList<Position> posArr) {
+		ArrayList<Move> ret = new ArrayList<Move>();
 
 		for (int i = 0; i<posArr.size()-1; i++) {
 			Move newJump = new Move(posArr.get(i), posArr.get(i+1), this);
 			ret.add(newJump);
 		}
+		
+		System.out.println(this.getName()+": first move" +ret.get(0));
+		System.out.println(this.getName()+": last move" +ret.get(ret.size()-1));
 
 		return ret;
 	}
@@ -208,15 +243,15 @@ public class ArushiStrategy extends Player {
 
 						if (goodStep) {
 							newCurr = jumps.get(nextMoveIndex);
+							path.add(newCurr);
 						} else {
 							improvingJumps=false;
 						}
 					}
-
 				} 
-			} else {
-				path.add(next);
-			}
+			} 
+		} else {
+			path.add(next);
 		}
 		return path;
 
