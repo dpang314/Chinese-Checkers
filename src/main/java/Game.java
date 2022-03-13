@@ -41,22 +41,21 @@ public class Game implements Serializable {
 	    
 	    //counts actual players
 	    int l = 0;
+		int z=0;
 	    for (Player p : players) {
-	    	if (p != null)
-	    		l++;
+	    	if (p != null) {
+				l++;
+				if (!p.isComputer()) {
+					z++;
+				}
+			}
 	    }
 	    numPlayers = l;
-	    
-	    //Determines whether there are multiple human players
-	    //for the purposes of undo
-	    int z=0;
-	    for (Player p : player){
-//	      if (p.isHuman())
-//	        z++;
-	    }
+		//Determines whether there are multiple human players
+		//for the purposes of undo
 	    if (z>1)
-	      humans = true;
-	    
+			humans = true;
+
 	    //sets history and turn counter to base form, creates a board with given players
 	    this.history = new Stack<Move>();
 	    this.turn = 0;
@@ -185,10 +184,22 @@ public class Game implements Serializable {
 	private boolean jumped = false;
 
 	public boolean movePeg(Move move) {
-		// First move of turn
-		if (board.possibleJumpMoves(move.getStartPosition()) != null &&
-				board.possibleJumpMoves(move.getStartPosition()).contains(move.getEndPosition())) {
-			jumped = true;
+		if (initiallySelected == null && miniHistory.empty()) {
+			initiallySelected = move.getEndPosition();
+			if (board.possibleJumpMoves(move.getStartPosition()) != null &&
+					board.possibleJumpMoves(move.getStartPosition()).contains(move.getEndPosition())) {
+				jumped = true;
+			}
+		} else {
+			Position lastPosition = miniHistory.peek().getEndPosition();
+			// Not moving same peg
+			if (!move.getStartPosition().equals(lastPosition)) {
+				throw new RuntimeException("Invalid move. startPos is not equal to the end position of the last move.");
+			} else if (!jumped) {
+				throw new RuntimeException("Invalid move. Can't move again after moving to an adjacent position.");
+			} else if (!board.possibleMoves(lastPosition, true).contains(move.getEndPosition())) {
+				throw new RuntimeException("Invalid move. Move is not a possible jump.");
+			}
 		}
 		board.move(move, false);
 		//adds the move to the mini stack for this turn

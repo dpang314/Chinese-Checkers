@@ -440,9 +440,10 @@ public class GamePanel extends JPanel {
 			game.getClickablePegs().forEach((position) -> {
 				this.add(new PegButton(position, game.getCurrentPlayer().getColor(), true));
 			});
-
-			for (Position p : game.getPossibleMoves()) {
-				this.add(new HighlightButton(p));
+			if (!game.getCurrentPlayer().isComputer()) {
+				for (Position p : game.getPossibleMoves()) {
+					this.add(new HighlightButton(p));
+				}
 			}
 			initButtons();
 			repaintButtons = false;
