@@ -184,7 +184,7 @@ public class Game implements Serializable {
 	private boolean jumped = false;
 
 	public boolean movePeg(Move move) {
-		if (initiallySelected == null && miniHistory.empty()) {
+		if (initiallySelected == null && miniHistory.isEmpty()) {
 			initiallySelected = move.getEndPosition();
 			if (board.possibleJumpMoves(move.getStartPosition()) != null &&
 					board.possibleJumpMoves(move.getStartPosition()).contains(move.getEndPosition())) {
@@ -246,8 +246,6 @@ public class Game implements Serializable {
 		return !miniHistory.isEmpty() && !selectedPosition().equals(startPosition());
 	}
 
-
-
 	public ArrayList<Position> getPossibleMoves() {
 		if (selectedPosition() == null ||
 				!miniHistory.isEmpty() && !jumped) return new ArrayList<Position>();
@@ -263,8 +261,8 @@ public class Game implements Serializable {
 		for (int i = 0; i < players.length; i++) {
 			if (players[i] != null) {
 				for (Position p : players[i].posArr) {
-					if ((selectedPosition() == null && playerTurn != i) ||
-							(selectedPosition() != null && !p.equals(selectedPosition()))) {
+					if ((playerTurn != i) ||
+							(selectedPosition() != null && !miniHistory.isEmpty() && !p.equals(selectedPosition()))) {
 						ret.put(p, players[i].getColor());
 					}
 				}
@@ -274,9 +272,12 @@ public class Game implements Serializable {
 	}
 
 	public ArrayList<Position> getClickablePegs() {
-        System.out.println(selectedPosition());
 		if (selectedPosition() == null) return currentPlayer.posArr;
-		else {
+		else if (miniHistory.isEmpty()) {
+			ArrayList<Position> ret = new ArrayList<>();
+			ret.addAll(players[playerTurn].posArr);
+			return ret;
+		} else {
 			ArrayList<Position> ret = new ArrayList<>();
 			ret.add(selectedPosition());
 			return ret;

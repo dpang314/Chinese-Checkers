@@ -415,6 +415,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		
 		if (eventName.equals("loadB")) {
 			// load code
+
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 					".chcr save file", "chcr");
@@ -426,7 +427,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 					Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
 					gui.switchToGamePanel(game);
 				} catch (IOException ex) {
-					ex.printStackTrace();
+					JOptionPane.showMessageDialog(this, "Error loading save file. Please try a different file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
