@@ -5,7 +5,7 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 	private char dir;
 	private int[] WRP; //{row, col}
 	//private ArrayList<Position> prevPos;
-	private boolean newTurn, endTurn;
+	private boolean newTurn, endTurn, isAdjPos;
 	private ArrayList <Position> moveQue;
 	private Position[] winReg;
 	private Move prevMove;
@@ -16,7 +16,7 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 		//prevPos = new ArrayList<Position>();
 		moveQue = new ArrayList<Position>();
 		//newBM = false;
-		newTurn = true; endTurn=false;
+		newTurn = true; endTurn=false; isAdjPos=false;
 		//numWiTurn=1;
 		prevMove=null;
 		winReg = getWR();
@@ -38,6 +38,7 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 //			return null;
 //		}
 		if (newTurn) {
+			isAdjPos=false;
 			//System.out.println("New Turn");
 			//Random rand = new Random();
 			ArrayList<Position> tpf = new ArrayList<Position>();
@@ -57,8 +58,12 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 				toPickFrom = getMoveablePos(p, board, false);
 			}
 			Position p2 = getBestPos(toPickFrom, board);//toPickFrom.get(rand.nextInt(toPickFrom.size()));
+			if (indexOf(board.possibleAdjacentMoves(p), p2)!=-1) {
+				isAdjPos=true;
+			}
 			prevMove = new Move(p, p2, this);
 			newTurn = false;
+			//System.out.println("New Turn Move: "+prevMove);
 			return prevMove;
 //			moveQue.add(p);
 //			moveQue.add(p2);
@@ -71,10 +76,18 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 //			}
 //			System.out.println("MQ: "+moveQue);
 		}
+		if (isAdjPos) {
+			newTurn=true;
+			return null;
+		}
 		if (getMoveablePos(prevMove.getEndPosition(), board, true).size()>0) {
 			ArrayList<Position> toPickFrom = getMoveablePos(prevMove.getEndPosition(), board, true);
 			Position p2 = getBestPos(toPickFrom, board);//toPickFrom.get(rand.nextInt(toPickFrom.size()));
+			if (indexOf(board.possibleAdjacentMoves(prevMove.getEndPosition()), p2)!=-1) {
+				isAdjPos=true;
+			}
 			prevMove = new Move(prevMove.getEndPosition(), p2, this);
+			//System.out.println("Move: "+prevMove);
 			return prevMove;
 		} else {
 			newTurn=true;
@@ -153,15 +166,17 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 		}
 		if (dir=='u') {
 			while (!(WRP[0]==newP.getRow()&&WRP[1]==newP.getColumn())) {
-				while ((Board.rowWidths[newP.getRow()])/2>=newP.getColumn()) {
+				while (!(newP.getRow()==1 && newP.getColumn()==1) && (Board.rowWidths[newP.getRow()])/2>=newP.getColumn() && !(WRP[0]==newP.getRow()&&WRP[1]==newP.getColumn())) {
 					if (newP.adj(2)!=null) {
 						newP = newP.adj(2);
-					} else {
+					} else if (newP.adj(3)!=null){
 						newP = newP.adj(3);
+					} else {
+						System.out.println("bad case: "+newP);
 					}
 					dist+=1;
 				}
-				while ((Board.rowWidths[newP.getRow()])/2<newP.getColumn()) {
+				while ((newP.getRow()==1 && newP.getColumn()==1) || (Board.rowWidths[newP.getRow()])/2<newP.getColumn() && !(WRP[0]==newP.getRow()&&WRP[1]==newP.getColumn())) {
 					if (newP.adj(1)!=null) {
 						newP = newP.adj(1);
 					} else {
