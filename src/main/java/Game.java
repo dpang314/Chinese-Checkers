@@ -59,34 +59,7 @@ public class Game implements Serializable {
 	    //sets history and turn counter to base form, creates a board with given players
 	    this.history = new Stack<Move>();
 	    this.turn = 0;
-
-	    //Shuffles turn order
-	    if (shuffle) {
-	      //Second players array with all null elements
-	      Player[] playersCopy = new Player[]{null,null,null,null,null,null};
-	      //Iterates through every space in players2
-	      for (int i = 0; i < 6; i++){
-	        //creates a random index k and assigns an element from players to players2
-	        //in that random index; checks to make sure only null spaces in players2 are
-	        //being occupied
-	        int k = (int)Math.random()*6;
-	        while (!(playersCopy[k]==null)){
-	          k = (int)Math.random()*6;
-	        }
-	        //Once this is over, every player in players should be assigned to a null space
-	        //in players2
-	
-	        //If 2 or more null spaces in players are assigned to the same 
-	        //null space in players2 it doesn't matter because all of players2's elements
-	        //were null to begin with
-			  playersCopy[k]=players[i];
-	      }
-
-	      //Sets players to players2 so the game will now reference the random turn order
-	      players = playersCopy;
-
-	    }
-		int count = 0;
+	    int count = 0;
 		for (int i = 0; i < players.length; i++) {
 			if (players[i] != null) {
 				if (players[i] instanceof HumanPlayer) {
@@ -101,6 +74,29 @@ public class Game implements Serializable {
 				count++;
 			}
 		}
+	    //Shuffles turn order
+	    if (shuffle) {
+            //Second players array 
+            Player[] players2 = players;
+            Random rand = new Random();
+            for (int x = players2.length - 1; x > 0; x--) {
+              int index = rand.nextInt(x + 1);
+              // Simple swap
+              Player a = players2[index];
+              players2[index] = players2[x];
+              players2[x] = a;
+            }
+
+            //Sets players to players2 so the game will now reference the random turn order
+            players = players2;
+            currentPlayer = players[0];
+            playerTurn = 0;
+        }
+        //otherwise, the first player should be the first element
+        else
+            currentPlayer = players[0];
+	    
+		
 		//If shuffled, the first element will NOT necessarily be a player; so it will
 		//iterate through the array until it finds a real player to set the first player
 		//to
