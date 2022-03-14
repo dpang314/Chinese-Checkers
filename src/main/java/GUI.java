@@ -1,23 +1,27 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GUI implements ActionListener{
+public class GUI {
 	private MenuPanel menuPanel;
 	private GamePanel gamePanel;
 	private Game game;
 	private JFrame frame;
-
+	private static ImageLoader imageLoader = new ImageLoader();
 	private static String toGame = "Switch to game panel";
 	private static String toMenu = "Switch to menu panel";
 
 	public GUI() {
-		CustomFont.load();
 		frame = new JFrame();
 		switchToMenuPanel();
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+	}
+
+	public static ImageLoader getImageLoader() {
+		return imageLoader;
 	}
 
 	public void switchToGamePanel(Player[] players, boolean shuffle) {
@@ -39,7 +43,7 @@ public class GUI implements ActionListener{
 	public void switchToMenuPanel() {
 		game = null;
 		MenuPanel menuPanel = new MenuPanel(this);
-		frame.setContentPane(menuPanel);
+		frame.setContentPane(new PlayerOptionsPanel(1));
 		frame.pack();
 	}
 
@@ -55,9 +59,4 @@ public class GUI implements ActionListener{
 			}
     });
   }
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-
-	}
 }
