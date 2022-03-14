@@ -59,7 +59,21 @@ public class Game implements Serializable {
 	    //sets history and turn counter to base form, creates a board with given players
 	    this.history = new Stack<Move>();
 	    this.turn = 0;
-
+	    int count = 0;
+		for (int i = 0; i < players.length; i++) {
+			if (players[i] != null) {
+				if (players[i] instanceof HumanPlayer) {
+					players[i] = new HumanPlayer(colorAssignments[numPlayers][count], players[i].getName());
+				}
+				else if (players[i] instanceof ComputerStratBasic2) {
+					players[i] = new ComputerStratBasic2(colorAssignments[numPlayers][count], players[i].getName());
+				}
+				else if (players[i] instanceof QuinnStrategy) {
+					players[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
+				}
+				count++;
+			}
+		}
 	    //Shuffles turn order
 	    if (shuffle) {
             //Second players array 
@@ -82,22 +96,7 @@ public class Game implements Serializable {
         else
             currentPlayer = players[0];
 	    
-		int count = 0;
-		for (int i = 0; i < players.length; i++) {
-			if (players[i] != null) {
-				if (players[i] instanceof HumanPlayer) {
-					players[i] = new HumanPlayer(colorAssignments[numPlayers][count], players[i].getName());
-				}
-				else if (players[i] instanceof ComputerStratBasic2) {
-					players[i] = new ComputerStratBasic2(colorAssignments[numPlayers][count], players[i].getName());
-				}
-				else if (players[i] instanceof QuinnStrategy) {
-					players[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
-				}
-				count++;
-			}
-		}
-		System.out.println(this.players[0]);
+		
 		//If shuffled, the first element will NOT necessarily be a player; so it will
 		//iterate through the array until it finds a real player to set the first player
 		//to
