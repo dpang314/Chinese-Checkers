@@ -409,6 +409,20 @@ public class MenuPanel extends JPanel implements ActionListener {
 					typesAl.add(types[x]);
 				}
 			}
+			int numPlayers = typesAl.size();
+			// set the game screen
+			// pass data from players
+			//players[0] = new HumanPlayer(Color.RED,"hi");
+			//players[1] = new HumanPlayer(Color.BLUE,"test");
+//			players[0] = new QuinnStrategy(Color.RED, "test1");
+//			players[1] = new QuinnStrategy(Color.BLUE, "test");
+//			players[2] = new QuinnStrategy(Color.GREEN, "test2");
+//			players[3] = new QuinnStrategy(Color.YELLOW, "test2");
+//			players[4] = new QuinnStrategy(Color.BLACK, "test2");
+//			players[5] = new QuinnStrategy(Color.WHITE, "test2");
+			players[0] = new ComputerStratBasic2(Color.RED, "Basic3");
+			players[0] = new ComputerStratBasic2(Color.RED, "Simple");
+			players[1] = new QuinnStrategy(Color.BLUE, "Quinn");
 
 			gui.switchToGamePanel(players, shuffle);
 		}
@@ -516,7 +530,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 				checkSubject(3);
 				dif = (String) difficulty.getSelectedItem();
 				if (dif.equals("Easier")) {
-					players[subject - 1] = new ComputerStratBasic(Color.RED, "Computer " + (subject - 1 ));
+					players[subject - 1] = new ComputerStratBasic2(Color.RED, "Computer " + (subject - 1 ));
 					
 					// create computer player
 					// set the difficulty to Easier
