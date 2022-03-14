@@ -310,6 +310,8 @@ public class GamePanel extends JPanel {
 					if (save()) {
 						gui.switchToMenuPanel();
 					}
+				} else {
+					gui.switchToMenuPanel();
 				}
 			}
 		}
@@ -326,6 +328,8 @@ public class GamePanel extends JPanel {
 					if (save()) {
 						gui.close();
 					}
+				} else {
+					gui.close();
 				}
 			}
 		}
@@ -356,7 +360,13 @@ public class GamePanel extends JPanel {
 		}
 		end.addActionListener(endAction);
 		this.add(end);
-		undo = new JButton("Undo");
+		if (game.canUndoMini()) {
+			undo = new JButton("Undo Move");
+		} else if (game.canUndoTurns()) {
+			undo = new JButton("Undo Turn");
+		} else {
+			undo = new JButton("Undo");
+		}
 		undo.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 3, 254, BUTTON_HEIGHT);
 		style(undo);
 		if (((!game.canUndoMini() && !game.canUndoTurns()) || game.gameOver())

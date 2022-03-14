@@ -498,12 +498,14 @@ public class MenuPanel extends JPanel implements ActionListener {
 					typesAl.add(types[x]);
 				}
 			}
+			int numPlayers = typesAl.size();
 
 			gui.switchToGamePanel(players, shuffle);
 		}
 		
 		if (eventName.equals("loadB")) {
 			// load code
+
 			JFileChooser chooser = new JFileChooser();
 			FileNameExtensionFilter filter = new FileNameExtensionFilter(
 					".chcr save file", "chcr");
@@ -515,7 +517,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 					Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
 					gui.switchToGamePanel(game);
 				} catch (IOException ex) {
-					ex.printStackTrace();
+					JOptionPane.showMessageDialog(this, "Error loading save file. Please try a different file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -604,7 +606,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 				checkSubject(3);
 				dif = (String) difficulty.getSelectedItem();
 				if (dif.equals("Easier")) {
-					players[subject - 1] = new ComputerStratBasic(Color.RED, "Computer " + (subject - 1 ));
+					players[subject - 1] = new ComputerStratBasic2(Color.RED, "Computer " + (subject - 1 ));
 					
 					// create computer player
 					// set the difficulty to Easier
@@ -655,7 +657,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		ImageIcon bg = new ImageIcon("images/bg.PNG");
 		background = bg.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 		
-		ImageIcon fb = new ImageIcon("images/filledRadioButton.ong");
+		ImageIcon fb = new ImageIcon("images/filledRadioButton.png");
 		filledButton = fb.getImage().getScaledInstance(20,20,Image.SCALE_DEFAULT);
 		
 		ImageIcon eb = new ImageIcon("images/emptyRadioButton.png");
