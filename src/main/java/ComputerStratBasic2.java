@@ -11,13 +11,14 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 	private Move prevMove;
 	public ComputerStratBasic2(Color color, String playerName) {
 		super(color, playerName);
-		System.out.println(color);
+		//System.out.println(color);
 		WRP = new int[2];
 		//prevPos = new ArrayList<Position>();
 		moveQue = new ArrayList<Position>();
 		//newBM = false;
 		newTurn = true; endTurn=false;
 		//numWiTurn=1;
+		prevMove=null;
 		winReg = getWR();
 		if (color.equals(Color.green)) {dir='l'; WRP[0] = 4; WRP[1] = 0;}
 		else if (color.equals(Color.black)) {dir='l'; WRP[0] = 12; WRP[1] = 0;}
@@ -27,61 +28,94 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 		else {dir='d'; WRP[0] = 16; WRP[1] = 0;}
 	}
 	public Move getMove(Board board) {
-		System.out.println("getting move");
+		//System.out.println("getting move");
+		Random rand = new Random();
 		winReg = getWR();
-		if (endTurn) {
-			endTurn=false;
-			newTurn=true;
-			moveQue.clear();
-			return null;
-		}
+//		if (endTurn) {
+//			endTurn=false;
+//			newTurn=true;
+//			moveQue.clear();
+//			return null;
+//		}
 		if (newTurn) {
-			Random rand = new Random();
+			//System.out.println("New Turn");
+			//Random rand = new Random();
 			ArrayList<Position> tpf = new ArrayList<Position>();
 			for (Position pos: posArr) {
 				if (board.possibleMoves(pos, false).size()>0) {
 					tpf.add(pos);
 				}
 			}
+			//System.out.println("Pegs that can move: "+tpf);
 			Position p = tpf.get(rand.nextInt(tpf.size()));
-			System.out.println("picked pos: "+p);
-			ArrayList<Position> toPickFrom = getMoveablePos(p, board);
+			//System.out.println("picked pos: "+p);
+			ArrayList<Position> toPickFrom = getMoveablePos(p, board, false);
+			//System.out.println("moveablePos: "+toPickFrom);
 			while (toPickFrom.size()==0) {
+				//System.out.println("In Loop, picked pos: "+p);
 				p = posArr.get(rand.nextInt(8));
-				toPickFrom = getMoveablePos(p, board);
+				toPickFrom = getMoveablePos(p, board, false);
 			}
-			Position p2 = toPickFrom.get(rand.nextInt(toPickFrom.size()));
-			moveQue.add(p);
-			moveQue.add(p2);
-			while (board.possibleMoves(p2, true).size()>0) {
-				ArrayList<Position> pm2 = getMoveablePos(p2, board);
-				if (pm2.size()>0) {
-					p2 = toPickFrom.get(rand.nextInt(toPickFrom.size()));
-					moveQue.add(p2);
-				}
-			}
-		}
-		newTurn = false;
-		if (moveQue.size()==2) {
-			endTurn=true;
-			prevMove = new Move(moveQue.get(0), moveQue.get(1), this);
+			Position p2 = getBestPos(toPickFrom, board);//toPickFrom.get(rand.nextInt(toPickFrom.size()));
+			prevMove = new Move(p, p2, this);
+			newTurn = false;
 			return prevMove;
+//			moveQue.add(p);
+//			moveQue.add(p2);
+//			while (board.possibleMoves(p2, true).size()>0) {
+//				ArrayList<Position> pm2 = getMoveablePos(p2, board);
+//				if (pm2.size()>0) {
+//					p2 = toPickFrom.get(rand.nextInt(toPickFrom.size()));
+//					moveQue.add(p2);
+//				}
+//			}
+//			System.out.println("MQ: "+moveQue);
 		}
-		prevMove = new Move(moveQue.get(0), moveQue.get(1), this);
-		moveQue.remove(0);
-		return prevMove;
+		if (getMoveablePos(prevMove.getEndPosition(), board, true).size()>0) {
+			ArrayList<Position> toPickFrom = getMoveablePos(prevMove.getEndPosition(), board, true);
+			Position p2 = getBestPos(toPickFrom, board);//toPickFrom.get(rand.nextInt(toPickFrom.size()));
+			prevMove = new Move(prevMove.getEndPosition(), p2, this);
+			return prevMove;
+		} else {
+			newTurn=true;
+			//moveQue.clear();
+			return null;
+		}
+//		if (moveQue.size()==2) {
+//			endTurn=true;
+//			prevMove = new Move(moveQue.get(0), moveQue.get(1), this);
+//			return prevMove;
+//		}
+//		prevMove = new Move(moveQue.get(0), moveQue.get(1), this);
+//		moveQue.remove(0);
+//		return prevMove;
 	}
-	private ArrayList<Position> getMoveablePos(Position p, Board board){
+	private ArrayList<Position> getMoveablePos(Position p, Board board, boolean jumpOnly){
 		ArrayList<Position> toPickFrom = new ArrayList<Position>();
-		ArrayList<Position> pm = board.possibleMoves(p, false);
+		ArrayList<Position> pm = board.possibleMoves(p, jumpOnly);
+		//System.out.println("pos moves: "+pm);
 		for (Position pos:pm) {
-			if (distanceToWRP(pos, board)>=distanceToWRP(p, board)) {
-				if (!pos.equals(prevMove.getStartPosition())) {
+			//System.out.println("og pos: "+ p+", dwrp: "+distanceToWRP(p, board));
+			//System.out.println("new pos: "+ pos+", dwrp: "+distanceToWRP(pos, board));
+			if (distanceToWRP(pos, board)<=distanceToWRP(p, board)) {
+				if (prevMove==null || !pos.equals(prevMove.getStartPosition())) {
 					toPickFrom.add(pos);
 				}
 			}
 		}
 		return toPickFrom;
+	}
+	private Position getBestPos(ArrayList<Position> pm, Board board) {
+		int dist  = 1000;
+		Position bestPos = null;
+		for (Position p: pm) {
+			int d2 = distanceToWRP(p, board);
+			if (d2<dist) {
+				dist=d2;
+				bestPos = p;
+			}
+		}
+		return bestPos;
 	}
 	private int indexOf(ArrayList<Position> PP, Position check) {
 		for (int i=0; i<PP.size(); i++) {
