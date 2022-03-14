@@ -92,8 +92,8 @@ public class Game implements Serializable {
 				if (players[i] instanceof HumanPlayer) {
 					players[i] = new HumanPlayer(colorAssignments[numPlayers][count], players[i].getName());
 				}
-				else if (players[i] instanceof ComputerStratBasic2) {
-					players[i] = new ComputerStratBasic2(colorAssignments[numPlayers][count], players[i].getName());
+				else if (players[i] instanceof StupidQuinnStrategy) {
+					players[i] = new StupidQuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
 				}
 				else if (players[i] instanceof QuinnStrategy) {
 					players[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
@@ -101,7 +101,6 @@ public class Game implements Serializable {
 				count++;
 			}
 		}
-		System.out.println(this.players[0]);
 		//If shuffled, the first element will NOT necessarily be a player; so it will
 		//iterate through the array until it finds a real player to set the first player
 		//to

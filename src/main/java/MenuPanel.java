@@ -517,7 +517,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 				checkSubject(3);
 				dif = (String) difficulty.getSelectedItem();
 				if (dif.equals("Easier")) {
-					players[subject - 1] = new ComputerStratBasic2(Color.RED, "Computer " + (subject - 1 ));
+					players[subject - 1] = new StupidQuinnStrategy(Color.RED, "Computer " + (subject - 1 ));
 					
 					// create computer player
 					// set the difficulty to Easier
