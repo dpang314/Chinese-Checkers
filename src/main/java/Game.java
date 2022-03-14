@@ -91,7 +91,11 @@ public class Game implements Serializable {
 			if (players[i] != null) {
 				if (players[i] instanceof HumanPlayer) {
 					players[i] = new HumanPlayer(colorAssignments[numPlayers][count], players[i].getName());
-				} else if (players[i] instanceof QuinnStrategy) {
+				}
+				else if (players[i] instanceof ComputerStratBasic2) {
+					players[i] = new ComputerStratBasic2(colorAssignments[numPlayers][count], players[i].getName());
+				}
+				else if (players[i] instanceof QuinnStrategy) {
 					players[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
 				}
 				count++;
@@ -151,7 +155,9 @@ public class Game implements Serializable {
 		// has made at least 1 earlier turn
 		return !humans && history.size() >= numPlayers;
 	}
-
+	
+	private boolean jumped = false;
+	
 	// If multiple human players, can only undo minihistory
 	// If minihistory empty, undo entire turns
 	public void undo() {
@@ -166,6 +172,9 @@ public class Game implements Serializable {
 			undoingMove = new Move(lastMove.getEndPosition(),
 					lastMove.getStartPosition(), currentPlayer);
 			board.move(undoingMove, true);
+			if (miniHistory.size()==0) {
+				jumped = false;
+			}
 		}
 		//If there were no moves made this turn, and there are no other human players,
 		//undoes to the beginning of your previous turn.
@@ -182,7 +191,7 @@ public class Game implements Serializable {
 		}
 	}
 
-	private boolean jumped = false;
+	
 
 	public boolean movePeg(Move move) {
 		if (initiallySelected == null && miniHistory.isEmpty()) {
