@@ -189,20 +189,20 @@ public class ArushiStrategy extends Player {
 	private ArrayList<Move> confQueue(ArrayList<Position> posArr) {
 		ArrayList<Move> ret = new ArrayList<Move>();
 
-		for (int i = 0; i<posArr.size()-1; i++) {
+		for (int i = 0; i<=posArr.size()-2; i++) {
 			Move newJump = new Move(posArr.get(i), posArr.get(i+1), this);
 			ret.add(newJump);
 		}
 		
 		System.out.println(this.getName()+": first move" +ret.get(0));
 		System.out.println(this.getName()+": last move" +ret.get(ret.size()-1));
-
+		
 		return ret;
 	}
 
 	private ArrayList<Position> generateConfArr(Position pos, Board current) {
 		ArrayList<Position> path = new ArrayList<Position>();
-
+		path.add(pos);
 		Position next = new Position(pos.getRow(), pos.getColumn());
 		int movingPegDist = pegDistance(pos);
 		ArrayList<Position> possMoves = current.possibleMoves(pos, false);

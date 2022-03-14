@@ -407,8 +407,8 @@ public class MenuPanel extends JPanel implements ActionListener {
 //					typesAl.add(types[x]);
 //				}
 //			}
-			players[0] = new ArushiStrategy(Color.RED, "MCMC 1");
-			players[1] = new ArushiStrategy(Color.BLUE, "MCMC 2");
+			players[0] = new QuinnStrategy(Color.RED, "quinn 1");
+			players[1] = new HumanPlayer (Color.BLUE, "human");
 
 
 			gui.switchToGamePanel(players, shuffle);
