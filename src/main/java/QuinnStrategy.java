@@ -177,7 +177,7 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 	double currentBestValue = -Double.MAX_VALUE;
 	int currentFastestPath = 0;
 
-	private void checkAndUpdateIfOptimal(Position[] path) throws Exception {
+	protected void checkAndUpdateIfOptimal(Position[] path) throws Exception {
 		
 		//gets the root position (original position at start of turn)
 		Position rootPos = path[0];
