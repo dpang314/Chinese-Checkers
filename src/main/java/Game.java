@@ -155,6 +155,7 @@ public class Game implements Serializable {
 	// If multiple human players, can only undo minihistory
 	// If minihistory empty, undo entire turns
 	public void undo() {
+		initiallySelected = null;
 		Move undoingMove;
 		//If the player has made a move this turn, undoes only the FinalMove without
 		//referencing history
