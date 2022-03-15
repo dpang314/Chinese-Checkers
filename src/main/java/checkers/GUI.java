@@ -15,7 +15,7 @@ public class GUI {
     private final JFrame frame;
 
     public GUI() {
-        frame = new JFrame();
+        frame = new JFrame("Chinese Checkers");
         switchToMenuPanel();
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
