@@ -154,7 +154,7 @@ public class GamePanel extends JPanel {
 	}
 
 	private void renderComputerMoves() {
-		if (game.winningPlayer() != null) {
+		if (game.gameOver()) {
 			repaint();
 		} else if (game.getCurrentPlayer().isComputer()) {
 			Move move = game.getTurn();
@@ -384,7 +384,7 @@ public class GamePanel extends JPanel {
 		}
 		g.drawString("Turn " + game.getTurns(), BUTTON_LEFT - 10, 200);
 		g.drawString("Move " + game.getMoves(), BUTTON_LEFT - 10, 230);
-		if (repaintButtons) {
+		if (repaintButtons && !game.gameOver()) {
 			for (int i = 0; i < this.getComponentCount(); i++) {
 				if (this.getComponents()[i] instanceof JButton) {
 					this.remove(i);
