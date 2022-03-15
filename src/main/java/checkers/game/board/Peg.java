@@ -6,7 +6,6 @@ import java.io.Serializable;
 
 public class Peg implements Cloneable, Serializable {
     private Player owner;
-    private Position pos;
 
     //only for testing, don't use this peg
     public Peg() {
@@ -22,9 +21,5 @@ public class Peg implements Cloneable, Serializable {
 
     public Player getOwner() {
         return owner;
-    }
-
-    public Position getPos() {
-        return pos;
     }
 }

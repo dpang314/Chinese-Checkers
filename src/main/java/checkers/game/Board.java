@@ -12,9 +12,6 @@ import java.util.Collections;
 
 public class Board implements Cloneable, Serializable {
 
-    public static final Color[] colors = new Color[]{
-            Color.blue, Color.white, Color.yellow, Color.red, Color.black, Color.green
-    };
     //only so that the various directional position methods can be static
     public static final int[] rowWidths = {1, 2, 3, 4, 13, 12, 11, 10, 9, 10, 11, 12, 13, 4, 3, 2, 1};
     public static final Position[] homeR = {new Position(0, 0),
@@ -77,12 +74,11 @@ public class Board implements Cloneable, Serializable {
             {null, null, null, null}, {null, null, null}, {null, null}, {null}};
 
     public Board(Player[] players) {
-        for (int i = 0; i < players.length; i++) {
-            if (!(players[i] == null)) {
-                populateReg(getHomeRegion(players[i].getColor()), players[i]);
-                int WR = (homeAll.indexOf(getHomeRegion(players[i].getColor())) % 2 == 0) ? homeAll.indexOf(getHomeRegion(players[i].getColor())) + 1 : homeAll.indexOf(getHomeRegion(players[i].getColor())) - 1;
-                players[i].assignWinRegInt(WR);
-                players[i].assignWinReg(homeAll.get(WR));
+        for (Player player : players) {
+            if (!(player == null)) {
+                populateReg(getHomeRegion(player.getColor()), player);
+                int WR = (homeAll.indexOf(getHomeRegion(player.getColor())) % 2 == 0) ? homeAll.indexOf(getHomeRegion(player.getColor())) + 1 : homeAll.indexOf(getHomeRegion(player.getColor())) - 1;
+                player.assignWinReg(homeAll.get(WR));
             }
         }
     }
@@ -297,7 +293,7 @@ public class Board implements Cloneable, Serializable {
     private void populateReg(Position[] region, Player p) {
         for (int i = 0; i < region.length; i++) {
             boardPos[region[i].getRow()][region[i].getColumn()] = new Peg(p);
-            p.addInitalPos(new Position(region[i].getRow(), region[i].getColumn()));
+            p.addInitialPos(new Position(region[i].getRow(), region[i].getColumn()));
         }
     }
 

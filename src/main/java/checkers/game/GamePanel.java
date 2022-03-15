@@ -41,12 +41,7 @@ public class GamePanel extends JPanel {
             repaint();
         }
     };
-    private final ActionListener saveAction = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            save();
-        }
-    };
+    private final ActionListener saveAction = e -> save();
     private final GUI gui;
     private final ActionListener quitAction = new ActionListener() {
         @Override
@@ -82,14 +77,9 @@ public class GamePanel extends JPanel {
             }
         }
     };
-    private final int WIDTH;
-	private final int HEIGHT;
-    private JButton end, undo, save, quit, exit;
 
-    public GamePanel(GUI gui, Game game, int WIDTH, int HEIGHT) {
+    public GamePanel(GUI gui, Game game, Dimension screenSize) {
         this.gui = gui;
-        this.WIDTH = WIDTH;
-        this.HEIGHT = HEIGHT;
         this.game = game;
         Player[] players = game.getPlayers();
         // TODO center the labels
@@ -134,7 +124,7 @@ public class GamePanel extends JPanel {
                 }
             }
         }
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(screenSize);
         setLayout(null);
         repaintButtons = true;
         renderComputerMoves();
@@ -212,24 +202,14 @@ public class GamePanel extends JPanel {
                 game.endTurn();
                 repaintButtons = true;
                 repaint();
-                Timer timer = new Timer(100, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        renderComputerMoves();
-                    }
-                });
+                Timer timer = new Timer(100, actionEvent -> renderComputerMoves());
                 timer.setRepeats(false);
                 timer.start();
             } else {
                 game.movePeg(move);
                 repaintButtons = true;
                 repaint();
-                Timer timer = new Timer(100, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        renderComputerMoves();
-                    }
-                });
+                Timer timer = new Timer(100, actionEvent -> renderComputerMoves());
                 timer.setRepeats(false);
                 timer.start();
             }
@@ -248,7 +228,7 @@ public class GamePanel extends JPanel {
     }
 
     private void initButtons() {
-        end = new JButton("End Turn");
+        JButton end = new JButton("End Turn");
         end.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 4, 254, BUTTON_HEIGHT);
         style(end);
         if (!game.canEndTurn() || game.gameOver() || game.getCurrentPlayer() instanceof ComputerStrategy) {
@@ -256,6 +236,7 @@ public class GamePanel extends JPanel {
         }
         end.addActionListener(endAction);
         this.add(end);
+        JButton undo;
         if (game.canUndoMini()) {
             undo = new JButton("Undo Move");
         } else if (game.canUndoTurns()) {
@@ -271,7 +252,7 @@ public class GamePanel extends JPanel {
         }
         undo.addActionListener(undoAction);
         this.add(undo);
-        save = new JButton("Save");
+        JButton save = new JButton("Save");
         save.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 2, 254, BUTTON_HEIGHT);
         save.addActionListener(saveAction);
         style(save);
@@ -279,12 +260,12 @@ public class GamePanel extends JPanel {
             styleDisabled(save);
         }
         this.add(save);
-        quit = new JButton("Quit");
+        JButton quit = new JButton("Quit");
         quit.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING, 254, BUTTON_HEIGHT);
         quit.addActionListener(quitAction);
         style(quit);
         this.add(quit);
-        exit = new JButton("Exit");
+        JButton exit = new JButton("Exit");
         exit.setBounds(BUTTON_LEFT, BUTTON_BOTTOM, 254, BUTTON_HEIGHT);
         exit.addActionListener(exitAction);
         style(exit);
@@ -320,13 +301,9 @@ public class GamePanel extends JPanel {
             }
 
             // not highlighted
-            game.getNonClickablePegs().forEach((position, color) -> {
-                this.add(new PegButton(position, color, false));
-            });
+            game.getNonClickablePegs().forEach((position, color) -> this.add(new PegButton(position, color, false)));
 
-            game.getClickablePegs().forEach((position) -> {
-                this.add(new PegButton(position, game.getCurrentPlayer().getColor(), true));
-            });
+            game.getClickablePegs().forEach((position) -> this.add(new PegButton(position, game.getCurrentPlayer().getColor(), true)));
 
             if (!game.getCurrentPlayer().isComputer() && !game.gameOver()) {
                 for (Position p : game.getPossibleMoves()) {
@@ -340,10 +317,8 @@ public class GamePanel extends JPanel {
 
     class PegButton extends JButton {
         private final Ellipse2D border;
-        private final boolean highlighted;
 
         public PegButton(Position pos, Color color, boolean highlighted) {
-            this.highlighted = highlighted;
             // Image is a square with a circle
             ImageIcon icon = GUI.getImageLoader().getGamePanelImages().getImageIcon(color, highlighted);
             int RADIUS = icon.getIconHeight();
@@ -357,13 +332,10 @@ public class GamePanel extends JPanel {
 
             this.border = new Ellipse2D.Float(0, 0, RADIUS, RADIUS);
             if (highlighted) {
-                this.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        GamePanel.this.repaintButtons = true;
-                        GamePanel.this.repaint();
-                        game.select(pos);
-                    }
+                this.addActionListener(actionEvent -> {
+                    GamePanel.this.repaintButtons = true;
+                    GamePanel.this.repaint();
+                    game.select(pos);
                 });
             }
         }
@@ -391,13 +363,10 @@ public class GamePanel extends JPanel {
 
             border = new Ellipse2D.Float(0, 0, RADIUS, RADIUS);
 
-            this.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    GamePanel.this.repaintButtons = true;
-                    GamePanel.this.repaint();
-                    game.movePeg(position);
-                }
+            this.addActionListener(actionEvent -> {
+                GamePanel.this.repaintButtons = true;
+                GamePanel.this.repaint();
+                game.movePeg(position);
             });
         }
 

@@ -12,8 +12,6 @@ import checkers.resources.GameLoader;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class MenuPanel extends JPanel {
@@ -27,29 +25,20 @@ public class MenuPanel extends JPanel {
     private final PlayerButton P4;
     private final PlayerButton P5;
     private final PlayerButton P6;
-    private final JButton start;
-    private final JButton load;
-    private final JButton exit;
     private final JButton shuffler;
 
-    private final GUI gui;
-
     public MenuPanel(GUI gui) {
-        this.gui = gui;
         setPreferredSize(new Dimension(1280, 720));
         this.setLayout(null);
 
         shuffler = new JButton("");
         shuffler.setBounds(335, 115, 20, 20);
-        shuffler.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                shuffle = !shuffle;
-                if (shuffle) {
-                    shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
-                } else {
-                    shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-                }
+        shuffler.addActionListener(actionEvent -> {
+            shuffle = !shuffle;
+            if (shuffle) {
+                shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
+            } else {
+                shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
             }
         });
         shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -83,61 +72,55 @@ public class MenuPanel extends JPanel {
         P6.setBounds(480, 450, P6.getIcon().getIconWidth(), P6.getIcon().getIconHeight());
         this.add(P6);
 
-        start = new JButton("");
+        JButton start = new JButton("");
         start.setBounds(540, 591, GUI.getImageLoader().getMenuPanelImages().getStart().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getStart().getIconHeight());
         start.setIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
-        start.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                Player[] players = {
-                        createPlayer(P1),
-                        createPlayer(P2),
-                        createPlayer(P3),
-                        createPlayer(P4),
-                        createPlayer(P5),
-                        createPlayer(P6),
-                };
-                int playerCount = 0;
-                for (Player p : players) {
-                    if (p != null) {
-                        playerCount++;
-                    }
+        start.addActionListener(actionEvent -> {
+            Player[] players = {
+                    createPlayer(P1),
+                    createPlayer(P2),
+                    createPlayer(P3),
+                    createPlayer(P4),
+                    createPlayer(P5),
+                    createPlayer(P6),
+            };
+            int playerCount = 0;
+            for (Player p : players) {
+                if (p != null) {
+                    playerCount++;
                 }
-                if (playerCount == 0) {
-                    JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 0 players", "Error", JOptionPane.ERROR_MESSAGE);
-                } else if (playerCount == 1) {
-                    JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 1 player", "Error", JOptionPane.ERROR_MESSAGE);
-                } else if (playerCount == 5) {
-                    JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 5 players", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    gui.switchToGamePanel(players, shuffle);
-                }
+            }
+            if (playerCount == 0) {
+                JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 0 players", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (playerCount == 1) {
+                JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 1 player", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (playerCount == 5) {
+                JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 5 players", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                gui.switchToGamePanel(players, shuffle);
             }
         });
         start.setContentAreaFilled(false);
         start.setBorderPainted(false);
         this.add(start);
 
-        load = new JButton("");
+        JButton load = new JButton("");
         load.setBounds(195, 590, GUI.getImageLoader().getMenuPanelImages().getLoad().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getLoad().getIconHeight());
         load.setIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
-        load.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                // loads save
-                JFileChooser chooser = new JFileChooser();
-                FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                        ".chcr save file", "chcr");
-                chooser.setFileFilter(filter);
-                chooser.setAcceptAllFileFilterUsed(false);
-                int returnVal = chooser.showOpenDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
-                        gui.switchToGamePanel(game);
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(MenuPanel.this, "Error loading save file. Please try a different file.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+        load.addActionListener(actionEvent -> {
+            // loads save
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    ".chcr save file", "chcr");
+            chooser.setFileFilter(filter);
+            chooser.setAcceptAllFileFilterUsed(false);
+            int returnVal = chooser.showOpenDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
+                    gui.switchToGamePanel(game);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(MenuPanel.this, "Error loading save file. Please try a different file.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -145,18 +128,15 @@ public class MenuPanel extends JPanel {
         load.setBorderPainted(false);
         this.add(load);
 
-        exit = new JButton("");
+        JButton exit = new JButton("");
         exit.setBounds(872, 597, GUI.getImageLoader().getMenuPanelImages().getExit().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getExit().getIconHeight());
         exit.setIcon(GUI.getImageLoader().getMenuPanelImages().getExit());
-        exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                int confirmed = JOptionPane.showConfirmDialog(MenuPanel.this,
-                        "Are you sure you want to quit the game?",
-                        "Quit", JOptionPane.YES_NO_OPTION);
-                if (confirmed == JOptionPane.YES_OPTION) {
-                    gui.close();
-                }
+        exit.addActionListener(actionEvent -> {
+            int confirmed = JOptionPane.showConfirmDialog(MenuPanel.this,
+                    "Are you sure you want to quit the game?",
+                    "Quit", JOptionPane.YES_NO_OPTION);
+            if (confirmed == JOptionPane.YES_OPTION) {
+                gui.close();
             }
         });
         exit.setContentAreaFilled(false);
@@ -230,12 +210,7 @@ public class MenuPanel extends JPanel {
             this.setContentAreaFilled(false);
             this.setIcon(GUI.getImageLoader().getMenuPanelImages().getPlayerCloudIcon(playerNumber, playerType));
             this.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getPlayerCloudIcon(playerNumber, playerType));
-            this.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    openOptions(PlayerButton.this);
-                }
-            });
+            this.addActionListener(actionEvent -> openOptions(PlayerButton.this));
             repaint();
         }
 
@@ -297,10 +272,6 @@ public class MenuPanel extends JPanel {
 
         public String getName() {
             return playerOptionsPanel.getName();
-        }
-
-        public Util.PlayerType getPlayerType() {
-            return playerType;
         }
 
         public void setPlayerType(Util.PlayerType playerType) {

@@ -7,6 +7,7 @@ import checkers.menu.MenuPanel;
 import checkers.resources.ImageLoader;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GUI {
     private static final ImageLoader imageLoader = new ImageLoader();
@@ -36,14 +37,14 @@ public class GUI {
         if (game == null) {
             game = new Game(players, shuffle);
         }
-        GamePanel gamePanel = new GamePanel(this, game, 1280, 720);
+        GamePanel gamePanel = new GamePanel(this, game, new Dimension(1280, 720));
         frame.setContentPane(gamePanel);
         frame.pack();
     }
 
     public void switchToGamePanel(Game game) {
         this.game = game;
-        GamePanel gamePanel = new GamePanel(this, game, 1280, 720);
+        GamePanel gamePanel = new GamePanel(this, game, new Dimension(1280, 720));
         frame.setContentPane(gamePanel);
         frame.pack();
     }

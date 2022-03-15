@@ -18,7 +18,7 @@ public class PlayerOptionsPanel extends JPanel {
     private final JButton computerSelect;
     private final JButton noneSelect;
     private final JButton save;
-    private final JComboBox difficultySelect;
+    private final JComboBox<String> difficultySelect;
     private final JTextField nameInput;
     private final JTextField error;
     private final JLabel nameInstruct;
@@ -73,14 +73,11 @@ public class PlayerOptionsPanel extends JPanel {
         noneSelect.setContentAreaFilled(false);
         noneSelect.setBorderPainted(false);
         noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-        noneSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                selected = Util.PlayerType.NONE;
-                name = "";
-                repaintButtons = true;
-                repaint();
-            }
+        noneSelect.addActionListener(actionEvent -> {
+            selected = Util.PlayerType.NONE;
+            name = "";
+            repaintButtons = true;
+            repaint();
         });
         this.add(noneSelect);
 
@@ -157,18 +154,15 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(comInstruct);
 
         String[] feed = {"Easier", "Harder"};
-        difficultySelect = new JComboBox(feed);
+        difficultySelect = new JComboBox<>(feed);
         difficultySelect.setBounds(750, 420, 255, 30);
         difficultySelect.setVisible(false);
-        difficultySelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (difficultySelect.isPopupVisible()) {
-                    if (difficultySelect.getSelectedIndex() == 0) {
-                        selected = Util.PlayerType.COMPUTER_EASY;
-                    } else if (difficultySelect.getSelectedIndex() == 1) {
-                        selected = Util.PlayerType.COMPUTER_HARD;
-                    }
+        difficultySelect.addActionListener(actionEvent -> {
+            if (difficultySelect.isPopupVisible()) {
+                if (difficultySelect.getSelectedIndex() == 0) {
+                    selected = Util.PlayerType.COMPUTER_EASY;
+                } else if (difficultySelect.getSelectedIndex() == 1) {
+                    selected = Util.PlayerType.COMPUTER_HARD;
                 }
             }
         });
@@ -180,12 +174,7 @@ public class PlayerOptionsPanel extends JPanel {
         save.setFont(Util.getBigFont());
         save.setFocusPainted(false);
         save.setBounds(770, 465, 200, 50);
-        save.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                playerButton.close(selected);
-            }
-        });
+        save.addActionListener(actionEvent -> playerButton.close(selected));
         this.add(save);
 
         this.setVisible(true);

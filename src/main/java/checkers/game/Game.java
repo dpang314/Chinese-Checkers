@@ -26,18 +26,15 @@ public class Game implements Serializable {
     //tracks the final start and end position of the peg you moved on your turn
     //this is the move that is added to the history stack
     //tracks moves within one turn; cleared at the end of every turn
-    private final Stack<Move> miniHistory = new Stack<Move>();
+    private final Stack<Move> miniHistory = new Stack<>();
     Position initiallySelected = null;
     //Stores all players in the game
     private Player[] players;
     //Stores which player's turn it is
     private Player currentPlayer;
-    //Number of turns
-    private int turn;
     //Current player index
-    private int playerTurn = 0;
+    private int playerTurn;
     //First player turn
-    private int first = 0;
     //determines if there are more than one human player
     private boolean humans = false;
     private boolean jumped = false;
@@ -63,14 +60,12 @@ public class Game implements Serializable {
         if (z > 1) humans = true;
 
         //sets history and turn counter to base form, creates a board with given players
-        this.history = new Stack<Move>();
-        this.turn = 0;
+        this.history = new Stack<>();
 
         Player[] players2 = players;
         //Shuffles turn order
         if (shuffle) {
             //Second players array
-            players2 = players;
             Random rand = new Random();
             for (int x = players2.length - 1; x > 0; x--) {
                 int index = rand.nextInt(x + 1);
@@ -96,7 +91,6 @@ public class Game implements Serializable {
             }
         }
         players = players2;
-        currentPlayer = players[0];
 
 
         //If shuffled, the first element will NOT necessarily be a player; so it will
@@ -108,14 +102,12 @@ public class Game implements Serializable {
         }
         currentPlayer = players[i];
         playerTurn = i;
-        first = i;
 
         this.board = new Board(players);
     }
 
     public Move getTurn() {
-        Move move = currentPlayer.getMove(board);
-        return move;
+        return currentPlayer.getMove(board);
     }
 
     public void endTurn() {
@@ -135,8 +127,6 @@ public class Game implements Serializable {
             playerTurn %= 6;
         }
         currentPlayer = players[playerTurn];
-
-        if (playerTurn == first) turn++;
 
     }
 
@@ -177,11 +167,10 @@ public class Game implements Serializable {
             }
             miniHistory.clear();
             //Sets turn counter back however many turns were skipped
-            turn -= numPlayers;
         }
     }
 
-    public boolean movePeg(Move move) {
+    public void movePeg(Move move) {
         if (initiallySelected == null && miniHistory.isEmpty()) {
             initiallySelected = move.getEndPosition();
             if (board.possibleJumpMoves(move.getStartPosition()) != null && board.possibleJumpMoves(move.getStartPosition()).contains(move.getEndPosition())) {
@@ -201,10 +190,9 @@ public class Game implements Serializable {
         board.move(move, false);
         //adds the move to the mini stack for this turn
         miniHistory.add(move);
-        return true;
     }
 
-    public boolean movePeg(Position endPosition) {
+    public void movePeg(Position endPosition) {
         // First move of turn
         Position startPosition = selectedPosition();
         if (board.possibleJumpMoves(startPosition) != null && board.possibleJumpMoves(startPosition).contains(endPosition)) {
@@ -215,7 +203,6 @@ public class Game implements Serializable {
         //adds the move to the mini stack for this turn
         miniHistory.add(move);
         initiallySelected = null;
-        return true;
     }
 
     public Position selectedPosition() {
@@ -241,7 +228,7 @@ public class Game implements Serializable {
     }
 
     public ArrayList<Position> getPossibleMoves() {
-        if (selectedPosition() == null || !miniHistory.isEmpty() && !jumped) return new ArrayList<Position>();
+        if (selectedPosition() == null || !miniHistory.isEmpty() && !jumped) return new ArrayList<>();
         if (miniHistory.isEmpty()) {
             return board.possibleMoves(selectedPosition(), false);
         } else {
@@ -266,9 +253,7 @@ public class Game implements Serializable {
     public ArrayList<Position> getClickablePegs() {
         if (selectedPosition() == null) return currentPlayer.posArr;
         else if (miniHistory.isEmpty()) {
-            ArrayList<Position> ret = new ArrayList<>();
-            ret.addAll(players[playerTurn].posArr);
-            return ret;
+            return new ArrayList<>(players[playerTurn].posArr);
         } else {
             ArrayList<Position> ret = new ArrayList<>();
             ret.add(selectedPosition());
@@ -279,7 +264,7 @@ public class Game implements Serializable {
     //(1)red to (4)blue
     //(6)yellow to (3)green
     //(2)black to (5)white
-    //If corresponding corner is filled and it isnt filled with its own players peg, return current player
+    //If corresponding corner is filled, and it isn't filled with its own players peg, return current player
     public Player winningPlayer() {
         //current player's color
         boolean filledByOpp = false;
