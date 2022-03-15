@@ -11,7 +11,6 @@ public class Util {
     public static final Color WHITE = new Color(225, 208, 190, 255);
     public static final Color YELLOW = new Color(216, 158, 77, 255);
     private static Font bigFont;
-    private static Font playerFont;
     private static final Font font = load();
 
     public static Font getBigFont() {
@@ -22,11 +21,10 @@ public class Util {
         Font font = null;
         try {
             font = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/CarterOne-Regular.ttf"));
+            bigFont = font.deriveFont(15f);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        bigFont = font.deriveFont(15f);
-        playerFont = font.deriveFont(28f);
         return font;
     }
 
