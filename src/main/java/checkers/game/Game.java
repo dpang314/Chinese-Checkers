@@ -1,7 +1,16 @@
+package checkers.game;
+
+import checkers.game.player.HumanPlayer;
+import checkers.game.board.Move;
+import checkers.game.board.Peg;
+import checkers.game.board.Position;
+import checkers.game.player.Player;
+import checkers.game.player.QuinnStrategy;
+import checkers.game.player.SimpleQuinnStrategy;
+
 import java.io.Serializable;
 import java.util.*;
 import java.awt.Color;
-import java.util.concurrent.TimeUnit;
 
 public class Game implements Serializable {
   //Stores all players in the game

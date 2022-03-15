@@ -1,6 +1,10 @@
+package checkers.game.player;
+
+import checkers.game.board.Move;
+import checkers.game.Board;
+
 import java.awt.Color;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class HumanPlayer extends Player implements Serializable {
 	public HumanPlayer(Color color, String playerName) {

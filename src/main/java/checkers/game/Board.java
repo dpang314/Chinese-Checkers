@@ -1,3 +1,10 @@
+package checkers.game;
+
+import checkers.game.board.Move;
+import checkers.game.board.Peg;
+import checkers.game.player.Player;
+import checkers.game.board.Position;
+
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,7 +51,7 @@ public class Board implements Cloneable, Serializable {
 	//only so that the various directional position methods can be static
 	public static final int[] rowWidths = {1,2,3,4,13,12,11,10,9,10,11,12,13,4,3,2,1};
 	
-	public static final Position[] homeR = {new Position(0, 0), 
+	public static final Position[] homeR = {new Position(0, 0),
 								new Position(1, 0), new Position(1, 1), 
 								new Position(2, 0), new Position(2, 1), new Position(2, 2),
 								new Position(3, 0), new Position(3, 1), new Position(3, 2), new Position(3, 3)};

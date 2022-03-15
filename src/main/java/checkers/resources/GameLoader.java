@@ -1,3 +1,7 @@
+package checkers.resources;
+
+import checkers.game.Game;
+
 import java.io.*;
 
 public abstract class GameLoader {

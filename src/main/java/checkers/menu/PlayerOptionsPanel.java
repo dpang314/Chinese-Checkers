@@ -1,3 +1,8 @@
+package checkers.menu;
+
+import checkers.GUI;
+import checkers.Util;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;

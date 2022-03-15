@@ -1,18 +1,22 @@
-import javax.imageio.ImageIO;
+package checkers.game;
+
+import checkers.*;
+import checkers.game.board.Move;
+import checkers.game.board.Position;
+import checkers.game.player.ComputerStrategy;
+import checkers.game.player.Player;
+import checkers.resources.GameLoader;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.awt.geom.*;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 public class GamePanel extends JPanel {
 	private Game game;
@@ -308,7 +312,7 @@ public class GamePanel extends JPanel {
 		this.add(exit);
 	}
 
-	GamePanel(GUI gui, Game game, int WIDTH, int HEIGHT) {
+	public GamePanel(GUI gui, Game game, int WIDTH, int HEIGHT) {
 		this.gui = gui;
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;

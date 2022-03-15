@@ -1,3 +1,5 @@
+package checkers;
+
 import java.awt.*;
 import java.io.File;
 

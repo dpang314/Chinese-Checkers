@@ -1,3 +1,5 @@
+package checkers.game.player;
+
 import java.awt.*;
 
 public abstract class ComputerStrategy extends Player {

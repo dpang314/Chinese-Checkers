@@ -1,3 +1,7 @@
+package checkers.game.player;
+
+import checkers.game.board.Position;
+
 import java.awt.Color;
 
 /*

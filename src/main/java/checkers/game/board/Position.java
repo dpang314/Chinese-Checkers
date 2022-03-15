@@ -1,3 +1,7 @@
+package checkers.game.board;
+
+import checkers.game.Board;
+
 import java.awt.Color;
 import java.io.Serializable;
 

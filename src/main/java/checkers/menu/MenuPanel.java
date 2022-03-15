@@ -1,12 +1,17 @@
+package checkers.menu;
+
+import checkers.GUI;
+import checkers.Util;
+import checkers.game.Game;
+import checkers.game.player.HumanPlayer;
+import checkers.game.player.Player;
+import checkers.game.player.QuinnStrategy;
+import checkers.game.player.SimpleQuinnStrategy;
+import checkers.resources.GameLoader;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import javax.swing.Timer;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -143,7 +148,7 @@ public class MenuPanel extends JPanel {
 		playerButton.open();
 	}
 
-	MenuPanel(GUI gui) {
+	public MenuPanel(GUI gui) {
 		this.gui = gui;
 		setPreferredSize(new Dimension(1280,720));
 		this.setLayout(null);
@@ -193,7 +198,7 @@ public class MenuPanel extends JPanel {
 		this.add(P6);
 
 		start = new JButton("");
-		start.setBounds(540,591,GUI.getImageLoader().getMenuPanelImages().getStart().getIconWidth(),GUI.getImageLoader().getMenuPanelImages().getStart().getIconHeight());
+		start.setBounds(540,591, GUI.getImageLoader().getMenuPanelImages().getStart().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getStart().getIconHeight());
 		start.setIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
 		start.addActionListener(new ActionListener() {
 			@Override
@@ -228,7 +233,7 @@ public class MenuPanel extends JPanel {
 		this.add(start);
 
 		load = new JButton("");
-		load.setBounds(195,590,GUI.getImageLoader().getMenuPanelImages().getLoad().getIconWidth(),GUI.getImageLoader().getMenuPanelImages().getLoad().getIconHeight());
+		load.setBounds(195,590, GUI.getImageLoader().getMenuPanelImages().getLoad().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getLoad().getIconHeight());
 		load.setIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
 		load.addActionListener(new ActionListener() {
 			@Override
@@ -255,7 +260,7 @@ public class MenuPanel extends JPanel {
 		this.add(load);
 
 		exit = new JButton("");
-		exit.setBounds(872,597,GUI.getImageLoader().getMenuPanelImages().getExit().getIconWidth(),GUI.getImageLoader().getMenuPanelImages().getExit().getIconHeight());
+		exit.setBounds(872,597, GUI.getImageLoader().getMenuPanelImages().getExit().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getExit().getIconHeight());
 		exit.setIcon(GUI.getImageLoader().getMenuPanelImages().getExit());
 		exit.addActionListener(new ActionListener() {
 			@Override

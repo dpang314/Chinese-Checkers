@@ -1,9 +1,13 @@
-/*
+package checkers.game.player;/*
  * Quinn Hancock
  * Chinese Checkers
  * Group Project 2022
  * Red Team
  */
+
+import checkers.game.board.Move;
+import checkers.game.board.Position;
+import checkers.game.Board;
 
 import java.awt.Color;
 import java.awt.geom.*;

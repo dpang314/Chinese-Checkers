@@ -1,3 +1,7 @@
+package checkers.resources;
+
+import checkers.Util;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;

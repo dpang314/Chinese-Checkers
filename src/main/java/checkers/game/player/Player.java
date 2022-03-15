@@ -1,3 +1,9 @@
+package checkers.game.player;
+
+import checkers.game.board.Move;
+import checkers.game.board.Position;
+import checkers.game.Board;
+
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;

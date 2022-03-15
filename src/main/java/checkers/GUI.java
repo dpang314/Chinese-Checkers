@@ -1,7 +1,12 @@
+package checkers;
+
+import checkers.game.Game;
+import checkers.game.GamePanel;
+import checkers.game.player.Player;
+import checkers.menu.MenuPanel;
+import checkers.resources.ImageLoader;
+
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GUI {
 	private MenuPanel menuPanel;

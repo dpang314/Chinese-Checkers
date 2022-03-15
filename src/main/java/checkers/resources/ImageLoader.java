@@ -1,9 +1,6 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
+package checkers.resources;
+
 import java.io.IOException;
-import java.util.HashMap;
 
 public class ImageLoader {
     private CommonImages commonImages;
