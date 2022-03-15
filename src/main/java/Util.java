@@ -13,7 +13,7 @@ public class Util {
     public static final Color RED = new Color(173,61,49,255);
     public static final Color BLACK = new Color(20, 18, 14, 255);
     public static final Color GREEN = new Color(95, 119, 82, 255);
-    public static final Color BLUE = new Color(90,85,125,255);
+    public static final Color BLUE = new Color(49,43,78,255);
     public static final Color WHITE = new Color(225,208,190,255);
     public static final Color YELLOW = new Color(216,158,77,255);
 

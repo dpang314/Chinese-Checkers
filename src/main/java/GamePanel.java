@@ -36,6 +36,10 @@ public class GamePanel extends JPanel {
 
 		double adjustedColumn = column - columnWidths[row];
 
+		if (column >= 10) {
+			START_X += 5;
+		}
+
 		return new Position((int) (adjustedColumn * (60 / 1.5) + START_X - RADIUS / 2), (int) (row * (53 / 1.5) + START_Y - RADIUS / 2));
 	}
 
