@@ -99,9 +99,9 @@ public class GamePanel extends JPanel {
 			this.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					game.movePeg(position);
 					GamePanel.this.repaintButtons = true;
 					GamePanel.this.repaint();
+					game.movePeg(position);
 				}
 			});
 		}
@@ -268,7 +268,7 @@ public class GamePanel extends JPanel {
 		end = new JButton("End Turn");
 		end.setBounds(BUTTON_LEFT, BUTTON_BOTTOM - SPACING * 4, 254, BUTTON_HEIGHT);
 		style(end);
-		if (!game.canEndTurn() || game.getCurrentPlayer() instanceof ComputerStrategy) {
+		if (!game.canEndTurn() || game.gameOver() || game.getCurrentPlayer() instanceof ComputerStrategy) {
 			styleDisabled(end);
 		}
 		end.addActionListener(endAction);
