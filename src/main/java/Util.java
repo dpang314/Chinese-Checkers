@@ -14,7 +14,7 @@ public class Util {
         COMPUTER_EASY,
         COMPUTER_HARD,
         HUMAN,
-        SELECTING, // If previously none, but now initializing type
+        DEFAULT, // If previously none, but now initializing type
         NONE
     }
 

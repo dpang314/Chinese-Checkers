@@ -1,8 +1,8 @@
 import java.awt.Color;
 
-public class StupidQuinnStrategy extends QuinnStrategy {
+public class SimpleQuinnStrategy extends QuinnStrategy {
 
-	public StupidQuinnStrategy(Color color, String playerName) {
+	public SimpleQuinnStrategy(Color color, String playerName) {
 		super(color, playerName);
 	}
 	

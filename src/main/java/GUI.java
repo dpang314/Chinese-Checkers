@@ -43,7 +43,7 @@ public class GUI {
 	public void switchToMenuPanel() {
 		game = null;
 		MenuPanel menuPanel = new MenuPanel(this);
-		frame.setContentPane(new PlayerOptionsPanel(1));
+		frame.setContentPane(menuPanel);
 		frame.pack();
 	}
 

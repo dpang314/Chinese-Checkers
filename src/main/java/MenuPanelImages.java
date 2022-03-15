@@ -1,6 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -20,14 +21,14 @@ public class MenuPanelImages {
                 .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
 
         // start load exit
-        start = ImageIO.read(new File("images/menu/start.PNG"))
-                .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
+        BufferedImage startImage = ImageIO.read(new File("images/menu/start.PNG"));
+        start = new ImageIcon(startImage.getScaledInstance((int)(startImage.getWidth() / 1.5), (int)(startImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
 
-        load = ImageIO.read(new File("images/menu/load.PNG"))
-                .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
+        BufferedImage loadImage = ImageIO.read(new File("images/menu/load.PNG"));
+        load = new ImageIcon(loadImage.getScaledInstance((int)(loadImage.getWidth() / 1.5), (int)(loadImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
 
-        exit = ImageIO.read(new File("images/menu/exit.PNG"))
-                .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
+        BufferedImage menuImage = ImageIO.read(new File("images/menu/exit.PNG"));
+        exit = new ImageIcon(menuImage.getScaledInstance((int)(menuImage.getWidth() / 1.5), (int)(menuImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
 
         // visuals like scrolls dragons logos
 
@@ -42,38 +43,38 @@ public class MenuPanelImages {
     }
 
     private void addImageIcon(String name) throws IOException {
-        cloudIcons.put(name, new ImageIcon(ImageIO.read(new File("images/menu/clouds/" + name + ".PNG"))
-                .getScaledInstance(24, 24, Image.SCALE_DEFAULT)));
+        BufferedImage cloud = ImageIO.read(new File("images/menu/clouds/" + name + ".PNG"));
+        cloudIcons.put(name, new ImageIcon(cloud.getScaledInstance((int)(cloud.getWidth() / 1.5), (int)(cloud.getHeight() / 1.5), Image.SCALE_DEFAULT)));
     }
 
     private void loadCloudIcons() throws IOException {
-        //			addImageIcon("player1Human");
-        //			addImageIcon("player2Human");
-        //			addImageIcon("player3Human");
-        //			addImageIcon("player4Human");
-        //			addImageIcon("player5Human");
-        //			addImageIcon("player6Human");
-        //
-        //			addImageIcon("player1Computer");
-        //			addImageIcon("player2Computer");
-        //			addImageIcon("player3Computer");
-        //			addImageIcon("player4Computer");
-        //			addImageIcon("player5Computer");
-        //			addImageIcon("player6Computer");
-        //
-        //			addImageIcon("player1None");
-        //			addImageIcon("player2None");
-        //			addImageIcon("player3None");
-        //			addImageIcon("player4None");
-        //			addImageIcon("player5None");
-        //			addImageIcon("player6None");
-        //
-        //			addImageIcon("player1Selecting");
-        //			addImageIcon("player2Selecting");
-        //			addImageIcon("player3Selecting");
-        //			addImageIcon("player4Selecting");
-        //			addImageIcon("player5Selecting");
-        //			addImageIcon("player6Selecting");
+        addImageIcon("p1Hum");
+        addImageIcon("p2Hum");
+        addImageIcon("p3Hum");
+        addImageIcon("p4Hum");
+        addImageIcon("p5Hum");
+        addImageIcon("p6Hum");
+
+        addImageIcon("p1Com");
+        addImageIcon("p2Com");
+        addImageIcon("p3Com");
+        addImageIcon("p4Com");
+        addImageIcon("p5Com");
+        addImageIcon("p6Com");
+
+        addImageIcon("p1None");
+        addImageIcon("p2None");
+        addImageIcon("p3None");
+        addImageIcon("p4None");
+        addImageIcon("p5None");
+        addImageIcon("p6None");
+
+        addImageIcon("p1Def");
+        addImageIcon("p2Def");
+        addImageIcon("p3Def");
+        addImageIcon("p4Def");
+        addImageIcon("p5Def");
+        addImageIcon("p6Def");
     }
 
     private ImageIcon emptyButton;
@@ -81,9 +82,7 @@ public class MenuPanelImages {
     private ImageIcon filledButton;
     //	https://cdn1.iconfinder.com/data/icons/thin-ui-1/100/Noun_Project_100Icon_1px_grid_thin_ic_radio_btn_full-512.PNG
     private Image smallScroll;
-    private Image start;
-    private Image load;
-    private Image exit;
+    private ImageIcon start, load, exit;
     private Image dragon;
     private Image logoBig;
     private Image logoSmall;
@@ -100,15 +99,15 @@ public class MenuPanelImages {
         return smallScroll;
     }
 
-    public Image getStart() {
+    public ImageIcon getStart() {
         return start;
     }
 
-    public Image getLoad() {
+    public ImageIcon getLoad() {
         return load;
     }
 
-    public Image getExit() {
+    public ImageIcon getExit() {
         return exit;
     }
 
@@ -126,13 +125,13 @@ public class MenuPanelImages {
 
     public ImageIcon getPlayerCloudIcon(int number, Util.PlayerType playerType) {
         if (playerType.equals(Util.PlayerType.COMPUTER_EASY) || playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
-            return cloudIcons.get("player" + number + "Computer");
+            return cloudIcons.get("p" + number + "Com");
         } else if (playerType.equals(Util.PlayerType.HUMAN)) {
-            return cloudIcons.get("player" + number + "Human");
+            return cloudIcons.get("p" + number + "Hum");
         } else if (playerType.equals(Util.PlayerType.NONE)) {
-            return cloudIcons.get("player" + number + "None");
-        } else if (playerType.equals(Util.PlayerType.SELECTING)) {
-            return cloudIcons.get("player" + number + "Selecting");
+            return cloudIcons.get("p" + number + "None");
+        } else if (playerType.equals(Util.PlayerType.DEFAULT)) {
+            return cloudIcons.get("p" + number + "Def");
         }
         throw new RuntimeException("Image not found");
     }

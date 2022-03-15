@@ -12,15 +12,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 
 // Marty
-public class MenuPanel extends JPanel implements ActionListener {
+public class MenuPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private boolean shuffle = false;
 	private boolean scrolled;
-
-	private JTextField name;
-
-	private JComboBox difficulty;
-
 
 	private PlayerButton P1;
 	private PlayerButton P2;
@@ -31,219 +26,243 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private JButton start;
 	private JButton load;
 	private JButton exit;
-	private JButton done;
 	private JButton shuffler;
 
-	private Font bigFont;
-	private Font playerFont;
 	private GUI gui;
 
-	private class PlayerButton extends JButton {
+	public class PlayerButton extends JButton {
 		private Util.PlayerType playerType = Util.PlayerType.NONE;
 		private PlayerOptionsPanel playerOptionsPanel;
+		private int playerNumber;
 
 		public PlayerButton(int playerNumber) {
-//			ImageIcon icon = getPlayerCloudIcon(playerNumber, playerType);
-//			this.setIcon(icon);
+			this.playerNumber = playerNumber;
+			playerOptionsPanel = new PlayerOptionsPanel(playerNumber, this);
+			playerOptionsPanel.setLayout(new BorderLayout());
+			playerOptionsPanel.setBounds(0, 0, 1280, 720);
+			playerOptionsPanel.setVisible(false);
+			MenuPanel.this.add(playerOptionsPanel);
 			this.setFocusPainted(false);
 			this.setBorderPainted(false);
 			this.setContentAreaFilled(false);
-
-
+			this.setIcon(GUI.getImageLoader().getMenuPanelImages().getPlayerCloudIcon(playerNumber, playerType));
+			this.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getPlayerCloudIcon(playerNumber, playerType));
 			this.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					ImageIcon i = GUI.getImageLoader().getMenuPanelImages().getPlayerCloudIcon(playerNumber, playerType);
-					PlayerButton.this.setIcon(i);
+				public void actionPerformed(ActionEvent actionEvent) {
+					openOptions(PlayerButton.this);
 				}
 			});
+			repaint();
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			this.setIcon(GUI.getImageLoader().getMenuPanelImages().getPlayerCloudIcon(playerNumber, playerType));
+			this.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getPlayerCloudIcon(playerNumber, playerType));
+		}
+
+		public void open() {
+			playerType = Util.PlayerType.DEFAULT;
+			playerOptionsPanel.setVisible(true);
+			scrolled = true;
+			P1.setEnabled(false);
+			P2.setEnabled(false);
+			P3.setEnabled(false);
+			P4.setEnabled(false);
+			P5.setEnabled(false);
+			P6.setEnabled(false);
+			this.setEnabled(true);
+		}
+
+		public void close(Util.PlayerType selected) {
+			playerType = selected;
+			playerOptionsPanel.setVisible(false);
+			repaint();
+			closeOptions();
 		}
 
 		public void setPlayerType(Util.PlayerType playerType) {
 			this.playerType = playerType;
+			playerOptionsPanel.setSelected(playerType);
+			this.repaint();
 		}
+
+		public String getName() {
+			return playerOptionsPanel.getName();
+		}
+
+		public Util.PlayerType getPlayerType() {
+			return playerType;
+		}
+	}
+
+	private void closeOptions() {
+		scrolled = false;
+		P1.setEnabled(true);
+		P2.setEnabled(true);
+		P3.setEnabled(true);
+		P4.setEnabled(true);
+		P5.setEnabled(true);
+		P6.setEnabled(true);
+	}
+
+	private void openOptions(PlayerButton playerButton) {
+		playerButton.open();
 	}
 
 	MenuPanel(GUI gui) {
 		this.gui = gui;
 		setPreferredSize(new Dimension(1280,720));
-
 		this.setLayout(null);
 
-		PlayerOptionsPanel p = new PlayerOptionsPanel(1);
-		p.setLayout(new BorderLayout());
-		p.setBounds(0,0, 1280, 720);
-		this.add(p);
-//		shuffler = new JButton("");
-//		shuffler.setBounds(335,115,20,20);
-//		shuffler.setActionCommand("Shuffler");
-//		shuffler.addActionListener(this);
-//		shuffler.setContentAreaFilled(false);
-//		shuffler.setBorderPainted(false);
-//		this.add(shuffler);
-//
-////		P1 = new PlayerButton(1);
-////		P1.setBounds(100, 125, 180, 80);
-////		this.add(P1);
-////
-////		P2 = new PlayerButton(2);
-////		P2.setBounds(340,180,180,80);
-////		this.add(P2);
-////
-////		P3 = new PlayerButton(3);
-////		P3.setBounds(158,258,180,80);
-////		this.add(P3);
-////
-////		P4 = new PlayerButton(4);
-////		P4.setBounds(405,312,180,80);
-////		this.add(P4);
-////
-////		P5 = new PlayerButton(5);
-////		P5.setBounds(225,410,180,80);
-////		this.add(P5);
-////
-////		P6 = new PlayerButton(6);
-////		P6.setBounds(458,450,180,80);
-////		this.add(P6);
-//
-//		start = new JButton("");
-//		start.setBounds(540,605,180,80);
-//		start.setActionCommand("startB");
-//		start.addActionListener(this);
-//		start.setContentAreaFilled(false);
-//		start.setBorderPainted(false);
-//		this.add(start);
-//
-//		load = new JButton("");
-//		load.setBounds(195,597,180,80);
-//		load.setActionCommand("loadB");
-//		load.addActionListener(this);
-//		load.setContentAreaFilled(false);
-//		load.setBorderPainted(false);
-//		this.add(load);
-//
-//		exit = new JButton("");
-//		exit.setBounds(872,597,180,80);
-//		exit.setActionCommand("exitB");
-//		exit.addActionListener(this);
-//		exit.setContentAreaFilled(false);
-//		exit.setBorderPainted(false);
-//		this.add(exit);
-//
-//		nameInstruct = new JLabel("Enter your name:");
-//		nameInstruct.setFont(bigFont);
-//		nameInstruct.setBounds(813,382,300,60);
-//		this.add(nameInstruct);
-//		nameInstruct.setVisible(false);
-//
-//		comInstruct = new JLabel("Set Difficulty:");
-//		comInstruct.setBounds(817,382,300,60);
-//		comInstruct.setFont(bigFont);
-//		this.add(comInstruct);
-//		comInstruct.setVisible(false);
-//
-//		shuffleLabel = new JLabel("Shuffle Colors");
-//		shuffleLabel.setBounds(380,110,200,30);
-//		shuffleLabel.setFont(bigFont);
-//		this.add(shuffleLabel);
-//		shuffleLabel.setVisible(true);
-//
-//		//////////////////////////////////////////////
-//
-//		String feed[] = {"Easier", "Harder"};
-//		difficulty = new JComboBox(feed);
-//		difficulty.setBounds(750,430,255,30);
-//		this.add(difficulty);
-//		difficulty.setActionCommand("difficulty");
-//		difficulty.addActionListener(this);
-//		difficulty.setVisible(false);
-//
-//		name = new JTextField("   ");
-//		name.setBounds(750,430,255,30);
-//		this.add(name);
-//		name.setActionCommand("name");
-//		name.addActionListener(this);
-//		name.setVisible(false);
-//
-//		///////////////////////////////////////////////
-//
-//		done = new JButton("Done");
-//		done.setBounds(770,465,200,50);
-//		done.setFont(bigFont);
-//		this.add(done);
-//		done.setActionCommand("done");
-//		done.addActionListener(this);
-//		done.setContentAreaFilled(false);
-//		done.setVisible(false);
-//
-//		playerNum = new JLabel("");
-//		playerNum.setBounds(820,200,250,30);
-//		playerNum.setFont(playerFont);
-//		this.add(playerNum);
-//		playerNum.setVisible(false);
+		shuffler = new JButton("");
+		shuffler.setBounds(335,115,20,20);
+		shuffler.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				shuffle = !shuffle;
+				if (shuffle) {
+					shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
+				} else {
+					shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
+				}
+			}
+		});
+		shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
+		shuffler.setContentAreaFilled(false);
+		shuffler.setBorderPainted(false);
+		this.add(shuffler);
+
+		P1 = new PlayerButton(1);
+		P1.setBounds(80, 125, P1.getIcon().getIconWidth(), P1.getIcon().getIconHeight());
+		P1.setPlayerType(Util.PlayerType.HUMAN);
+		this.add(P1);
+
+		P2 = new PlayerButton(2);
+		P2.setBounds(320,180,P2.getIcon().getIconWidth(), P2.getIcon().getIconHeight());
+		P2.setPlayerType(Util.PlayerType.COMPUTER_HARD);
+		this.add(P2);
+
+		P3 = new PlayerButton(3);
+		P3.setBounds(140,258,P3.getIcon().getIconWidth(), P3.getIcon().getIconHeight());
+		this.add(P3);
+
+		P4 = new PlayerButton(4);
+		P4.setBounds(420,312,P4.getIcon().getIconWidth(), P4.getIcon().getIconHeight());
+		this.add(P4);
+
+		P5 = new PlayerButton(5);
+		P5.setBounds(220,410,P5.getIcon().getIconWidth(), P5.getIcon().getIconHeight());
+		this.add(P5);
+
+		P6 = new PlayerButton(6);
+		P6.setBounds(480,450,P6.getIcon().getIconWidth(), P6.getIcon().getIconHeight());
+		this.add(P6);
+
+		start = new JButton("");
+		start.setBounds(540,591,GUI.getImageLoader().getMenuPanelImages().getStart().getIconWidth(),GUI.getImageLoader().getMenuPanelImages().getStart().getIconHeight());
+		start.setIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
+		start.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				Player[] players = {
+						createPlayer(P1),
+						createPlayer(P2),
+						createPlayer(P3),
+						createPlayer(P4),
+						createPlayer(P5),
+						createPlayer(P6),
+				};
+
+				gui.switchToGamePanel(players, shuffle);
+			}
+		});
+		start.setContentAreaFilled(false);
+		start.setBorderPainted(false);
+		this.add(start);
+
+		load = new JButton("");
+		load.setBounds(195,590,GUI.getImageLoader().getMenuPanelImages().getLoad().getIconWidth(),GUI.getImageLoader().getMenuPanelImages().getLoad().getIconHeight());
+		load.setIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
+		load.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				// loads save
+				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(
+						".chcr save file", "chcr");
+				chooser.setFileFilter(filter);
+				chooser.setAcceptAllFileFilterUsed(false);
+				int returnVal = chooser.showOpenDialog(null);
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					try {
+						Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
+						gui.switchToGamePanel(game);
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(MenuPanel.this, "Error loading save file. Please try a different file.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+		load.setContentAreaFilled(false);
+		load.setBorderPainted(false);
+		this.add(load);
+
+		exit = new JButton("");
+		exit.setBounds(872,597,GUI.getImageLoader().getMenuPanelImages().getExit().getIconWidth(),GUI.getImageLoader().getMenuPanelImages().getExit().getIconHeight());
+		exit.setIcon(GUI.getImageLoader().getMenuPanelImages().getExit());
+		exit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				int confirmed = JOptionPane.showConfirmDialog(MenuPanel.this,
+						"Are you sure you want to quit the game?",
+						"Quit", JOptionPane.YES_NO_OPTION);
+				if (confirmed == JOptionPane.YES_OPTION) {
+					gui.close();
+				}
+			}
+		});
+		exit.setContentAreaFilled(false);
+		exit.setBorderPainted(false);
+		this.add(exit);
+
+
+		JLabel shuffleLabel = new JLabel("Shuffle Colors");
+		shuffleLabel.setBounds(380,110,200,30);
+		shuffleLabel.setFont(Util.getBigFont());
+		this.add(shuffleLabel);
+		shuffleLabel.setVisible(true);
+
+
 		repaint();
 
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-		setFont(bigFont);
 		g.drawImage(GUI.getImageLoader().getCommonImages().getBackground(), 0, 0, this);
-	}
-	public void actionPerformed(ActionEvent e) {
-		String eventName = e.getActionCommand();
-		String dif;
-		String text;
-		
-		if (eventName.equals("loadB")) {
-			// loads save
-			JFileChooser chooser = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter(
-					".chcr save file", "chcr");
-			chooser.setFileFilter(filter);
-			chooser.setAcceptAllFileFilterUsed(false);
-			int returnVal = chooser.showOpenDialog(null);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
-				try {
-					Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
-					gui.switchToGamePanel(game);
-				} catch (IOException ex) {
-					// TODO display error message
-					ex.printStackTrace();
-				}
-			}
-		}
-		
-		if (eventName.equals("exitB")) {
-			// TODO Insert exit are you sure start up.
-			System.exit(0);
-		}
-		
-		if (eventName.equals("Shuffler")) {
-			if (shuffle) {
-				shuffle = false;
-			} else if (!shuffle) {
-				shuffle = true;
-			}
-		}
-		repaint();
-	}
-	private void getImages() {
-
-	}
-	private void drawImages(Graphics g) {
 		if (!scrolled) {
 			g.drawImage(GUI.getImageLoader().getMenuPanelImages().getLogoBig(), 0,0,this);
 			g.drawImage(GUI.getImageLoader().getMenuPanelImages().getDragon(),0,0,this);
-		} 
+		}
 		if (scrolled) {
-			g.drawImage(GUI.getImageLoader().getMenuPanelImages().getSmallScroll(),0,0,this);
 			g.drawImage(GUI.getImageLoader().getMenuPanelImages().getLogoSmall(),0,0,this);
 		}
-		
-		g.drawImage(GUI.getImageLoader().getMenuPanelImages().getStart(),0,0,this);
-		g.drawImage(GUI.getImageLoader().getMenuPanelImages().getLoad(),0,0,this);
-		g.drawImage(GUI.getImageLoader().getMenuPanelImages().getExit(),0,0,this);
+
+	}
+
+	private Player createPlayer(PlayerButton playerButton) {
+		if (playerButton.playerType.equals(Util.PlayerType.NONE)) {
+			return null;
+		} else if (playerButton.playerType.equals(Util.PlayerType.COMPUTER_EASY)) {
+			return new ComputerStratBasic2(Color.RED, playerButton.getName());
+		} else if (playerButton.playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
+			return new QuinnStrategy(Color.RED, playerButton.getName());
+		} else if (playerButton.playerType.equals(Util.PlayerType.HUMAN)) {
+			return new HumanPlayer(Color.RED, playerButton.getName());
+		}
+		throw new RuntimeException("Error creating player");
 	}
 }
 
