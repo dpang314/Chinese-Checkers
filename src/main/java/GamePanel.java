@@ -367,12 +367,19 @@ public class GamePanel extends JPanel {
 		g.drawImage(GUI.getImageLoader().getGamePanelImages().getBoard(), 0, 0, null);
 		g.drawImage(GUI.getImageLoader().getGamePanelImages().getBigScroll(), 0, 0, null);
 
-		g.setFont(Util.getFont().deriveFont(20f));
+		g.setFont(Util.getFont().deriveFont(18f));
 		if (game.gameOver()) {
-			g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT, 100);
+			g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT - 10, 100);
 		} else {
-			g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT, 100);
+			if (game.getCurrentPlayer().isComputer()) {
+				g.drawString(game.getCurrentPlayer().getName(), BUTTON_LEFT - 10, 100);
+				g.drawString("is thinking", BUTTON_LEFT - 10, 130);
+			} else {
+				g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT - 10, 100);
+			}
 		}
+		g.drawString("Turn " + game.getTurns(), BUTTON_LEFT - 10, 200);
+		g.drawString("Move " + game.getMoves(), BUTTON_LEFT - 10, 230);
 		if (repaintButtons) {
 			for (int i = 0; i < this.getComponentCount(); i++) {
 				if (this.getComponents()[i] instanceof JButton) {
