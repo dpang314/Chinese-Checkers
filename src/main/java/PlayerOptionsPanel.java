@@ -17,10 +17,6 @@ public class PlayerOptionsPanel extends JPanel {
     private String name = "";
     private boolean repaintButtons = false;
 
-    public Util.PlayerType getSelected() {
-        return selected;
-    }
-
     public String getName() {
         return name;
     }
@@ -30,7 +26,9 @@ public class PlayerOptionsPanel extends JPanel {
         this.repaintButtons = true;
         if (playerType.equals(Util.PlayerType.HUMAN)) {
             name = defaultHumanName;
-        } else if (playerType.equals(Util.PlayerType.COMPUTER_HARD) || playerType.equals(Util.PlayerType.COMPUTER_EASY)) {
+        } else if (playerType.equals(Util.PlayerType.COMPUTER_EASY)) {
+            name = defaultComputerName;
+        } else if (playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
             name = defaultComputerName;
         }
         nameInput.setText(name);
@@ -230,6 +228,11 @@ public class PlayerOptionsPanel extends JPanel {
                 computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
                 noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
                 reset();
+                if (selected.equals(Util.PlayerType.COMPUTER_EASY)) {
+                    difficultySelect.setSelectedIndex(0);
+                } else if (selected.equals(Util.PlayerType.COMPUTER_HARD)) {
+                    difficultySelect.setSelectedIndex(1);
+                }
                 difficultySelect.setVisible(true);
                 nameInput.setVisible(true);
                 nameInstruct.setVisible(true);

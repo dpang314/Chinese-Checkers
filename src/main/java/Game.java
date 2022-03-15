@@ -65,8 +65,8 @@ public class Game implements Serializable {
 				if (players[i] instanceof HumanPlayer) {
 					players[i] = new HumanPlayer(colorAssignments[numPlayers][count], players[i].getName());
 				}
-				else if (players[i] instanceof StupidQuinnStrategy) {
-					players[i] = new StupidQuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
+				else if (players[i] instanceof SimpleQuinnStrategy) {
+					players[i] = new SimpleQuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
 				}
 				else if (players[i] instanceof QuinnStrategy) {
 					players[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());

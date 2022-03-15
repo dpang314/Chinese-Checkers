@@ -175,8 +175,21 @@ public class MenuPanel extends JPanel {
 						createPlayer(P5),
 						createPlayer(P6),
 				};
-
-				gui.switchToGamePanel(players, shuffle);
+				int playerCount = 0;
+				for (Player p : players) {
+					if (p != null) {
+						playerCount++;
+					}
+				}
+				if (playerCount == 0) {
+					JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 0 players", "Error", JOptionPane.ERROR_MESSAGE);
+				} else if (playerCount == 1) {
+					JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 1 player", "Error", JOptionPane.ERROR_MESSAGE);
+				} else if (playerCount == 5) {
+					JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 5 players", "Error", JOptionPane.ERROR_MESSAGE);
+				} else {
+					gui.switchToGamePanel(players, shuffle);
+				}
 			}
 		});
 		start.setContentAreaFilled(false);
