@@ -293,19 +293,23 @@ public class Game implements Serializable {
   //If corresponding corner is filled and it isnt filled with its own players peg, return current player
 	public Player winningPlayer() {
     //current player's color
-    Color currentColor = currentPlayer.getColor();
-    //Goal region position array
-    Position[] goal = Board.getWinRegion(currentColor);
-
-    //Checks every position in the goal region - if they are all filled by
-    //current player's pegs, they win; otherwise return null
-		Player ret = currentPlayer;
-		for (Position p : goal) {
-			if (!currentPlayer.posArr.contains(p)) {
-				ret = null;
+		boolean filledByOpp = false;
+		boolean unfilledPosition = false;
+		
+		for(Position p : Board.getWinRegion(currentPlayer.getColor())) {
+			Peg peg = board.getPegs()[p.getRow()][p.getColumn()];
+			if(peg==null) {
+				unfilledPosition = true;
+				break;
+			}
+			if(peg.getOwner().getColor().equals(currentPlayer.getColor())) {
+				filledByOpp = true;
 			}
 		}
-    	return ret;
+		
+		if(!unfilledPosition && filledByOpp) return currentPlayer;
+		
+		return null;
 	};
 
     public boolean gameOver() {
