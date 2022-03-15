@@ -310,7 +310,7 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 		Position start = m.getStartPosition();
 		Position end = m.getEndPosition();
 		
-		Position nuisance = this.obj.getABL(Board.getOpposingColor(getColor()));
+		Position nuisance = new Position(4,6);
 		Position reqObj = new Position(0,0);
 		
 		boolean fillCond = boardAtTurnStart.isOccupied(reqObj) &&
