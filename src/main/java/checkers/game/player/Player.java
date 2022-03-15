@@ -45,6 +45,8 @@ public abstract class Player implements Serializable {
         //System.out.println("WR from P: "+winReg[0]);
     }
 
+    public abstract String toString();
+
     public Position[] getWR() {
         return winReg;
     }

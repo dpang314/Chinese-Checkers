@@ -39,4 +39,21 @@ public class Util {
         DEFAULT, // If previously none, but now initializing type
         NONE
     }
+
+    public static String colorToString(Color color) {
+        if (color.equals(Color.RED)) {
+            return "Red";
+        } else if (color.equals(Color.BLACK)) {
+            return "Black";
+        } else if (color.equals(Color.GREEN)) {
+            return "Green";
+        } else if (color.equals(Color.BLUE)) {
+            return "Blue";
+        } else if (color.equals(Color.WHITE)) {
+            return "White";
+        } else if (color.equals(Color.YELLOW)) {
+            return "Yellow";
+        }
+        return null;
+    }
 }

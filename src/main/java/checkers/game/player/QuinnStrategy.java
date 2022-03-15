@@ -5,6 +5,7 @@ package checkers.game.player;/*
  * Red Team
  */
 
+import checkers.Util;
 import checkers.game.Board;
 import checkers.game.board.Move;
 import checkers.game.board.Position;
@@ -154,6 +155,11 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 
         return move;
 
+    }
+
+    @Override
+    public String toString() {
+        return "QuinnStrategy " + Util.colorToString(this.getColor()) + ": " + this.getName();
     }
 
     //creates a queue of moves by iterating over the positions and looking at two at a time

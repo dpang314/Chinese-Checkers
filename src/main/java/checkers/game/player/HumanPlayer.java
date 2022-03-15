@@ -1,5 +1,6 @@
 package checkers.game.player;
 
+import checkers.Util;
 import checkers.game.Board;
 import checkers.game.board.Move;
 
@@ -18,5 +19,10 @@ public class HumanPlayer extends Player implements Serializable {
     @Override
     public boolean isComputer() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Human " + Util.colorToString(this.getColor()) + ": " + this.getName();
     }
 }
