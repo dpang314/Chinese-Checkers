@@ -30,7 +30,9 @@ import javax.swing.tree.*;
  */
 
 public class QuinnStrategy extends ComputerStrategy implements Serializable {
-	
+
+	private static final long serialVersionUID = 0xFECE;
+
 	/*
 	 * The distance from the objective position
 	 * after which moving pegs in that outer zone
