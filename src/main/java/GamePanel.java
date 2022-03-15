@@ -18,18 +18,9 @@ public class GamePanel extends JPanel {
 	private Game game;
 	private GUI gui;
 	private int WIDTH, HEIGHT;
-	private Position selectedPosition;
-	private boolean moved = false;
-	private boolean movedAdjacent;
 
 	private JButton end, undo, save, quit, exit;
-	private Image backgroundImage, boardImage, menuImage;
-
-
-
 	boolean repaintButtons = false;
-	
-
 
 	// 1 indexed
 	public static Position getPixels(int row, int column, int RADIUS) {
@@ -48,77 +39,6 @@ public class GamePanel extends JPanel {
 		return new Position((int) (adjustedColumn * (60 / 1.5) + START_X - RADIUS / 2), (int) (row * (53 / 1.5) + START_Y - RADIUS / 2));
 	}
 
-	private ImageIcon blackPeg, bluePeg, greenPeg, redPeg, whitePeg, yellowPeg;
-	private ImageIcon redPegHighlighted, blackPegHighlighted, greenPegHighlighted, bluePegHighlighted, whitePegHighlighted, yellowPegHighlighted;
-	private ImageIcon positionHighlight;
-
-	private void initIcons() {
-		try {
-			Image black = ImageIO.read(new File("images/board/pegBlack.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image blue = ImageIO.read(new File("images/board/pegBlue.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image green = ImageIO.read(new File("images/board/pegGreen.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image red = ImageIO.read(new File("images/board/pegRed.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image white = ImageIO.read(new File("images/board/pegWhite.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image yellow = ImageIO.read(new File("images/board/pegYellow.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-
-			Image blackH = ImageIO.read(new File("images/board/pegBlackH.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image blueH = ImageIO.read(new File("images/board/pegBlueH.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image greenH = ImageIO.read(new File("images/board/pegGreenH.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image redH = ImageIO.read(new File("images/board/pegRedH.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image whiteH = ImageIO.read(new File("images/board/pegWhiteH.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-			Image yellowH = ImageIO.read(new File("images/board/pegYellowH.PNG"))
-					.getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-
-			this.blackPeg = new ImageIcon(black);
-			this.bluePeg = new ImageIcon(blue);
-			this.greenPeg = new ImageIcon(green);
-			this.redPeg = new ImageIcon(red);
-			this.whitePeg = new ImageIcon(white);
-			this.yellowPeg = new ImageIcon(yellow);
-
-			this.blackPegHighlighted = new ImageIcon(blackH);
-			this.bluePegHighlighted = new ImageIcon(blueH);
-			this.greenPegHighlighted = new ImageIcon(greenH);
-			this.redPegHighlighted = new ImageIcon(redH);
-			this.whitePegHighlighted = new ImageIcon(whiteH);
-			this.yellowPegHighlighted = new ImageIcon(yellowH);
-
-			this.positionHighlight = new ImageIcon(ImageIO.read(new File("./images/board/highlight.PNG")).getScaledInstance(32, 32, Image.SCALE_DEFAULT));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private ImageIcon getImageIcon(Color color, boolean highlighted) {
-		if (color.equals(Color.RED)) {
-			return highlighted ? redPegHighlighted : redPeg;
-		} else if (color.equals(Color.BLACK)) {
-			return highlighted ? blackPegHighlighted : blackPeg;
-		} else if (color.equals(Color.BLUE)) {
-			return highlighted ? bluePegHighlighted : bluePeg;
-		} else if (color.equals(Color.GREEN)) {
-			return highlighted ? greenPegHighlighted : greenPeg;
-		} else if (color.equals(Color.WHITE)) {
-			return highlighted ? whitePegHighlighted : whitePeg;
-		} else if (color.equals(Color.YELLOW)) {
-			return highlighted ? yellowPegHighlighted : yellowPeg;
-		}
-		return null;
-	}
-
-
-
 	class PegButton extends JButton {
 		private Ellipse2D border;
 		private boolean highlighted;
@@ -126,7 +46,7 @@ public class GamePanel extends JPanel {
 		public PegButton(Position pos, Color color, boolean highlighted) {
 			this.highlighted = highlighted;
 			// Image is a square with a circle
-			ImageIcon icon = getImageIcon(color, highlighted);
+			ImageIcon icon = GUI.getImageLoader().getGamePanelImages().getImageIcon(color, highlighted);
 			int RADIUS = icon.getIconHeight();
 			this.setFocusPainted(false);
 			this.setIcon(icon);
@@ -141,7 +61,6 @@ public class GamePanel extends JPanel {
 				this.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						GamePanel.this.selectedPosition = pos;
 						GamePanel.this.repaintButtons = true;
 						GamePanel.this.repaint();
 						game.select(pos);
@@ -160,7 +79,7 @@ public class GamePanel extends JPanel {
 
 		public HighlightButton(Position position) {
 			// Image is a square with a circle
-			ImageIcon icon = positionHighlight;
+			ImageIcon icon = GUI.getImageLoader().getGamePanelImages().getPositionHighlight();
 			int RADIUS = icon.getIconHeight();
 			this.setFocusPainted(false);
 			this.setIcon(icon);
@@ -179,7 +98,6 @@ public class GamePanel extends JPanel {
 					game.movePeg(position);
 					GamePanel.this.repaintButtons = true;
 					GamePanel.this.repaint();
-					moved = true;
 				}
 			});
 		}
@@ -237,7 +155,6 @@ public class GamePanel extends JPanel {
 		} else if (game.getCurrentPlayer().isComputer()) {
 			Move move = game.getTurn();
 			if (move == null) {
-				reset();
 				game.endTurn();
 				repaintButtons = true;
 				repaint();
@@ -265,16 +182,9 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	private void reset() {
-		selectedPosition = null;
-		moved = false;
-		movedAdjacent = false;
-	}
-
 	private final ActionListener endAction = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			reset();
 			game.endTurn();
 			repaintButtons = true;
 			repaint();
@@ -285,7 +195,6 @@ public class GamePanel extends JPanel {
 	private final ActionListener undoAction = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			reset();
 			game.undo();
 			repaintButtons = true;
 			repaint();
@@ -342,7 +251,7 @@ public class GamePanel extends JPanel {
 
 	private void style(JButton button) {
 		button.setContentAreaFilled(false);
-		button.setFont(CustomFont.getFont().deriveFont(18f));
+		button.setFont(Util.getFont().deriveFont(18f));
 		button.setFocusPainted(false);
 	}
 
@@ -402,19 +311,6 @@ public class GamePanel extends JPanel {
 		this.game = game;
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setLayout(null);
-		initIcons();
-
-		try {
-			boardImage = ImageIO.read(new File("./images/board/board.PNG"))
-					.getScaledInstance(WIDTH, HEIGHT, Image.SCALE_DEFAULT);
-			backgroundImage = ImageIO.read(new File("./images/background.PNG"))
-					.getScaledInstance(WIDTH, HEIGHT, Image.SCALE_DEFAULT);
-			menuImage = ImageIO.read(new File("./images/menu.PNG"))
-					.getScaledInstance(WIDTH, HEIGHT, Image.SCALE_DEFAULT);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		repaintButtons = true;
 		renderComputerMoves();
 	}
@@ -424,11 +320,11 @@ public class GamePanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		g.drawImage(backgroundImage, 0, 0, null);
-		g.drawImage(boardImage, 0, 0, null);
-		g.drawImage(menuImage, 0, 0, null);
+		g.drawImage(GUI.getImageLoader().getCommonImages().getBackground(), 0, 0, null);
+		g.drawImage(GUI.getImageLoader().getGamePanelImages().getBoard(), 0, 0, null);
+		g.drawImage(GUI.getImageLoader().getGamePanelImages().getBigScroll(), 0, 0, null);
 
-		g.setFont(CustomFont.getFont().deriveFont(20f));
+		g.setFont(Util.getFont().deriveFont(20f));
 		if (game.gameOver()) {
 			g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT, 100);
 		} else {
