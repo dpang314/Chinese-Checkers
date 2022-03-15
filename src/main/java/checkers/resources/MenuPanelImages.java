@@ -15,39 +15,39 @@ public class MenuPanelImages {
 
     public MenuPanelImages() throws IOException {
         loadCloudIcons();
-        filledButton = new ImageIcon(ImageIO.read(new File("images/menu/filledRadioButton.png"))
-                .getScaledInstance(20,20, Image.SCALE_DEFAULT));
+        filledButton = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/filledRadioButton.png"))
+                .getScaledInstance(28,28, Image.SCALE_DEFAULT));
 
-        emptyButton = new ImageIcon(ImageIO.read(new File("images/menu/emptyRadioButton.png"))
+        emptyButton = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/emptyRadioButton.png"))
                 .getScaledInstance(20,20,Image.SCALE_DEFAULT));
 
-        smallScroll = ImageIO.read(new File("images/menu/smallScroll.PNG"))
+        smallScroll = ImageIO.read(new File("src/main/resources/images/menu/smallScroll.PNG"))
                 .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
 
         // start load exit
-        BufferedImage startImage = ImageIO.read(new File("images/menu/start.PNG"));
+        BufferedImage startImage = ImageIO.read(new File("src/main/resources/images/menu/start.PNG"));
         start = new ImageIcon(startImage.getScaledInstance((int)(startImage.getWidth() / 1.5), (int)(startImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
 
-        BufferedImage loadImage = ImageIO.read(new File("images/menu/load.PNG"));
+        BufferedImage loadImage = ImageIO.read(new File("src/main/resources/images/menu/load.PNG"));
         load = new ImageIcon(loadImage.getScaledInstance((int)(loadImage.getWidth() / 1.5), (int)(loadImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
 
-        BufferedImage menuImage = ImageIO.read(new File("images/menu/exit.PNG"));
+        BufferedImage menuImage = ImageIO.read(new File("src/main/resources/images/menu/exit.PNG"));
         exit = new ImageIcon(menuImage.getScaledInstance((int)(menuImage.getWidth() / 1.5), (int)(menuImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
 
         // visuals like scrolls dragons logos
 
-        ImageIcon dr = new ImageIcon("images/menu/dragon.PNG");
+        ImageIcon dr = new ImageIcon("src/main/resources/images/menu/dragon.PNG");
         dragon = dr.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 
-        ImageIcon lb = new ImageIcon("images/menu/logoBig.PNG");
+        ImageIcon lb = new ImageIcon("src/main/resources/images/menu/logoBig.PNG");
         logoBig = lb.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 
-        ImageIcon ls = new ImageIcon("images/menu/ogoSmall.PNG");
+        ImageIcon ls = new ImageIcon("src/main/resources/images/menu/ogoSmall.PNG");
         logoSmall = ls.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
     }
 
     private void addImageIcon(String name) throws IOException {
-        BufferedImage cloud = ImageIO.read(new File("images/menu/clouds/" + name + ".PNG"));
+        BufferedImage cloud = ImageIO.read(new File("src/main/resources/images/menu/clouds/" + name + ".PNG"));
         cloudIcons.put(name, new ImageIcon(cloud.getScaledInstance((int)(cloud.getWidth() / 1.5), (int)(cloud.getHeight() / 1.5), Image.SCALE_DEFAULT)));
     }
 

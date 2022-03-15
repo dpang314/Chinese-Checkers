@@ -14,40 +14,40 @@ public class GamePanelImages {
 
     public GamePanelImages() throws IOException {
         loadPegs();
-        positionHighlight = new ImageIcon(ImageIO.read(new File("./images/game/highlight.PNG"))
+        positionHighlight = new ImageIcon(ImageIO.read(new File("./src/main/resources/images/game/highlight.PNG"))
                 .getScaledInstance(32, 32, Image.SCALE_DEFAULT));
-        board = ImageIO.read(new File("./images/game/board.PNG"))
+        board = ImageIO.read(new File("./src/main/resources/images/game/board.PNG"))
                 .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
-        bigScroll = ImageIO.read(new File("./images/game/bigScroll.PNG"))
+        bigScroll = ImageIO.read(new File("./src/main/resources/images/game/bigScroll.PNG"))
                 .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
     }
 
     private void loadPegs() {
         try {
-            Image black = ImageIO.read(new File("images/game/pegs/pegBlack.PNG"))
+            Image black = ImageIO.read(new File("src/main/resources/images/game/pegs/pegBlack.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image blue = ImageIO.read(new File("images/game/pegs/pegBlue.PNG"))
+            Image blue = ImageIO.read(new File("src/main/resources/images/game/pegs/pegBlue.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image green = ImageIO.read(new File("images/game/pegs/pegGreen.PNG"))
+            Image green = ImageIO.read(new File("src/main/resources/images/game/pegs/pegGreen.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image red = ImageIO.read(new File("images/game/pegs/pegRed.PNG"))
+            Image red = ImageIO.read(new File("src/main/resources/images/game/pegs/pegRed.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image white = ImageIO.read(new File("images/game/pegs/pegWhite.PNG"))
+            Image white = ImageIO.read(new File("src/main/resources/images/game/pegs/pegWhite.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image yellow = ImageIO.read(new File("images/game/pegs/pegYellow.PNG"))
+            Image yellow = ImageIO.read(new File("src/main/resources/images/game/pegs/pegYellow.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
 
-            Image blackH = ImageIO.read(new File("images/game/pegs/pegBlackH.PNG"))
+            Image blackH = ImageIO.read(new File("src/main/resources/images/game/pegs/pegBlackH.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image blueH = ImageIO.read(new File("images/game/pegs/pegBlueH.PNG"))
+            Image blueH = ImageIO.read(new File("src/main/resources/images/game/pegs/pegBlueH.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image greenH = ImageIO.read(new File("images/game/pegs/pegGreenH.PNG"))
+            Image greenH = ImageIO.read(new File("src/main/resources/images/game/pegs/pegGreenH.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image redH = ImageIO.read(new File("images/game/pegs/pegRedH.PNG"))
+            Image redH = ImageIO.read(new File("src/main/resources/images/game/pegs/pegRedH.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image whiteH = ImageIO.read(new File("images/game/pegs/pegWhiteH.PNG"))
+            Image whiteH = ImageIO.read(new File("src/main/resources/images/game/pegs/pegWhiteH.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
-            Image yellowH = ImageIO.read(new File("images/game/pegs/pegYellowH.PNG"))
+            Image yellowH = ImageIO.read(new File("src/main/resources/images/game/pegs/pegYellowH.PNG"))
                     .getScaledInstance(24, 24, Image.SCALE_DEFAULT);
 
             blackPeg = new ImageIcon(black);

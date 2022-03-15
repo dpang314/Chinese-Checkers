@@ -20,7 +20,7 @@ public class Util {
     public static Font load() {
         Font font = null;
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/CarterOne-Regular.ttf"));
+            font = Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/fonts/CarterOne-Regular.ttf"));
             bigFont = font.deriveFont(15f);
         } catch (Exception e) {
             e.printStackTrace();
