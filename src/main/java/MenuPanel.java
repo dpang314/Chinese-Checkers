@@ -269,7 +269,7 @@ public class MenuPanel extends JPanel {
 		if (playerButton.playerType.equals(Util.PlayerType.NONE)) {
 			return null;
 		} else if (playerButton.playerType.equals(Util.PlayerType.COMPUTER_EASY)) {
-			return new ComputerStratBasic2(Color.RED, playerButton.getName());
+			return new SimpleQuinnStrategy(Color.RED, playerButton.getName());
 		} else if (playerButton.playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
 			return new QuinnStrategy(Color.RED, playerButton.getName());
 		} else if (playerButton.playerType.equals(Util.PlayerType.HUMAN)) {
