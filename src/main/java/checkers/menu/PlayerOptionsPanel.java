@@ -3,42 +3,29 @@ package checkers.menu;
 import checkers.GUI;
 import checkers.Util;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class PlayerOptionsPanel extends JPanel {
-    private String defaultHumanName;
-    private String defaultComputerName;
+    private final String defaultHumanName;
+    private final String defaultComputerName;
 
-    private JButton humanSelect, computerSelect, noneSelect, save;
-    private JComboBox difficultySelect;
-    private JTextField nameInput, error;
-    private JLabel nameInstruct, comInstruct;
+    private final JButton humanSelect;
+    private final JButton computerSelect;
+    private final JButton noneSelect;
+    private final JButton save;
+    private final JComboBox difficultySelect;
+    private final JTextField nameInput;
+    private final JTextField error;
+    private final JLabel nameInstruct;
+    private final JLabel comInstruct;
     private Util.PlayerType selected;
     private String name = "";
     private boolean repaintButtons = false;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setSelected(Util.PlayerType playerType) {
-        this.selected = playerType;
-        this.repaintButtons = true;
-        if (playerType.equals(Util.PlayerType.HUMAN)) {
-            name = defaultHumanName;
-        } else if (playerType.equals(Util.PlayerType.COMPUTER_EASY)) {
-            name = defaultComputerName;
-        } else if (playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
-            name = defaultComputerName;
-        }
-        nameInput.setText(name);
-        this.repaint();
-    }
 
     public PlayerOptionsPanel(int playerNumber, MenuPanel.PlayerButton playerButton) {
         defaultHumanName = "Human Player " + playerNumber;
@@ -46,7 +33,7 @@ public class PlayerOptionsPanel extends JPanel {
         setPreferredSize(new Dimension(1280, 720));
 
         humanSelect = new JButton();
-        humanSelect.setBounds(745,190,20,20);
+        humanSelect.setBounds(745, 190, 20, 20);
         humanSelect.setContentAreaFilled(false);
         humanSelect.setBorderPainted(false);
         humanSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -63,7 +50,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(humanSelect);
 
         computerSelect = new JButton();
-        computerSelect.setBounds(745,230,20,20);
+        computerSelect.setBounds(745, 230, 20, 20);
         computerSelect.setContentAreaFilled(false);
         computerSelect.setBorderPainted(false);
         computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -82,7 +69,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(computerSelect);
 
         noneSelect = new JButton();
-        noneSelect.setBounds(745,270,20,20);
+        noneSelect.setBounds(745, 270, 20, 20);
         noneSelect.setContentAreaFilled(false);
         noneSelect.setBorderPainted(false);
         noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -98,27 +85,27 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(noneSelect);
 
         JLabel human = new JLabel("Human");
-        human.setBounds(800,190,300,20);
+        human.setBounds(800, 190, 300, 20);
         human.setFont(Util.getBigFont());
         this.add(human);
 
         JLabel computer = new JLabel("Computer");
-        computer.setBounds(800,230,300,20);
+        computer.setBounds(800, 230, 300, 20);
         computer.setFont(Util.getBigFont());
         this.add(computer);
 
         JLabel none = new JLabel("None");
-        none.setBounds(800,270,300,20);
+        none.setBounds(800, 270, 300, 20);
         none.setFont(Util.getBigFont());
         this.add(none);
 
         nameInstruct = new JLabel("Enter your name:");
         nameInstruct.setFont(Util.getBigFont());
-        nameInstruct.setBounds(813,280,300,60);
+        nameInstruct.setBounds(813, 280, 300, 60);
         this.add(nameInstruct);
 
         nameInput = new JTextField("");
-        nameInput.setBounds(750,330,255,30);
+        nameInput.setBounds(750, 330, 255, 30);
         nameInput.getDocument().addDocumentListener(new DocumentListener() {
             private void updateError() {
                 if (name.length() == 0) {
@@ -137,6 +124,7 @@ public class PlayerOptionsPanel extends JPanel {
                     save.setForeground(Color.BLACK);
                 }
             }
+
             @Override
             public void insertUpdate(DocumentEvent documentEvent) {
                 name = nameInput.getText();
@@ -150,7 +138,8 @@ public class PlayerOptionsPanel extends JPanel {
             }
 
             @Override
-            public void changedUpdate(DocumentEvent documentEvent) {}
+            public void changedUpdate(DocumentEvent documentEvent) {
+            }
         });
         this.nameInput.setVisible(false);
         this.add(nameInput);
@@ -163,13 +152,13 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(error);
 
         comInstruct = new JLabel("Set Difficulty:");
-        comInstruct.setBounds(817,370,300,60);
+        comInstruct.setBounds(817, 370, 300, 60);
         comInstruct.setFont(Util.getBigFont());
         this.add(comInstruct);
 
-        String feed[] = {"Easier", "Harder"};
+        String[] feed = {"Easier", "Harder"};
         difficultySelect = new JComboBox(feed);
-        difficultySelect.setBounds(750,420,255,30);
+        difficultySelect.setBounds(750, 420, 255, 30);
         difficultySelect.setVisible(false);
         difficultySelect.addActionListener(new ActionListener() {
             @Override
@@ -190,7 +179,7 @@ public class PlayerOptionsPanel extends JPanel {
         save.setContentAreaFilled(false);
         save.setFont(Util.getBigFont());
         save.setFocusPainted(false);
-        save.setBounds(770,465,200,50);
+        save.setBounds(770, 465, 200, 50);
         save.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -205,6 +194,24 @@ public class PlayerOptionsPanel extends JPanel {
         selected = Util.PlayerType.NONE;
         repaintButtons = true;
         repaint();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setSelected(Util.PlayerType playerType) {
+        this.selected = playerType;
+        this.repaintButtons = true;
+        if (playerType.equals(Util.PlayerType.HUMAN)) {
+            name = defaultHumanName;
+        } else if (playerType.equals(Util.PlayerType.COMPUTER_EASY)) {
+            name = defaultComputerName;
+        } else if (playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
+            name = defaultComputerName;
+        }
+        nameInput.setText(name);
+        this.repaint();
     }
 
     private void reset() {

@@ -9,34 +9,39 @@ import checkers.resources.ImageLoader;
 import javax.swing.*;
 
 public class GUI {
-	private MenuPanel menuPanel;
-	private GamePanel gamePanel;
-	private Game game;
-	private JFrame frame;
-	private static ImageLoader imageLoader = new ImageLoader();
-	private static String toGame = "Switch to game panel";
-	private static String toMenu = "Switch to menu panel";
+    private static final ImageLoader imageLoader = new ImageLoader();
+    private Game game;
+    private final JFrame frame;
 
-	public GUI() {
-		frame = new JFrame();
-		switchToMenuPanel();
+    public GUI() {
+        frame = new JFrame();
+        switchToMenuPanel();
 
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
-	}
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
 
-	public static ImageLoader getImageLoader() {
-		return imageLoader;
-	}
+    public static ImageLoader getImageLoader() {
+        return imageLoader;
+    }
 
-	public void switchToGamePanel(Player[] players, boolean shuffle) {
-		if (game == null) {
-			game = new Game(players, shuffle);
-		}
-		GamePanel gamePanel = new GamePanel(this, game, 1280, 720);
-		frame.setContentPane(gamePanel);
-		frame.pack();
-	}
+    public static void main(String[] args) {
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                new GUI();
+            }
+        });
+    }
+
+    public void switchToGamePanel(Player[] players, boolean shuffle) {
+        if (game == null) {
+            game = new Game(players, shuffle);
+        }
+        GamePanel gamePanel = new GamePanel(this, game, 1280, 720);
+        frame.setContentPane(gamePanel);
+        frame.pack();
+    }
 
     public void switchToGamePanel(Game game) {
         this.game = game;
@@ -45,23 +50,14 @@ public class GUI {
         frame.pack();
     }
 
-	public void switchToMenuPanel() {
-		game = null;
-		MenuPanel menuPanel = new MenuPanel(this);
-		frame.setContentPane(menuPanel);
-		frame.pack();
-	}
+    public void switchToMenuPanel() {
+        game = null;
+        MenuPanel menuPanel = new MenuPanel(this);
+        frame.setContentPane(menuPanel);
+        frame.pack();
+    }
 
-	public void close() {
-		frame.dispose();
-	}
-
-	public static void main(String[] args) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JFrame.setDefaultLookAndFeelDecorated(true);
-				new GUI();
-			}
-    });
-  }
+    public void close() {
+        frame.dispose();
+    }
 }
