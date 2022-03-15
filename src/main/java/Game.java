@@ -59,25 +59,12 @@ public class Game implements Serializable {
 	    //sets history and turn counter to base form, creates a board with given players
 	    this.history = new Stack<Move>();
 	    this.turn = 0;
-	    int count = 0;
-		for (int i = 0; i < players.length; i++) {
-			if (players[i] != null) {
-				if (players[i] instanceof HumanPlayer) {
-					players[i] = new HumanPlayer(colorAssignments[numPlayers][count], players[i].getName());
-				}
-				else if (players[i] instanceof SimpleQuinnStrategy) {
-					players[i] = new SimpleQuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
-				}
-				else if (players[i] instanceof QuinnStrategy) {
-					players[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players[i].getName());
-				}
-				count++;
-			}
-		}
-	    //Shuffles turn order
+
+		Player[] players2 = players;
+		//Shuffles turn order
 	    if (shuffle) {
             //Second players array 
-            Player[] players2 = players;
+            players2 = players;
             Random rand = new Random();
             for (int x = players2.length - 1; x > 0; x--) {
               int index = rand.nextInt(x + 1);
@@ -86,15 +73,26 @@ public class Game implements Serializable {
               players2[index] = players2[x];
               players2[x] = a;
             }
-
-            //Sets players to players2 so the game will now reference the random turn order
-            players = players2;
-            currentPlayer = players[0];
-            playerTurn = 0;
         }
-        //otherwise, the first player should be the first element
-        else
-            currentPlayer = players[0];
+
+		//Sets players to players2 so the game will now reference the random turn order
+		int count = 0;
+		for (int i = 0; i < players2.length; i++) {
+			if (players2[i] != null) {
+				if (players2[i] instanceof HumanPlayer) {
+					players2[i] = new HumanPlayer(colorAssignments[numPlayers][count], players2[i].getName());
+				}
+				else if (players2[i] instanceof SimpleQuinnStrategy) {
+					players2[i] = new SimpleQuinnStrategy(colorAssignments[numPlayers][count], players2[i].getName());
+				}
+				else if (players2[i] instanceof QuinnStrategy) {
+					players2[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players2[i].getName());
+				}
+				count++;
+			}
+		}
+		players = players2;
+		currentPlayer = players[0];
 	    
 		
 		//If shuffled, the first element will NOT necessarily be a player; so it will
