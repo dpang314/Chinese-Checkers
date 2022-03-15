@@ -162,7 +162,7 @@ public class PlayerOptionsPanel extends JPanel {
         comInstruct.setFont(Util.getBigFont());
         this.add(comInstruct);
 
-        String feed[] = {"Easy", "Hard"};
+        String feed[] = {"Easier", "Harder"};
         difficultySelect = new JComboBox(feed);
         difficultySelect.setBounds(750,420,255,30);
         difficultySelect.setVisible(false);

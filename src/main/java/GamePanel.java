@@ -309,6 +309,49 @@ public class GamePanel extends JPanel {
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;
 		this.game = game;
+		Player[] players = game.getPlayers();
+		// TODO center the labels
+		for (Player p : players) {
+			if (p != null) {
+				if (p.getColor().equals(Color.RED)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Util.RED);
+					name.setBounds(410, 30, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.BLACK)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Util.BLACK);
+					name.setBounds(560, 170, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.GREEN)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Util.GREEN);
+					name.setBounds(560, 515, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.BLUE)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Util.BLUE);
+					name.setBounds(410, 650, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.WHITE)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Util.WHITE);
+					name.setBounds(210, 515, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.YELLOW)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Util.YELLOW);
+					name.setBounds(210, 170, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				}
+			}
+		}
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setLayout(null);
 		repaintButtons = true;
@@ -324,12 +367,19 @@ public class GamePanel extends JPanel {
 		g.drawImage(GUI.getImageLoader().getGamePanelImages().getBoard(), 0, 0, null);
 		g.drawImage(GUI.getImageLoader().getGamePanelImages().getBigScroll(), 0, 0, null);
 
-		g.setFont(Util.getFont().deriveFont(20f));
+		g.setFont(Util.getFont().deriveFont(18f));
 		if (game.gameOver()) {
-			g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT, 100);
+			g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT - 10, 100);
 		} else {
-			g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT, 100);
+			if (game.getCurrentPlayer().isComputer()) {
+				g.drawString(game.getCurrentPlayer().getName(), BUTTON_LEFT - 10, 100);
+				g.drawString("is thinking", BUTTON_LEFT - 10, 130);
+			} else {
+				g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT - 10, 100);
+			}
 		}
+		g.drawString("Turn " + game.getTurns(), BUTTON_LEFT - 10, 200);
+		g.drawString("Move " + game.getMoves(), BUTTON_LEFT - 10, 230);
 		if (repaintButtons) {
 			for (int i = 0; i < this.getComponentCount(); i++) {
 				if (this.getComponents()[i] instanceof JButton) {

@@ -34,6 +34,7 @@ public class MenuPanel extends JPanel {
 		private Util.PlayerType playerType = Util.PlayerType.NONE;
 		private PlayerOptionsPanel playerOptionsPanel;
 		private int playerNumber;
+		private JLabel displayName;
 
 		public PlayerButton(int playerNumber) {
 			this.playerNumber = playerNumber;
@@ -74,11 +75,40 @@ public class MenuPanel extends JPanel {
 			P5.setEnabled(false);
 			P6.setEnabled(false);
 			this.setEnabled(true);
+			if (displayName != null) {
+				MenuPanel.this.remove(displayName);
+			}
+		}
+
+		private void addName() {
+			if (displayName != null) {
+				MenuPanel.this.remove(displayName);
+			}
+			displayName = new JLabel(getName());
+			displayName.setFont(Util.getBigFont());
+			if (playerType.equals(Util.PlayerType.COMPUTER_EASY) || playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
+				displayName.setForeground(Util.RED);
+			} else if (playerType.equals(Util.PlayerType.HUMAN)) {
+				displayName.setForeground(Util.GREEN);
+			} else {
+				displayName = new JLabel("");
+			}
+			int y = 100;
+			if (playerNumber == 3) {
+				y += 20;
+			} else if (playerNumber == 5) {
+				y += 30;
+			} else if (playerNumber == 6) {
+				y += 10;
+			}
+			displayName.setBounds(this.getX() + 20, this.getY() + y, 1000, 30);
+			MenuPanel.this.add(displayName);
 		}
 
 		public void close(Util.PlayerType selected) {
 			playerType = selected;
 			playerOptionsPanel.setVisible(false);
+			addName();
 			repaint();
 			closeOptions();
 		}
@@ -86,6 +116,7 @@ public class MenuPanel extends JPanel {
 		public void setPlayerType(Util.PlayerType playerType) {
 			this.playerType = playerType;
 			playerOptionsPanel.setSelected(playerType);
+			addName();
 			this.repaint();
 		}
 

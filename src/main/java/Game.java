@@ -326,4 +326,16 @@ public class Game implements Serializable {
 	public Board getBoard() { 
 		return board;
 	};
+	public int getTurns() {
+		if (history.empty()) {
+			return 0;
+		}
+		return history.size();
+	}
+	public int getMoves() {
+		if (miniHistory.empty()) {
+			return 0;
+		}
+		return miniHistory.size();
+	}
 }
