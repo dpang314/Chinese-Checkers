@@ -26,6 +26,7 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 		else if (color.equals(Color.yellow)) {dir='r'; WRP[0] = 12; WRP[1] = 12;}
 		else if (color.equals(Color.blue)) {dir='u'; WRP[0] = 0; WRP[1] = 0;}
 		else {dir='d'; WRP[0] = 16; WRP[1] = 0;}
+		System.out.println(new Position(10, 0).adj(5));
 	}
 	public Move getMove(Board board) {
 		//System.out.println("getting move");
@@ -54,7 +55,7 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 			//System.out.println("moveablePos: "+toPickFrom);
 			while (toPickFrom.size()==0) {
 				//System.out.println("In Loop, picked pos: "+p);
-				p = posArr.get(rand.nextInt(8));
+				p = tpf.get(rand.nextInt(8));
 				toPickFrom = getMoveablePos(p, board, false);
 			}
 			Position p2 = getBestPos(toPickFrom, board);//toPickFrom.get(rand.nextInt(toPickFrom.size()));
@@ -144,24 +145,42 @@ public class ComputerStratBasic2 extends ComputerStrategy{
 		//System.out.println("position: "+newP);
 		if (dir=='l') {
 			while (WRP[0]>newP.getRow()) {
-				newP = newP.adj(5);
+				if (newP.adj(5)!=null) {newP = newP.adj(5);}
+				else {newP = newP.adj(4);}
 				dist+=1;
 			}
 			while (WRP[0]<newP.getRow()) {
-				newP = newP.adj(1);
+				if (newP.adj(1)!=null) {newP = newP.adj(1);}
+				else {newP = newP.adj(2);}
 				dist+=1;
 			}
+//			if (newP.getRow()!=WRP[0]) {
+//				System.out.println("Problem pos: "+newP);
+//				System.out.println("get TL: "+newP.adj(5));
+//				System.out.println("get BL: "+newP.adj(1));
+//				newP=null;
+//				newP.getRow();
+//			}
 			dist+=newP.getColumn();
 		}
 		if (dir=='r') {
 			while (WRP[0]>newP.getRow()) {
-				newP = newP.adj(4);
+				if (newP.adj(4)!=null) {newP = newP.adj(4);}
+				else {newP = newP.adj(5);}
 				dist+=1;
 			}
-			while (WRP[0]<newP.getRow()) {
-				newP = newP.adj(2);
+			while ( WRP[0]<newP.getRow()) {
+				if (newP.adj(2)!=null) {newP = newP.adj(2);}
+				else {newP = newP.adj(1);}
 				dist+=1;
 			}
+//			if (newP.getRow()!=WRP[0]) {
+//				System.out.println("Problem pos: "+newP);
+//				System.out.println("get TR: "+newP.adj(4));
+//				System.out.println("get BR: "+newP.adj(2));
+//				newP=null;
+//				newP.getRow();
+//			}
 			dist+=WRP[1]-newP.getColumn();
 		}
 		if (dir=='u') {
