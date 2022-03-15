@@ -17,7 +17,8 @@ import java.awt.Color;
  * increasing the 'stupidity' int will make the probability
  * of looking at each possible move lower, thereby causing it 
  * to look at fewer of the possible moves and decrease the
- * likelihood of it finding an optimal one
+ * likelihood of it finding an optimal one. TLDR: bigger number=
+ * more stupid
  * 
  * 
  * THE FORCE-CHECKING INT
@@ -39,10 +40,10 @@ import java.awt.Color;
 
 public class StupidQuinnStrategy extends QuinnStrategy {
 
-	public int stupidity = 10;
+	public int stupidity = 8;
 	//read above for more info
 	
-	public int forceCheckInterval = 12;
+	public int forceCheckInterval = 7;
 	//don't exceed 14 please, see above for more info
 	
 	public StupidQuinnStrategy(Color color, String playerName) {
