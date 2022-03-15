@@ -384,7 +384,7 @@ public class GamePanel extends JPanel {
 		}
 		g.drawString("Turn " + game.getTurns(), BUTTON_LEFT - 10, 200);
 		g.drawString("Move " + game.getMoves(), BUTTON_LEFT - 10, 230);
-		if (repaintButtons && !game.gameOver()) {
+		if (repaintButtons) {
 			for (int i = 0; i < this.getComponentCount(); i++) {
 				if (this.getComponents()[i] instanceof JButton) {
 					this.remove(i);
@@ -400,7 +400,8 @@ public class GamePanel extends JPanel {
 			game.getClickablePegs().forEach((position) -> {
 				this.add(new PegButton(position, game.getCurrentPlayer().getColor(), true));
 			});
-			if (!game.getCurrentPlayer().isComputer()) {
+
+			if (!game.getCurrentPlayer().isComputer() && !game.gameOver()) {
 				for (Position p : game.getPossibleMoves()) {
 					this.add(new HighlightButton(p));
 				}
