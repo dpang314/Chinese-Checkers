@@ -309,6 +309,49 @@ public class GamePanel extends JPanel {
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;
 		this.game = game;
+		Player[] players = game.getPlayers();
+		// TODO center the labels
+		for (Player p : players) {
+			if (p != null) {
+				if (p.getColor().equals(Color.RED)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Color.RED);
+					name.setBounds(410, 30, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.BLACK)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Color.BLACK);
+					name.setBounds(560, 170, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.GREEN)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Color.GREEN);
+					name.setBounds(560, 515, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.BLUE)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Color.BLUE);
+					name.setBounds(410, 650, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.WHITE)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Color.WHITE);
+					name.setBounds(210, 515, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				} else if (p.getColor().equals(Color.YELLOW)) {
+					JLabel name = new JLabel(p.getName());
+					name.setForeground(Color.YELLOW);
+					name.setBounds(210, 170, 1000, 30);
+					name.setFont(Util.getBigFont());
+					this.add(name);
+				}
+			}
+		}
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setLayout(null);
 		repaintButtons = true;
