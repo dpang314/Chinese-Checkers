@@ -39,11 +39,14 @@ public class MenuPanelImages {
         ImageIcon dr = new ImageIcon("src/main/resources/images/menu/dragon.PNG");
         dragon = dr.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
 
-        ImageIcon lb = new ImageIcon("src/main/resources/images/menu/logoBig.PNG");
-        logoBig = lb.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
+        logoBig = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/logoBig.PNG"))
+                .getScaledInstance(1280, 720, Image.SCALE_DEFAULT));
 
-        ImageIcon ls = new ImageIcon("src/main/resources/images/menu/ogoSmall.PNG");
+        ImageIcon ls = new ImageIcon("src/main/resources/images/menu/logoSmall.PNG");
         logoSmall = ls.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
+
+        scrollOpenAnimated = new ImageIcon("src/main/resources/images/menu/scrollOpen.gif");
+        scrollCloseAnimated = new ImageIcon("src/main/resources/images/menu/scrollClose.gif");
     }
 
     private void addImageIcon(String name) throws IOException {
@@ -88,8 +91,10 @@ public class MenuPanelImages {
     private Image smallScroll;
     private ImageIcon start, load, exit;
     private Image dragon;
-    private Image logoBig;
+    private ImageIcon logoBig;
     private Image logoSmall;
+    private ImageIcon scrollOpenAnimated;
+    private ImageIcon scrollCloseAnimated;
 
     public ImageIcon getEmptyButton() {
         return emptyButton;
@@ -97,10 +102,6 @@ public class MenuPanelImages {
 
     public ImageIcon getFilledButton() {
         return filledButton;
-    }
-
-    public Image getSmallScroll() {
-        return smallScroll;
     }
 
     public ImageIcon getStart() {
@@ -119,12 +120,8 @@ public class MenuPanelImages {
         return dragon;
     }
 
-    public Image getLogoBig() {
+    public ImageIcon getLogoBig() {
         return logoBig;
-    }
-
-    public Image getLogoSmall() {
-        return logoSmall;
     }
 
     public ImageIcon getPlayerCloudIcon(int number, Util.PlayerType playerType) {
@@ -138,5 +135,15 @@ public class MenuPanelImages {
             return cloudIcons.get("p" + number + "Def");
         }
         throw new RuntimeException("Image not found");
+    }
+
+    public ImageIcon getScrollOpenAnimated() {
+        scrollOpenAnimated.getImage().flush();
+        return scrollOpenAnimated;
+    }
+
+    public ImageIcon getScrollCloseAnimated() {
+        scrollCloseAnimated.getImage().flush();
+        return scrollCloseAnimated;
     }
 }

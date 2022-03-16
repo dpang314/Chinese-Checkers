@@ -149,6 +149,10 @@ public class MenuPanel extends JPanel {
         this.add(shuffleLabel);
         shuffleLabel.setVisible(true);
 
+        scrollCloseImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getLogoBig());
+        scrollCloseImage.setBounds(0, 0, 1280, 720);
+        this.add(scrollCloseImage);
+
         repaint();
     }
 
@@ -160,23 +164,21 @@ public class MenuPanel extends JPanel {
         P4.setEnabled(true);
         P5.setEnabled(true);
         P6.setEnabled(true);
+        scrollCloseImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getScrollCloseAnimated());
+        scrollCloseImage.setBounds(0, 0, 1280, 720);
+        this.add(scrollCloseImage);
     }
 
     private void openOptions(PlayerButton playerButton) {
         playerButton.open();
     }
 
+    private JLabel scrollCloseImage;
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(GUI.getImageLoader().getCommonImages().getBackground(), 0, 0, this);
-        if (!scrolled) {
-            g.drawImage(GUI.getImageLoader().getMenuPanelImages().getLogoBig(), 0, 0, this);
-            g.drawImage(GUI.getImageLoader().getMenuPanelImages().getDragon(), 0, 0, this);
-        }
-        if (scrolled) {
-            g.drawImage(GUI.getImageLoader().getMenuPanelImages().getLogoSmall(), 0, 0, this);
-        }
-
+        g.drawImage(GUI.getImageLoader().getMenuPanelImages().getDragon(), 0, 0, this);
     }
 
     private Player createPlayer(PlayerButton playerButton) {
@@ -196,7 +198,7 @@ public class MenuPanel extends JPanel {
         private Util.PlayerType playerType = Util.PlayerType.NONE;
         private final PlayerOptionsPanel playerOptionsPanel;
         private final int playerNumber;
-        private JLabel displayName;
+        private JLabel displayName, scrollImage;
 
         public PlayerButton(int playerNumber) {
             this.playerNumber = playerNumber;
@@ -223,7 +225,9 @@ public class MenuPanel extends JPanel {
 
         public void open() {
             playerType = Util.PlayerType.DEFAULT;
-            playerOptionsPanel.setVisible(true);
+            Timer timer = new Timer(1000, actionEvent -> playerOptionsPanel.open());
+            timer.setRepeats(false);
+            timer.start();
             scrolled = true;
             P1.setEnabled(false);
             P2.setEnabled(false);
@@ -235,6 +239,13 @@ public class MenuPanel extends JPanel {
             if (displayName != null) {
                 MenuPanel.this.remove(displayName);
             }
+            if (scrollCloseImage != null) {
+                MenuPanel.this.remove(scrollCloseImage);
+            }
+            scrollImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getScrollOpenAnimated());
+            scrollImage.setBounds(0, 0, 1280, 720);
+            MenuPanel.this.add(scrollImage);
+
         }
 
         private void addName() {
@@ -263,6 +274,9 @@ public class MenuPanel extends JPanel {
         }
 
         public void close(Util.PlayerType selected) {
+            if (scrollImage != null) {
+                MenuPanel.this.remove(scrollImage);
+            }
             playerType = selected;
             playerOptionsPanel.setVisible(false);
             addName();

@@ -189,6 +189,10 @@ public class PlayerOptionsPanel extends JPanel {
         return name;
     }
 
+    public void open() {
+         this.setVisible(true);
+    }
+
     public void setSelected(Util.PlayerType playerType) {
         this.selected = playerType;
         this.repaintButtons = true;
@@ -214,7 +218,6 @@ public class PlayerOptionsPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(GUI.getImageLoader().getMenuPanelImages().getSmallScroll(), 0, 0, null);
         if (repaintButtons) {
             repaintButtons = false;
             if (selected.equals(Util.PlayerType.HUMAN)) {
