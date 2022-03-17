@@ -14,11 +14,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.IOException;
 
-public class MenuPanel extends JPanel {
+public class MenuPanel extends JLayeredPane {
     private static final long serialVersionUID = 1L;
-    private boolean shuffle = false;
-    private boolean scrolled;
-
     private final PlayerButton P1;
     private final PlayerButton P2;
     private final PlayerButton P3;
@@ -26,6 +23,9 @@ public class MenuPanel extends JPanel {
     private final PlayerButton P5;
     private final PlayerButton P6;
     private final JButton shuffler;
+    private boolean shuffle = false;
+    private boolean scrolled;
+    private JLabel scrollCloseImage, dragonImage;
 
     public MenuPanel(GUI gui) {
         setPreferredSize(new Dimension(1280, 720));
@@ -157,7 +157,7 @@ public class MenuPanel extends JPanel {
 
         dragonImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getDragon());
         dragonImage.setBounds(0, 0, 1280, 720);
-        this.add(dragonImage);
+        this.add(dragonImage, -1, 0);
 
         repaint();
     }
@@ -170,19 +170,16 @@ public class MenuPanel extends JPanel {
         P4.setEnabled(true);
         P5.setEnabled(true);
         P6.setEnabled(true);
-        scrollCloseImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getScrollCloseAnimated());
+        if (scrollCloseImage != null) {
+            this.remove(scrollCloseImage);
+        }
+        scrollCloseImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getLogoBig());
         scrollCloseImage.setBounds(0, 0, 1280, 720);
         this.add(scrollCloseImage);
     }
 
     private void openOptions(PlayerButton playerButton) {
         playerButton.open();
-    }
-
-    private JLabel scrollCloseImage, dragonImage;
-
-    private void transition() {
-        this.remove(dragonImage);
     }
 
     public void paintComponent(Graphics g) {
@@ -204,9 +201,9 @@ public class MenuPanel extends JPanel {
     }
 
     public class PlayerButton extends JButton {
-        private Util.PlayerType playerType = Util.PlayerType.NONE;
         private final PlayerOptionsPanel playerOptionsPanel;
         private final int playerNumber;
+        private Util.PlayerType playerType = Util.PlayerType.NONE;
         private JLabel displayName, scrollImage;
 
         public PlayerButton(int playerNumber) {
@@ -286,11 +283,16 @@ public class MenuPanel extends JPanel {
             if (scrollImage != null) {
                 MenuPanel.this.remove(scrollImage);
             }
+            scrollCloseImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getScrollCloseAnimated());
+            scrollCloseImage.setBounds(0, 0, 1280, 720);
+            MenuPanel.this.add(scrollCloseImage);
             playerType = selected;
             playerOptionsPanel.setVisible(false);
             addName();
             repaint();
-            closeOptions();
+            Timer timer = new Timer(770, actionEvent -> closeOptions());
+            timer.setRepeats(false);
+            timer.start();
         }
 
         public String getName() {

@@ -13,14 +13,18 @@ public class GUI {
     private static final ImageLoader imageLoader = new ImageLoader();
     private Game game;
     private final JFrame frame;
-    private JPanel menuPanel, gamePanel;
+    private JPanel gamePanel;
+    private JLayeredPane menuPanel;
     private final JLayeredPane containerPane = new JLayeredPane();
 
     public GUI() {
         frame = new JFrame("Chinese Checkers");
         containerPane.setPreferredSize(new Dimension(1280, 720));
-        switchToMenuPanel();
-
+        menuPanel = new MenuPanel(this);
+        menuPanel.setBounds(0, 0, 1280, 720);
+        containerPane.add(menuPanel, 0, 0);
+        frame.add(containerPane);
+        frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
@@ -49,15 +53,15 @@ public class GUI {
         transition.setBounds(0, 0, 1280, 720);
         transitionPane.add(transition);
         transitionPane.setOpaque(false);
-        Timer addCloudTimer = new Timer(300, actionEvent -> {
-            containerPane.add(transitionPane, new Integer(1), 0);
-            Timer timer = new Timer(1400, actionEvent1 -> {
+        Timer addCloudTimer = new Timer(500, actionEvent -> {
+            containerPane.add(transitionPane, 1, 0);
+            Timer timer = new Timer(550, actionEvent1 -> {
                 containerPane.remove(menuPanel);
                 gamePanel = new GamePanel(this, game, new Dimension(1280, 720));
                 gamePanel.setBounds(0, 0, 1280, 720);
-                containerPane.add(gamePanel, new Integer(0), 0);
+                containerPane.add(gamePanel, 0, 0);
             });
-            Timer t = new Timer(1800, actionEvent1 -> {
+            Timer t = new Timer(1080, actionEvent1 -> {
                 containerPane.remove(transitionPane);
                 containerPane.repaint();
             });
@@ -80,14 +84,32 @@ public class GUI {
 
     public void switchToMenuPanel() {
         game = null;
-        if (gamePanel != null) {
-            containerPane.remove(gamePanel);
-            gamePanel = null;
-        }
-        menuPanel = new MenuPanel(this);
-        menuPanel.setBounds(0, 0, 1280, 720);
-        containerPane.add(menuPanel, new Integer(0), 0);
-        frame.add(containerPane, BorderLayout.CENTER);
+
+        JPanel transitionPane = new JPanel();
+        transitionPane.setBounds(0, 0, 1280, 720);
+        JLabel transition = new JLabel(GUI.getImageLoader().getCommonImages().getCloudTransition());
+        transition.setBounds(0, 0, 1280, 720);
+        transitionPane.add(transition);
+        transitionPane.setOpaque(false);
+        Timer addCloudTimer = new Timer(300, actionEvent -> {
+            containerPane.add(transitionPane, 1, 0);
+            Timer timer = new Timer(550, actionEvent1 -> {
+                containerPane.remove(gamePanel);
+                menuPanel = new MenuPanel(this);
+                menuPanel.setBounds(0, 0, 1280, 720);
+                containerPane.add(menuPanel, 0, 0);
+            });
+            Timer t = new Timer(1080, actionEvent1 -> {
+                containerPane.remove(transitionPane);
+                containerPane.repaint();
+            });
+            t.setRepeats(false);
+            t.start();
+            timer.setRepeats(false);
+            timer.start();
+        });
+        addCloudTimer.setRepeats(false);
+        addCloudTimer.start();
         frame.pack();
     }
 
