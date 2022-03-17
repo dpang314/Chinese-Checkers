@@ -18,9 +18,6 @@ import java.io.IOException;
 
 public class MenuPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    private boolean shuffle = false;
-    private boolean scrolled;
-
     private final PlayerButton P1;
     private final PlayerButton P2;
     private final PlayerButton P3;
@@ -28,15 +25,8 @@ public class MenuPanel extends JPanel {
     private final PlayerButton P5;
     private final PlayerButton P6;
     private final JButton shuffler, start, load, exit;
-
-    private void shuffleAction() {
-        shuffle = !shuffle;
-        if (shuffle) {
-            shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
-        } else {
-            shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-        }
-    }
+    private boolean shuffle = false;
+    private JLabel scrollCloseImage;
 
     public MenuPanel(GUI gui) {
         setPreferredSize(new Dimension(1280, 720));
@@ -160,16 +150,20 @@ public class MenuPanel extends JPanel {
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+            }
 
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void mouseReleased(MouseEvent e) {
+            }
 
             @Override
-            public void mouseEntered(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {
+            }
 
             @Override
-            public void mouseExited(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {
+            }
         });
         this.add(shuffleLabel);
         shuffleLabel.setVisible(true);
@@ -181,8 +175,16 @@ public class MenuPanel extends JPanel {
         repaint();
     }
 
+    private void shuffleAction() {
+        shuffle = !shuffle;
+        if (shuffle) {
+            shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
+        } else {
+            shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
+        }
+    }
+
     private void closeOptions() {
-        scrolled = false;
         P1.setEnabled(true);
         P2.setEnabled(true);
         P3.setEnabled(true);
@@ -200,8 +202,6 @@ public class MenuPanel extends JPanel {
     private void openOptions(PlayerButton playerButton) {
         playerButton.open();
     }
-
-    private JLabel scrollCloseImage;
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -223,9 +223,9 @@ public class MenuPanel extends JPanel {
     }
 
     public class PlayerButton extends JButton {
-        private Util.PlayerType playerType = Util.PlayerType.NONE;
         private final PlayerOptionsPanel playerOptionsPanel;
         private final int playerNumber;
+        private Util.PlayerType playerType = Util.PlayerType.NONE;
         private JLabel displayName, scrollImage;
 
         public PlayerButton(int playerNumber) {
@@ -256,7 +256,6 @@ public class MenuPanel extends JPanel {
             Timer timer = new Timer(1000, actionEvent -> playerOptionsPanel.open());
             timer.setRepeats(false);
             timer.start();
-            scrolled = true;
             P1.setEnabled(false);
             P2.setEnabled(false);
             P3.setEnabled(false);

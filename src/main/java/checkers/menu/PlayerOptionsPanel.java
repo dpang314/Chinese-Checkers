@@ -4,8 +4,6 @@ import checkers.GUI;
 import checkers.Util;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -70,16 +68,20 @@ public class PlayerOptionsPanel extends JPanel {
             }
 
             @Override
-            public void mousePressed(MouseEvent mouseEvent) {}
+            public void mousePressed(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseReleased(MouseEvent mouseEvent) {}
+            public void mouseReleased(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseEntered(MouseEvent mouseEvent) {}
+            public void mouseEntered(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseExited(MouseEvent mouseEvent) {}
+            public void mouseExited(MouseEvent mouseEvent) {
+            }
         });
         this.add(human);
 
@@ -93,16 +95,20 @@ public class PlayerOptionsPanel extends JPanel {
             }
 
             @Override
-            public void mousePressed(MouseEvent mouseEvent) {}
+            public void mousePressed(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseReleased(MouseEvent mouseEvent) {}
+            public void mouseReleased(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseEntered(MouseEvent mouseEvent) {}
+            public void mouseEntered(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseExited(MouseEvent mouseEvent) {}
+            public void mouseExited(MouseEvent mouseEvent) {
+            }
         });
         this.add(computer);
 
@@ -116,16 +122,20 @@ public class PlayerOptionsPanel extends JPanel {
             }
 
             @Override
-            public void mousePressed(MouseEvent mouseEvent) {}
+            public void mousePressed(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseReleased(MouseEvent mouseEvent) {}
+            public void mouseReleased(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseEntered(MouseEvent mouseEvent) {}
+            public void mouseEntered(MouseEvent mouseEvent) {
+            }
 
             @Override
-            public void mouseExited(MouseEvent mouseEvent) {}
+            public void mouseExited(MouseEvent mouseEvent) {
+            }
         });
         this.add(none);
 
