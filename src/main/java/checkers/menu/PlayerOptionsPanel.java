@@ -6,6 +6,10 @@ import checkers.Util;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -103,7 +107,10 @@ public class PlayerOptionsPanel extends JPanel {
 
         nameInput = new JTextField("");
         nameInput.setBounds(750, 330, 255, 30);
-        nameInput.getDocument().addDocumentListener(new DocumentListener() {
+        AbstractDocument doc = (AbstractDocument) nameInput.getDocument();
+        doc.setDocumentFilter(new DocumentFilter() {
+            private final int maxCharacters = 18;
+
             private void updateError() {
                 if (name.length() == 0) {
                     error.setText("Name must be at least 1 character");
@@ -123,19 +130,26 @@ public class PlayerOptionsPanel extends JPanel {
             }
 
             @Override
-            public void insertUpdate(DocumentEvent documentEvent) {
-                name = nameInput.getText();
+            public void replace(FilterBypass fb, int offs, int length,
+                                String str, AttributeSet a) throws BadLocationException {
+                if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
+                    name = nameInput.getText();
+                    super.insertString(fb, offs, str, a);
+                }
                 updateError();
             }
 
             @Override
-            public void removeUpdate(DocumentEvent documentEvent) {
-                name = nameInput.getText();
+            public void insertString(FilterBypass fb, int offs,
+                                     String str, AttributeSet a)
+                    throws BadLocationException {
+                // If input length less than or equal to 18
+                System.out.println("bruh");
+                if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
+                    name = nameInput.getText();
+                    super.insertString(fb, offs, str, a);
+                }
                 updateError();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent documentEvent) {
             }
         });
         this.nameInput.setVisible(false);

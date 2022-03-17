@@ -25,7 +25,7 @@ public class MenuPanel extends JPanel {
     private final PlayerButton P4;
     private final PlayerButton P5;
     private final PlayerButton P6;
-    private final JButton shuffler;
+    private final JButton shuffler, start, load, exit;
 
     public MenuPanel(GUI gui) {
         setPreferredSize(new Dimension(1280, 720));
@@ -72,9 +72,10 @@ public class MenuPanel extends JPanel {
         P6.setBounds(480, 450, P6.getIcon().getIconWidth(), P6.getIcon().getIconHeight());
         this.add(P6);
 
-        JButton start = new JButton("");
+        start = new JButton("");
         start.setBounds(540, 591, GUI.getImageLoader().getMenuPanelImages().getStart().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getStart().getIconHeight());
         start.setIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
+        start.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
         start.addActionListener(actionEvent -> {
             Player[] players = {
                     createPlayer(P1),
@@ -104,9 +105,10 @@ public class MenuPanel extends JPanel {
         start.setBorderPainted(false);
         this.add(start);
 
-        JButton load = new JButton("");
+        load = new JButton("");
         load.setBounds(195, 590, GUI.getImageLoader().getMenuPanelImages().getLoad().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getLoad().getIconHeight());
         load.setIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
+        load.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
         load.addActionListener(actionEvent -> {
             // loads save
             JFileChooser chooser = new JFileChooser();
@@ -128,9 +130,10 @@ public class MenuPanel extends JPanel {
         load.setBorderPainted(false);
         this.add(load);
 
-        JButton exit = new JButton("");
+        exit = new JButton("");
         exit.setBounds(872, 597, GUI.getImageLoader().getMenuPanelImages().getExit().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getExit().getIconHeight());
         exit.setIcon(GUI.getImageLoader().getMenuPanelImages().getExit());
+        exit.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getExit());
         exit.addActionListener(actionEvent -> {
             int confirmed = JOptionPane.showConfirmDialog(MenuPanel.this,
                     "Are you sure you want to quit the game?",
@@ -164,6 +167,9 @@ public class MenuPanel extends JPanel {
         P4.setEnabled(true);
         P5.setEnabled(true);
         P6.setEnabled(true);
+        start.setEnabled(true);
+        load.setEnabled(true);
+        exit.setEnabled(true);
         scrollCloseImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getScrollCloseAnimated());
         scrollCloseImage.setBounds(0, 0, 1280, 720);
         this.add(scrollCloseImage);
@@ -235,7 +241,10 @@ public class MenuPanel extends JPanel {
             P4.setEnabled(false);
             P5.setEnabled(false);
             P6.setEnabled(false);
-            this.setEnabled(true);
+            start.setEnabled(false);
+            load.setEnabled(false);
+            exit.setEnabled(false);
+
             if (displayName != null) {
                 MenuPanel.this.remove(displayName);
             }
