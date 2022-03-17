@@ -41,7 +41,7 @@ public class PlayerOptionsPanel extends JPanel {
         humanSelect.setContentAreaFilled(false);
         humanSelect.setBorderPainted(false);
         humanSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-        humanSelect.addActionListener(actionEvent -> humanSelectAction());
+        humanSelect.addActionListener(actionEvent -> PlayerOptionsPanel.this.humanSelectAction());
         this.add(humanSelect);
 
         computerSelect = new JButton();
@@ -49,7 +49,7 @@ public class PlayerOptionsPanel extends JPanel {
         computerSelect.setContentAreaFilled(false);
         computerSelect.setBorderPainted(false);
         computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-        computerSelect.addActionListener(actionEvent -> computerSelectAction());
+        computerSelect.addActionListener(actionEvent -> PlayerOptionsPanel.this.computerSelectAction());
         this.add(computerSelect);
 
         noneSelect = new JButton();
@@ -57,7 +57,7 @@ public class PlayerOptionsPanel extends JPanel {
         noneSelect.setContentAreaFilled(false);
         noneSelect.setBorderPainted(false);
         noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-        noneSelect.addActionListener(actionEvent -> noneSelectAction());
+        noneSelect.addActionListener(actionEvent -> PlayerOptionsPanel.this.noneSelectAction());
         this.add(noneSelect);
 
         JLabel human = new JLabel("Human");
@@ -66,7 +66,7 @@ public class PlayerOptionsPanel extends JPanel {
         human.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                humanSelectAction();
+                PlayerOptionsPanel.this.humanSelectAction();
             }
 
             @Override
@@ -89,7 +89,7 @@ public class PlayerOptionsPanel extends JPanel {
         computer.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                computerSelectAction();
+                PlayerOptionsPanel.this.computerSelectAction();
             }
 
             @Override
@@ -112,7 +112,7 @@ public class PlayerOptionsPanel extends JPanel {
         none.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                noneSelectAction();
+                PlayerOptionsPanel.this.noneSelectAction();
             }
 
             @Override
@@ -141,12 +141,12 @@ public class PlayerOptionsPanel extends JPanel {
             private final int maxCharacters = 18;
 
             private void updateError() {
-                if (name.length() == 0) {
+                if (nameInput.getText().length() == 0) {
                     error.setText("Name must be at least 1 character");
                     error.setVisible(true);
                     save.setEnabled(false);
                     save.setForeground(Color.GRAY);
-                } else if (name.length() > 20) {
+                } else if (nameInput.getText().length() > 20) {
                     error.setText("Max name length is 20 characters");
                     error.setVisible(true);
                     save.setEnabled(false);
@@ -162,7 +162,6 @@ public class PlayerOptionsPanel extends JPanel {
             public void replace(FilterBypass fb, int offs, int length,
                                 String str, AttributeSet a) throws BadLocationException {
                 if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
-                    name = nameInput.getText();
                     super.insertString(fb, offs, str, a);
                 }
                 updateError();
@@ -173,9 +172,7 @@ public class PlayerOptionsPanel extends JPanel {
                                      String str, AttributeSet a)
                     throws BadLocationException {
                 // If input length less than or equal to 18
-                System.out.println("bruh");
                 if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
-                    name = nameInput.getText();
                     super.insertString(fb, offs, str, a);
                 }
                 updateError();
@@ -217,7 +214,10 @@ public class PlayerOptionsPanel extends JPanel {
         save.setFont(Util.getBigFont());
         save.setFocusPainted(false);
         save.setBounds(770, 465, 200, 50);
-        save.addActionListener(actionEvent -> playerButton.close(selected));
+        save.addActionListener(actionEvent -> {
+            PlayerOptionsPanel.this.name = nameInput.getText();
+            playerButton.close(selected);
+        });
         this.add(save);
 
         this.setVisible(true);
@@ -230,25 +230,23 @@ public class PlayerOptionsPanel extends JPanel {
 
     private void humanSelectAction() {
         selected = Util.PlayerType.HUMAN;
-        name = defaultHumanName;
+        this.name = defaultHumanName;
         nameInput.setText(name);
         repaintButtons = true;
         repaint();
     }
 
     private void computerSelectAction() {
-        if (computerSelect.isVisible()) {
-            selected = Util.PlayerType.COMPUTER_HARD;
-            name = defaultComputerName;
-            nameInput.setText(name);
-            repaintButtons = true;
-            repaint();
-        }
+        selected = Util.PlayerType.COMPUTER_HARD;
+        this.name = defaultComputerName;
+        nameInput.setText(name);
+        repaintButtons = true;
+        repaint();
     }
 
     private void noneSelectAction() {
         selected = Util.PlayerType.NONE;
-        name = "";
+        this.name = "";
         repaintButtons = true;
         repaint();
     }
@@ -263,24 +261,16 @@ public class PlayerOptionsPanel extends JPanel {
 
     public void setSelected(Util.PlayerType playerType) {
         this.selected = playerType;
-        this.repaintButtons = true;
         if (playerType.equals(Util.PlayerType.HUMAN)) {
-            name = defaultHumanName;
+            this.name = defaultHumanName;
         } else if (playerType.equals(Util.PlayerType.COMPUTER_EASY)) {
-            name = defaultComputerName;
+            this.name = defaultComputerName;
         } else if (playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
-            name = defaultComputerName;
+            this.name = defaultComputerName;
         }
-        nameInput.setText(name);
+        nameInput.setText(this.name);
+        this.repaintButtons = true;
         this.repaint();
-    }
-
-    private void reset() {
-        difficultySelect.setSelectedIndex(1);
-        difficultySelect.setVisible(false);
-        comInstruct.setVisible(false);
-        nameInput.setVisible(false);
-        nameInstruct.setVisible(false);
     }
 
     @Override
@@ -292,14 +282,14 @@ public class PlayerOptionsPanel extends JPanel {
                 humanSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
                 computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
                 noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-                reset();
+                comInstruct.setVisible(false);
+                difficultySelect.setVisible(false);
                 nameInput.setVisible(true);
                 nameInstruct.setVisible(true);
             } else if (selected.equals(Util.PlayerType.COMPUTER_EASY) || selected.equals(Util.PlayerType.COMPUTER_HARD)) {
                 humanSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
                 computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
                 noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-                reset();
                 if (selected.equals(Util.PlayerType.COMPUTER_EASY)) {
                     difficultySelect.setSelectedIndex(0);
                 } else if (selected.equals(Util.PlayerType.COMPUTER_HARD)) {
@@ -313,7 +303,10 @@ public class PlayerOptionsPanel extends JPanel {
                 humanSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
                 computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
                 noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
-                reset();
+                difficultySelect.setVisible(false);
+                comInstruct.setVisible(false);
+                nameInput.setVisible(false);
+                nameInstruct.setVisible(false);
             }
         }
     }
