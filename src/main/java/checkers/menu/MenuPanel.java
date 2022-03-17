@@ -12,6 +12,8 @@ import checkers.resources.GameLoader;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 
 public class MenuPanel extends JPanel {
@@ -27,20 +29,22 @@ public class MenuPanel extends JPanel {
     private final PlayerButton P6;
     private final JButton shuffler, start, load, exit;
 
+    private void shuffleAction() {
+        shuffle = !shuffle;
+        if (shuffle) {
+            shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
+        } else {
+            shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
+        }
+    }
+
     public MenuPanel(GUI gui) {
         setPreferredSize(new Dimension(1280, 720));
         this.setLayout(null);
 
         shuffler = new JButton("");
         shuffler.setBounds(335, 115, 20, 20);
-        shuffler.addActionListener(actionEvent -> {
-            shuffle = !shuffle;
-            if (shuffle) {
-                shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
-            } else {
-                shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-            }
-        });
+        shuffler.addActionListener(actionEvent -> shuffleAction());
         shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
         shuffler.setContentAreaFilled(false);
         shuffler.setBorderPainted(false);
@@ -149,6 +153,24 @@ public class MenuPanel extends JPanel {
         JLabel shuffleLabel = new JLabel("Shuffle Colors");
         shuffleLabel.setBounds(380, 110, 200, 30);
         shuffleLabel.setFont(Util.getBigFont());
+        shuffleLabel.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                shuffleAction();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {}
+
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
         this.add(shuffleLabel);
         shuffleLabel.setVisible(true);
 
