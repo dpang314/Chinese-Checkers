@@ -58,7 +58,7 @@ public class PlayerOptionsPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (computerSelect.isVisible()) {
-                    selected = Util.PlayerType.COMPUTER_EASY;
+                    selected = Util.PlayerType.COMPUTER_HARD;
                     name = defaultComputerName;
                     nameInput.setText(name);
                     repaintButtons = true;
@@ -166,7 +166,7 @@ public class PlayerOptionsPanel extends JPanel {
                 }
             }
         });
-        difficultySelect.setSelectedIndex(0);
+        difficultySelect.setSelectedIndex(1);
         this.add(difficultySelect);
 
         save = new JButton("Save");
@@ -208,7 +208,7 @@ public class PlayerOptionsPanel extends JPanel {
     }
 
     private void reset() {
-        difficultySelect.setSelectedIndex(0);
+        difficultySelect.setSelectedIndex(1);
         difficultySelect.setVisible(false);
         comInstruct.setVisible(false);
         nameInput.setVisible(false);
