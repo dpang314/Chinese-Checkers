@@ -11,8 +11,8 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class PlayerOptionsPanel extends JPanel {
     private final String defaultHumanName;
@@ -29,7 +29,7 @@ public class PlayerOptionsPanel extends JPanel {
     private final JLabel comInstruct;
     private Util.PlayerType selected;
     private String name = "";
-    private boolean repaintButtons = false;
+    private boolean repaintButtons;
 
     public PlayerOptionsPanel(int playerNumber, MenuPanel.PlayerButton playerButton) {
         defaultHumanName = "Human Player " + playerNumber;
@@ -41,16 +41,7 @@ public class PlayerOptionsPanel extends JPanel {
         humanSelect.setContentAreaFilled(false);
         humanSelect.setBorderPainted(false);
         humanSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-        humanSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                selected = Util.PlayerType.HUMAN;
-                name = defaultHumanName;
-                nameInput.setText(name);
-                repaintButtons = true;
-                repaint();
-            }
-        });
+        humanSelect.addActionListener(actionEvent -> humanSelectAction());
         this.add(humanSelect);
 
         computerSelect = new JButton();
@@ -58,18 +49,7 @@ public class PlayerOptionsPanel extends JPanel {
         computerSelect.setContentAreaFilled(false);
         computerSelect.setBorderPainted(false);
         computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-        computerSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (computerSelect.isVisible()) {
-                    selected = Util.PlayerType.COMPUTER_HARD;
-                    name = defaultComputerName;
-                    nameInput.setText(name);
-                    repaintButtons = true;
-                    repaint();
-                }
-            }
-        });
+        computerSelect.addActionListener(actionEvent -> computerSelectAction());
         this.add(computerSelect);
 
         noneSelect = new JButton();
@@ -77,27 +57,76 @@ public class PlayerOptionsPanel extends JPanel {
         noneSelect.setContentAreaFilled(false);
         noneSelect.setBorderPainted(false);
         noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-        noneSelect.addActionListener(actionEvent -> {
-            selected = Util.PlayerType.NONE;
-            name = "";
-            repaintButtons = true;
-            repaint();
-        });
+        noneSelect.addActionListener(actionEvent -> noneSelectAction());
         this.add(noneSelect);
 
         JLabel human = new JLabel("Human");
         human.setBounds(800, 190, 300, 20);
         human.setFont(Util.getBigFont());
+        human.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                humanSelectAction();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) {}
+        });
         this.add(human);
 
         JLabel computer = new JLabel("Computer");
         computer.setBounds(800, 230, 300, 20);
         computer.setFont(Util.getBigFont());
+        computer.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                computerSelectAction();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) {}
+        });
         this.add(computer);
 
         JLabel none = new JLabel("None");
         none.setBounds(800, 270, 300, 20);
         none.setFont(Util.getBigFont());
+        none.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                noneSelectAction();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {}
+
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) {}
+        });
         this.add(none);
 
         nameInstruct = new JLabel("Enter your name:");
@@ -199,12 +228,37 @@ public class PlayerOptionsPanel extends JPanel {
         repaint();
     }
 
+    private void humanSelectAction() {
+        selected = Util.PlayerType.HUMAN;
+        name = defaultHumanName;
+        nameInput.setText(name);
+        repaintButtons = true;
+        repaint();
+    }
+
+    private void computerSelectAction() {
+        if (computerSelect.isVisible()) {
+            selected = Util.PlayerType.COMPUTER_HARD;
+            name = defaultComputerName;
+            nameInput.setText(name);
+            repaintButtons = true;
+            repaint();
+        }
+    }
+
+    private void noneSelectAction() {
+        selected = Util.PlayerType.NONE;
+        name = "";
+        repaintButtons = true;
+        repaint();
+    }
+
     public String getName() {
         return name;
     }
 
     public void open() {
-         this.setVisible(true);
+        this.setVisible(true);
     }
 
     public void setSelected(Util.PlayerType playerType) {
