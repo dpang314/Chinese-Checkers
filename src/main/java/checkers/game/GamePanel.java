@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
     private static final int BUTTON_LEFT = 920;
@@ -24,6 +25,7 @@ public class GamePanel extends JPanel {
     private static final int BUTTON_HEIGHT = 60;
     boolean repaintButtons;
     private final Game game;
+    private final ArrayList<JLabel> highlightedButtons = new ArrayList<>();
     private final ActionListener endAction = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -303,7 +305,16 @@ public class GamePanel extends JPanel {
             // not highlighted
             game.getNonClickablePegs().forEach((position, color) -> this.add(new PegButton(position, color, false)));
 
+            for (JLabel label : highlightedButtons) {
+                GamePanel.this.remove(label);
+            }
+            highlightedButtons.clear();
+
             game.getClickablePegs().forEach((position) -> this.add(new PegButton(position, game.getCurrentPlayer().getColor(), true)));
+
+            for (JLabel label : highlightedButtons) {
+                this.add(label);
+            }
 
             if (!game.getCurrentPlayer().isComputer() && !game.gameOver()) {
                 for (Position p : game.getPossibleMoves()) {
@@ -332,6 +343,12 @@ public class GamePanel extends JPanel {
 
             this.border = new Ellipse2D.Float(0, 0, RADIUS, RADIUS);
             if (highlighted) {
+                JLabel highlightIcon = new JLabel(GUI.getImageLoader().getGamePanelImages().getButtonHighlight());
+                highlightIcon.setBounds(pixels.getRow() - (highlightIcon.getIcon().getIconWidth() - icon.getIconWidth()) / 2,
+                        pixels.getColumn() - (highlightIcon.getIcon().getIconHeight() - icon.getIconHeight()) / 2,
+                        highlightIcon.getIcon().getIconWidth(), highlightIcon.getIcon().getIconHeight());
+                highlightedButtons.add(highlightIcon);
+
                 this.addActionListener(actionEvent -> {
                     GamePanel.this.repaintButtons = true;
                     GamePanel.this.repaint();

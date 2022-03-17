@@ -11,18 +11,17 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class MenuPanelImages {
-    private HashMap<String, ImageIcon> cloudIcons = new HashMap<>();
+    private final HashMap<String, ImageIcon> cloudIcons = new HashMap<>();
 
     public MenuPanelImages() throws IOException {
         loadCloudIcons();
+        //	https://cdn1.iconfinder.com/data/icons/thin-ui-1/100/Noun_Project_100Icon_1px_grid_thin_ic_radio_btn_full-512.PNG
         filledButton = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/filledRadioButton.png"))
                 .getScaledInstance(28,28, Image.SCALE_DEFAULT));
 
+        //	https://cdn1.iconfinder.com/data/icons/interface-59/24/radio-button-off-unchecked-round-circle-512.PNG
         emptyButton = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/emptyRadioButton.png"))
                 .getScaledInstance(20,20,Image.SCALE_DEFAULT));
-
-        smallScroll = ImageIO.read(new File("src/main/resources/images/menu/smallScroll.PNG"))
-                .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
 
         // start load exit
         BufferedImage startImage = ImageIO.read(new File("src/main/resources/images/menu/start.PNG"));
@@ -36,17 +35,14 @@ public class MenuPanelImages {
 
         // visuals like scrolls dragons logos
 
-        ImageIcon dr = new ImageIcon("src/main/resources/images/menu/dragon.PNG");
-        dragon = dr.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
+        dragon = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/dragon.PNG")).getScaledInstance(1280,720,Image.SCALE_DEFAULT));
 
         logoBig = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/logoBig.PNG"))
                 .getScaledInstance(1280, 720, Image.SCALE_DEFAULT));
 
-        ImageIcon ls = new ImageIcon("src/main/resources/images/menu/logoSmall.PNG");
-        logoSmall = ls.getImage().getScaledInstance(1280,720,Image.SCALE_DEFAULT);
-
         scrollOpenAnimated = new ImageIcon("src/main/resources/images/menu/scrollOpen.gif");
         scrollCloseAnimated = new ImageIcon("src/main/resources/images/menu/scrollClose.gif");
+        dragonAnimated = new ImageIcon("src/main/resources/images/menu/dragon.gif");
     }
 
     private void addImageIcon(String name) throws IOException {
@@ -84,17 +80,16 @@ public class MenuPanelImages {
         addImageIcon("p6Def");
     }
 
-    private ImageIcon emptyButton;
-    //	https://cdn1.iconfinder.com/data/icons/interface-59/24/radio-button-off-unchecked-round-circle-512.PNG
-    private ImageIcon filledButton;
-    //	https://cdn1.iconfinder.com/data/icons/thin-ui-1/100/Noun_Project_100Icon_1px_grid_thin_ic_radio_btn_full-512.PNG
-    private Image smallScroll;
-    private ImageIcon start, load, exit;
-    private Image dragon;
-    private ImageIcon logoBig;
-    private Image logoSmall;
-    private ImageIcon scrollOpenAnimated;
-    private ImageIcon scrollCloseAnimated;
+    private final ImageIcon emptyButton;
+    private final ImageIcon filledButton;
+    private final ImageIcon start;
+    private final ImageIcon load;
+    private final ImageIcon exit;
+    private final ImageIcon dragon;
+    private final ImageIcon logoBig;
+    private final ImageIcon scrollOpenAnimated;
+    private final ImageIcon scrollCloseAnimated;
+    private final ImageIcon dragonAnimated;
 
     public ImageIcon getEmptyButton() {
         return emptyButton;
@@ -116,7 +111,7 @@ public class MenuPanelImages {
         return exit;
     }
 
-    public Image getDragon() {
+    public ImageIcon getDragon() {
         return dragon;
     }
 
@@ -145,5 +140,10 @@ public class MenuPanelImages {
     public ImageIcon getScrollCloseAnimated() {
         scrollCloseAnimated.getImage().flush();
         return scrollCloseAnimated;
+    }
+
+    public ImageIcon getDragonAnimated() {
+        dragonAnimated.getImage().flush();
+        return dragonAnimated;
     }
 }

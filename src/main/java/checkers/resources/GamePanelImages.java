@@ -9,13 +9,16 @@ import java.io.IOException;
 public class GamePanelImages {
     private ImageIcon blackPeg, bluePeg, greenPeg, redPeg, whitePeg, yellowPeg;
     private ImageIcon redPegHighlighted, blackPegHighlighted, greenPegHighlighted, bluePegHighlighted, whitePegHighlighted, yellowPegHighlighted;
-    private ImageIcon positionHighlight;
-    private Image board, bigScroll;
+    private final ImageIcon positionHighlight, buttonHighlight;
+    private final Image board;
+    private final Image bigScroll;
 
     public GamePanelImages() throws IOException {
         loadPegs();
         positionHighlight = new ImageIcon(ImageIO.read(new File("./src/main/resources/images/game/highlight.PNG"))
                 .getScaledInstance(32, 32, Image.SCALE_DEFAULT));
+        buttonHighlight = new ImageIcon(ImageIO.read(new File("./src/main/resources/images/game/highlight.PNG"))
+                .getScaledInstance(34, 34, Image.SCALE_DEFAULT));
         board = ImageIO.read(new File("./src/main/resources/images/game/board.PNG"))
                 .getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
         bigScroll = ImageIO.read(new File("./src/main/resources/images/game/bigScroll.PNG"))
@@ -95,5 +98,9 @@ public class GamePanelImages {
 
     public Image getBigScroll() {
         return bigScroll;
+    }
+
+    public ImageIcon getButtonHighlight() {
+        return buttonHighlight;
     }
 }

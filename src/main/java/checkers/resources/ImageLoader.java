@@ -7,9 +7,6 @@ public class ImageLoader {
     private MenuPanelImages menuPanelImages;
     private GamePanelImages gamePanelImages;
 
-    // Images were designed for 1080p, but project will use 720p
-    private static final double SCALE = 1.5;
-
     public ImageLoader() {
         try {
             commonImages = new CommonImages();

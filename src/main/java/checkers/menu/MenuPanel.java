@@ -97,6 +97,7 @@ public class MenuPanel extends JPanel {
             } else if (playerCount == 5) {
                 JOptionPane.showMessageDialog(MenuPanel.this, "Game can't have 5 players", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
+                this.remove(dragonImage);
                 gui.switchToGamePanel(players, shuffle);
             }
         });
@@ -118,6 +119,7 @@ public class MenuPanel extends JPanel {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 try {
                     Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
+                    this.remove(dragonImage);
                     gui.switchToGamePanel(game);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(MenuPanel.this, "Error loading save file. Please try a different file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -153,6 +155,10 @@ public class MenuPanel extends JPanel {
         scrollCloseImage.setBounds(0, 0, 1280, 720);
         this.add(scrollCloseImage);
 
+        dragonImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getDragon());
+        dragonImage.setBounds(0, 0, 1280, 720);
+        this.add(dragonImage);
+
         repaint();
     }
 
@@ -173,12 +179,15 @@ public class MenuPanel extends JPanel {
         playerButton.open();
     }
 
-    private JLabel scrollCloseImage;
+    private JLabel scrollCloseImage, dragonImage;
+
+    private void transition() {
+        this.remove(dragonImage);
+    }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(GUI.getImageLoader().getCommonImages().getBackground(), 0, 0, this);
-        g.drawImage(GUI.getImageLoader().getMenuPanelImages().getDragon(), 0, 0, this);
     }
 
     private Player createPlayer(PlayerButton playerButton) {
