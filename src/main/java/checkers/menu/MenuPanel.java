@@ -16,7 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 
-public class MenuPanel extends JPanel {
+public class MenuPanel extends JLayeredPane {
     private static final long serialVersionUID = 1L;
     private final PlayerButton P1;
     private final PlayerButton P2;
