@@ -12,9 +12,11 @@ import checkers.resources.GameLoader;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 
-public class MenuPanel extends JLayeredPane {
+public class MenuPanel extends JPanel {
     private static final long serialVersionUID = 1L;
     private final PlayerButton P1;
     private final PlayerButton P2;
@@ -22,7 +24,7 @@ public class MenuPanel extends JLayeredPane {
     private final PlayerButton P4;
     private final PlayerButton P5;
     private final PlayerButton P6;
-    private final JButton shuffler;
+    private final JButton shuffler, start, load, exit;
     private boolean shuffle = false;
     private JLabel scrollCloseImage, dragonImage;
 
@@ -71,9 +73,10 @@ public class MenuPanel extends JLayeredPane {
         P6.setBounds(480, 450, P6.getIcon().getIconWidth(), P6.getIcon().getIconHeight());
         this.add(P6);
 
-        JButton start = new JButton("");
+        start = new JButton("");
         start.setBounds(540, 591, GUI.getImageLoader().getMenuPanelImages().getStart().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getStart().getIconHeight());
         start.setIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
+        start.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
         start.addActionListener(actionEvent -> {
             Player[] players = {
                     createPlayer(P1),
@@ -104,9 +107,10 @@ public class MenuPanel extends JLayeredPane {
         start.setBorderPainted(false);
         this.add(start);
 
-        JButton load = new JButton("");
+        load = new JButton("");
         load.setBounds(195, 590, GUI.getImageLoader().getMenuPanelImages().getLoad().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getLoad().getIconHeight());
         load.setIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
+        load.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
         load.addActionListener(actionEvent -> {
             // loads save
             JFileChooser chooser = new JFileChooser();
@@ -129,9 +133,10 @@ public class MenuPanel extends JLayeredPane {
         load.setBorderPainted(false);
         this.add(load);
 
-        JButton exit = new JButton("");
+        exit = new JButton("");
         exit.setBounds(872, 597, GUI.getImageLoader().getMenuPanelImages().getExit().getIconWidth(), GUI.getImageLoader().getMenuPanelImages().getExit().getIconHeight());
         exit.setIcon(GUI.getImageLoader().getMenuPanelImages().getExit());
+        exit.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getExit());
         exit.addActionListener(actionEvent -> {
             int confirmed = JOptionPane.showConfirmDialog(MenuPanel.this,
                     "Are you sure you want to quit the game?",
@@ -147,6 +152,28 @@ public class MenuPanel extends JLayeredPane {
         JLabel shuffleLabel = new JLabel("Shuffle Colors");
         shuffleLabel.setBounds(380, 110, 200, 30);
         shuffleLabel.setFont(Util.getBigFont());
+        shuffleLabel.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                shuffleAction();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
         this.add(shuffleLabel);
         shuffleLabel.setVisible(true);
 
@@ -161,6 +188,15 @@ public class MenuPanel extends JLayeredPane {
         repaint();
     }
 
+    private void shuffleAction() {
+        shuffle = !shuffle;
+        if (shuffle) {
+            shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
+        } else {
+            shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
+        }
+    }
+
     private void closeOptions() {
         P1.setEnabled(true);
         P2.setEnabled(true);
@@ -168,6 +204,9 @@ public class MenuPanel extends JLayeredPane {
         P4.setEnabled(true);
         P5.setEnabled(true);
         P6.setEnabled(true);
+        start.setEnabled(true);
+        load.setEnabled(true);
+        exit.setEnabled(true);
         scrollCloseImage = new JLabel(GUI.getImageLoader().getMenuPanelImages().getScrollCloseAnimated());
         scrollCloseImage.setBounds(0, 0, 1280, 720);
         this.add(scrollCloseImage);
@@ -235,6 +274,9 @@ public class MenuPanel extends JLayeredPane {
             P4.setEnabled(false);
             P5.setEnabled(false);
             P6.setEnabled(false);
+            start.setEnabled(false);
+            load.setEnabled(false);
+            exit.setEnabled(false);
 
             if (displayName != null) {
                 MenuPanel.this.remove(displayName);
