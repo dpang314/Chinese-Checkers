@@ -35,9 +35,9 @@ public class MenuPanelImages {
 
         // visuals like scrolls dragons logos
 
-        dragon = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/dragon.PNG")).getScaledInstance(1280,720,Image.SCALE_DEFAULT));
+        dragon = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/dragon.png")).getScaledInstance(1280,720,Image.SCALE_DEFAULT));
 
-        logoBig = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/logoBig.PNG"))
+        logoBig = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/logoBig.png"))
                 .getScaledInstance(1280, 720, Image.SCALE_DEFAULT));
 
         scrollOpenAnimated = new ImageIcon("src/main/resources/images/menu/scrollOpen.gif");
