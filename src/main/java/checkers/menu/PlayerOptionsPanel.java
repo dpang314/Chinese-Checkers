@@ -38,11 +38,8 @@ public class PlayerOptionsPanel extends JPanel {
                         error.setVisible(true);
                         save.setEnabled(false);
                         save.setForeground(Color.GRAY);
-                    } else if (nameInput.getText().length() > 20) {
-                        error.setText("Max name length is 20 characters");
-                        error.setVisible(true);
-                        save.setEnabled(false);
-                        save.setForeground(Color.GRAY);
+                    } else if (nameInput.getText().length() > maxCharacters) {
+                        throw new RuntimeException("Name length is over maxCharacters. This should never occur");
                     } else {
                         error.setVisible(false);
                         save.setEnabled(true);
@@ -58,6 +55,12 @@ public class PlayerOptionsPanel extends JPanel {
                         str = str.substring(0, str.length() - overflow);
                     }
                     super.replace(fb, offs, length, str, a);
+                    updateError();
+                }
+
+                @Override
+                public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+                    super.remove(fb, offset, length);
                     updateError();
                 }
 
@@ -91,7 +94,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(humanSelect);
 
         computerSelect = new JButton();
-        computerSelect.setBounds(775, 240, 20, 20);
+        computerSelect.setBounds(775, 230, 20, 20);
         computerSelect.setContentAreaFilled(false);
         computerSelect.setBorderPainted(false);
         computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -99,7 +102,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(computerSelect);
 
         noneSelect = new JButton();
-        noneSelect.setBounds(775, 280, 20, 20);
+        noneSelect.setBounds(775, 260, 20, 20);
         noneSelect.setContentAreaFilled(false);
         noneSelect.setBorderPainted(false);
         noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -134,7 +137,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(human);
 
         JLabel computer = new JLabel("Computer");
-        computer.setBounds(830, 240, 300, 20);
+        computer.setBounds(830, 230, 300, 20);
         computer.setFont(Util.getBigFont());
         computer.addMouseListener(new MouseListener() {
             @Override
@@ -161,7 +164,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(computer);
 
         JLabel none = new JLabel("None");
-        none.setBounds(830, 280, 300, 20);
+        none.setBounds(830, 260, 300, 20);
         none.setFont(Util.getBigFont());
         none.addMouseListener(new MouseListener() {
             @Override
@@ -189,17 +192,17 @@ public class PlayerOptionsPanel extends JPanel {
 
         nameInstruct = new JLabel("Enter your name:");
         nameInstruct.setFont(Util.getBigFont());
-        nameInstruct.setBounds(852, 295, 300, 60);
+        nameInstruct.setBounds(852, 275, 300, 60);
         this.add(nameInstruct);
 
         nameInput = new LimitedInput();
-        nameInput.setBounds(790, 345, 255, 30);
+        nameInput.setBounds(790, 325, 255, 30);
 
         this.nameInput.setVisible(false);
         this.add(nameInput);
 
         error = new JTextField("");
-        error.setBounds(780, 365, 255, 15);
+        error.setBounds(790, 365, 255, 15);
         error.setOpaque(false);
         error.setBorder(null);
         error.setForeground(Color.RED);
