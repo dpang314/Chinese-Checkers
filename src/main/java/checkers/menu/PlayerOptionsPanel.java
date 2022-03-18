@@ -4,10 +4,7 @@ import checkers.GUI;
 import checkers.Util;
 
 import javax.swing.*;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -29,13 +26,64 @@ public class PlayerOptionsPanel extends JPanel {
     private String name = "";
     private boolean repaintButtons;
 
+    private class LimitedInput extends JTextField {
+        private final int maxCharacters = 18;
+
+        public LimitedInput() {
+            AbstractDocument doc = (AbstractDocument) this.getDocument();
+            doc.setDocumentFilter(new DocumentFilter() {
+                private void updateError() {
+                    if (nameInput.getText().length() == 0) {
+                        error.setText("Name must be at least 1 character");
+                        error.setVisible(true);
+                        save.setEnabled(false);
+                        save.setForeground(Color.GRAY);
+                    } else if (nameInput.getText().length() > 20) {
+                        error.setText("Max name length is 20 characters");
+                        error.setVisible(true);
+                        save.setEnabled(false);
+                        save.setForeground(Color.GRAY);
+                    } else {
+                        error.setVisible(false);
+                        save.setEnabled(true);
+                        save.setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void replace(FilterBypass fb, int offs, int length,
+                                    String str, AttributeSet a) throws BadLocationException {
+                    if (str.length() + offs > maxCharacters) {
+                        int overflow = str.length() + offs - maxCharacters;
+                        str = str.substring(0, str.length() - overflow);
+                    }
+                    super.replace(fb, offs, length, str, a);
+                    updateError();
+                }
+
+                @Override
+                public void insertString(FilterBypass fb, int offs,
+                                         String str, AttributeSet a)
+                        throws BadLocationException {
+                    // If input length less than or equal to 18
+                    if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
+                        super.insertString(fb, offs, str, a);
+                    }
+                    updateError();
+                }
+            });
+        }
+
+
+    }
+
     public PlayerOptionsPanel(int playerNumber, MenuPanel.PlayerButton playerButton) {
         defaultHumanName = "Human Player " + playerNumber;
         defaultComputerName = "Computer Player " + playerNumber;
         setPreferredSize(new Dimension(1280, 720));
 
         humanSelect = new JButton();
-        humanSelect.setBounds(745, 190, 20, 20);
+        humanSelect.setBounds(775, 200, 20, 20);
         humanSelect.setContentAreaFilled(false);
         humanSelect.setBorderPainted(false);
         humanSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -43,7 +91,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(humanSelect);
 
         computerSelect = new JButton();
-        computerSelect.setBounds(745, 230, 20, 20);
+        computerSelect.setBounds(775, 240, 20, 20);
         computerSelect.setContentAreaFilled(false);
         computerSelect.setBorderPainted(false);
         computerSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -51,7 +99,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(computerSelect);
 
         noneSelect = new JButton();
-        noneSelect.setBounds(745, 270, 20, 20);
+        noneSelect.setBounds(775, 280, 20, 20);
         noneSelect.setContentAreaFilled(false);
         noneSelect.setBorderPainted(false);
         noneSelect.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
@@ -59,7 +107,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(noneSelect);
 
         JLabel human = new JLabel("Human");
-        human.setBounds(800, 190, 300, 20);
+        human.setBounds(830, 200, 300, 20);
         human.setFont(Util.getBigFont());
         human.addMouseListener(new MouseListener() {
             @Override
@@ -86,7 +134,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(human);
 
         JLabel computer = new JLabel("Computer");
-        computer.setBounds(800, 230, 300, 20);
+        computer.setBounds(830, 240, 300, 20);
         computer.setFont(Util.getBigFont());
         computer.addMouseListener(new MouseListener() {
             @Override
@@ -113,7 +161,7 @@ public class PlayerOptionsPanel extends JPanel {
         this.add(computer);
 
         JLabel none = new JLabel("None");
-        none.setBounds(800, 270, 300, 20);
+        none.setBounds(830, 280, 300, 20);
         none.setFont(Util.getBigFont());
         none.addMouseListener(new MouseListener() {
             @Override
@@ -141,71 +189,30 @@ public class PlayerOptionsPanel extends JPanel {
 
         nameInstruct = new JLabel("Enter your name:");
         nameInstruct.setFont(Util.getBigFont());
-        nameInstruct.setBounds(813, 280, 300, 60);
+        nameInstruct.setBounds(852, 295, 300, 60);
         this.add(nameInstruct);
 
-        nameInput = new JTextField("");
-        nameInput.setBounds(750, 330, 255, 30);
-        AbstractDocument doc = (AbstractDocument) nameInput.getDocument();
-        doc.setDocumentFilter(new DocumentFilter() {
-            private final int maxCharacters = 20;
+        nameInput = new LimitedInput();
+        nameInput.setBounds(790, 345, 255, 30);
 
-            private void updateError() {
-                if (nameInput.getText().length() == 0) {
-                    error.setText("Name must be at least 1 character");
-                    error.setVisible(true);
-                    save.setEnabled(false);
-                    save.setForeground(Color.GRAY);
-                } else if (nameInput.getText().length() > 20) {
-                    error.setText("Max name length is 20 characters");
-                    error.setVisible(true);
-                    save.setEnabled(false);
-                    save.setForeground(Color.GRAY);
-                } else {
-                    error.setVisible(false);
-                    save.setEnabled(true);
-                    save.setForeground(Color.BLACK);
-                }
-            }
-
-            @Override
-            public void replace(FilterBypass fb, int offs, int length,
-                                String str, AttributeSet a) throws BadLocationException {
-                if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
-                    super.insertString(fb, offs, str, a);
-                }
-                updateError();
-            }
-
-            @Override
-            public void insertString(FilterBypass fb, int offs,
-                                     String str, AttributeSet a)
-                    throws BadLocationException {
-                // If input length less than or equal to 18
-                if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
-                    super.insertString(fb, offs, str, a);
-                }
-                updateError();
-            }
-        });
         this.nameInput.setVisible(false);
         this.add(nameInput);
 
         error = new JTextField("");
-        error.setBounds(750, 365, 255, 15);
+        error.setBounds(780, 365, 255, 15);
         error.setOpaque(false);
         error.setBorder(null);
         error.setForeground(Color.RED);
         this.add(error);
 
         comInstruct = new JLabel("Set Difficulty:");
-        comInstruct.setBounds(817, 370, 300, 60);
+        comInstruct.setBounds(865, 370, 300, 60);
         comInstruct.setFont(Util.getBigFont());
         this.add(comInstruct);
 
         String[] feed = {"Easier", "Harder"};
         difficultySelect = new JComboBox<>(feed);
-        difficultySelect.setBounds(750, 420, 255, 30);
+        difficultySelect.setBounds(790, 420, 255, 30);
         difficultySelect.setVisible(false);
         difficultySelect.addActionListener(actionEvent -> {
             if (difficultySelect.isPopupVisible()) {
@@ -223,7 +230,7 @@ public class PlayerOptionsPanel extends JPanel {
         save.setContentAreaFilled(false);
         save.setFont(Util.getBigFont());
         save.setFocusPainted(false);
-        save.setBounds(770, 465, 200, 50);
+        save.setBounds(820, 465, 200, 50);
         save.addActionListener(actionEvent -> {
             PlayerOptionsPanel.this.name = nameInput.getText();
             playerButton.close(selected);
@@ -239,26 +246,17 @@ public class PlayerOptionsPanel extends JPanel {
     }
 
     private void humanSelectAction() {
-        selected = Util.PlayerType.HUMAN;
-        this.name = defaultHumanName;
-        nameInput.setText(name);
-        repaintButtons = true;
-        repaint();
+        nameInput.setVisible(false);
+        this.setSelected(Util.PlayerType.HUMAN);
     }
 
     private void computerSelectAction() {
         selected = Util.PlayerType.COMPUTER_HARD;
-        this.name = defaultComputerName;
-        nameInput.setText(name);
-        repaintButtons = true;
-        repaint();
+        this.setSelected(Util.PlayerType.COMPUTER_HARD);
     }
 
     private void noneSelectAction() {
-        selected = Util.PlayerType.NONE;
-        this.name = "";
-        repaintButtons = true;
-        repaint();
+        this.setSelected(Util.PlayerType.NONE);
     }
 
     public String getName() {
