@@ -13,8 +13,7 @@ public class GUI {
     private static final ImageLoader imageLoader = new ImageLoader();
     private Game game;
     private final JFrame frame;
-    private JPanel gamePanel;
-    private JLayeredPane menuPanel;
+    private JPanel gamePanel, menuPanel;
     private final JLayeredPane containerPane = new JLayeredPane();
 
     public GUI() {
