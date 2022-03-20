@@ -286,7 +286,7 @@ public class Board implements Cloneable, Serializable {
         boardPos[startPos.getRow()][startPos.getColumn()] = null;
 
         //updates the move-maker's array of positions
-        move.getOwner().posArr.set(indexOf(move.getOwner().posArr, startPos), endPos);
+        move.getOwner().getPosArr().set(indexOf(move.getOwner().getPosArr(), startPos), endPos);
 
     }
 

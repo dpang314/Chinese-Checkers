@@ -126,7 +126,7 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
         if (!moveCalculated) {
             boardAtTurnStart = board;
             try {
-                for (Position p : this.posArr) {
+                for (Position p : this.getPosArr()) {
                     investigateMoves(p);
                 }
             }

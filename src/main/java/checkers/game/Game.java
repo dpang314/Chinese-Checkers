@@ -240,7 +240,7 @@ public class Game implements Serializable {
         HashMap<Position, Color> ret = new HashMap<>();
         for (int i = 0; i < players.length; i++) {
             if (players[i] != null) {
-                for (Position p : players[i].posArr) {
+                for (Position p : players[i].getPosArr()) {
                     if ((playerTurn != i) || (selectedPosition() != null && !miniHistory.isEmpty() && !p.equals(selectedPosition()))) {
                         ret.put(p, players[i].getColor());
                     }
@@ -251,9 +251,9 @@ public class Game implements Serializable {
     }
 
     public ArrayList<Position> getClickablePegs() {
-        if (selectedPosition() == null) return currentPlayer.posArr;
+        if (selectedPosition() == null) return currentPlayer.getPosArr();
         else if (miniHistory.isEmpty()) {
-            return new ArrayList<>(players[playerTurn].posArr);
+            return new ArrayList<>(players[playerTurn].getPosArr());
         } else {
             ArrayList<Position> ret = new ArrayList<>();
             ret.add(selectedPosition());

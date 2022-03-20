@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public abstract class Player implements Serializable {
     private final String playerName;
-    public ArrayList<Position> posArr;
+    private ArrayList<Position> posArr;
     private Color color;
     private Position[] winReg;
 
@@ -51,4 +51,7 @@ public abstract class Player implements Serializable {
         return winReg;
     }
 
+    public ArrayList<Position> getPosArr() {
+        return posArr;
+    }
 }
