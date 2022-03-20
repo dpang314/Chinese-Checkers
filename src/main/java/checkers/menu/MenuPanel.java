@@ -303,14 +303,17 @@ public class MenuPanel extends JLayeredPane {
                 displayName = new JLabel("");
             }
             int y = 100;
-            if (playerNumber == 3) {
+            int x = 20;
+            if (playerNumber == 1) {
+                x -= 20;
+            } else if (playerNumber == 3) {
                 y += 20;
             } else if (playerNumber == 5) {
                 y += 30;
             } else if (playerNumber == 6) {
                 y += 10;
             }
-            displayName.setBounds(this.getX() + 20, this.getY() + y, 1000, 30);
+            displayName.setBounds(this.getX() + x, this.getY() + y, 1000, 30);
             MenuPanel.this.add(displayName);
         }
 

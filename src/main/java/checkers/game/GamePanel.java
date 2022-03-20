@@ -87,40 +87,48 @@ public class GamePanel extends JPanel {
         // TODO center the labels
         for (Player p : players) {
             if (p != null) {
+                JLabel name = new JLabel(p.getName());
+                Canvas c = new Canvas();
+                FontMetrics metrics = c.getFontMetrics(Util.getBigFont());
+                int width = metrics.stringWidth(p.getName()) + 54;
+                int height = metrics.getHeight() + 20;
+                name.setVerticalTextPosition(JLabel.CENTER);
+                name.setHorizontalTextPosition(JLabel.CENTER);
+
                 if (p.getColor().equals(Color.RED)) {
-                    JLabel name = new JLabel(p.getName());
                     name.setForeground(Util.RED);
-                    name.setBounds(410, 30, 1000, 30);
+                    name.setIcon(GUI.getImageLoader().getCommonImages().getRedNameScroll(width, height));
+                    name.setBounds(462 - width / 2, 10, width, height);
                     name.setFont(Util.getBigFont());
                     this.add(name);
                 } else if (p.getColor().equals(Color.BLACK)) {
-                    JLabel name = new JLabel(p.getName());
                     name.setForeground(Util.BLACK);
-                    name.setBounds(560, 170, 1000, 30);
+                    name.setIcon(GUI.getImageLoader().getCommonImages().getBlackNameScroll(width, height));
+                    name.setBounds(560, 160, width, height);
                     name.setFont(Util.getBigFont());
                     this.add(name);
                 } else if (p.getColor().equals(Color.GREEN)) {
-                    JLabel name = new JLabel(p.getName());
                     name.setForeground(Util.GREEN);
-                    name.setBounds(560, 515, 1000, 30);
+                    name.setIcon(GUI.getImageLoader().getCommonImages().getGreenNameScroll(width, height));
+                    name.setBounds(560, 515, width, height);
                     name.setFont(Util.getBigFont());
                     this.add(name);
                 } else if (p.getColor().equals(Color.BLUE)) {
-                    JLabel name = new JLabel(p.getName());
                     name.setForeground(Util.BLUE);
-                    name.setBounds(410, 650, 1000, 30);
+                    name.setIcon(GUI.getImageLoader().getCommonImages().getBlueNameScroll(width, height));
+                    name.setBounds(462 - width / 2, 650, width, height);
                     name.setFont(Util.getBigFont());
                     this.add(name);
                 } else if (p.getColor().equals(Color.WHITE)) {
-                    JLabel name = new JLabel(p.getName());
                     name.setForeground(Util.WHITE);
-                    name.setBounds(210, 515, 1000, 30);
+                    name.setIcon(GUI.getImageLoader().getCommonImages().getWhiteNameScroll(width, height));
+                    name.setBounds(370 - width, 515, width, height);
                     name.setFont(Util.getBigFont());
                     this.add(name);
                 } else if (p.getColor().equals(Color.YELLOW)) {
-                    JLabel name = new JLabel(p.getName());
                     name.setForeground(Util.YELLOW);
-                    name.setBounds(210, 170, 1000, 30);
+                    name.setIcon(GUI.getImageLoader().getCommonImages().getYellowNameScroll(width, height));
+                    name.setBounds(370 - width, 160, width, height);
                     name.setFont(Util.getBigFont());
                     this.add(name);
                 }
@@ -281,7 +289,7 @@ public class GamePanel extends JPanel {
         g.drawImage(GUI.getImageLoader().getGamePanelImages().getBoard(), 0, 0, null);
         g.drawImage(GUI.getImageLoader().getGamePanelImages().getBigScroll(), 0, 0, null);
 
-        g.setFont(Util.getFont().deriveFont(18f));
+        g.setFont(Util.getFont().deriveFont(17f));
         if (game.gameOver()) {
             g.drawString(game.winningPlayer().getName() + " won!", BUTTON_LEFT - 10, 100);
         } else {
@@ -289,7 +297,12 @@ public class GamePanel extends JPanel {
                 g.drawString(game.getCurrentPlayer().getName(), BUTTON_LEFT - 10, 100);
                 g.drawString("is thinking", BUTTON_LEFT - 10, 130);
             } else {
-                g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT - 10, 100);
+                if(g.getFontMetrics().stringWidth(game.getCurrentPlayer().getName()) >= 270) {
+                    g.drawString(game.getCurrentPlayer().getName() + "'s", BUTTON_LEFT - 10, 100);
+                    g.drawString("turn", BUTTON_LEFT - 10, 120);
+                } else {
+                    g.drawString(game.getCurrentPlayer().getName() + "'s turn", BUTTON_LEFT - 10, 100);
+                }
             }
         }
         g.drawString("Turn " + game.getTurns(), BUTTON_LEFT - 10, 200);
