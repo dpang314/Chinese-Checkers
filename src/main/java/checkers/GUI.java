@@ -40,10 +40,7 @@ public class GUI {
         });
     }
 
-    public void switchToGamePanel(Player[] players, boolean shuffle) {
-        if (game == null) {
-            game = new Game(players, shuffle);
-        }
+    private void animateMenuToGame() {
         JLabel dragon = new JLabel(GUI.getImageLoader().getMenuPanelImages().getDragonAnimated());
         dragon.setBounds(0, 0, 1280, 720);
         menuPanel.add(dragon);
@@ -75,11 +72,16 @@ public class GUI {
         frame.pack();
     }
 
+    public void switchToGamePanel(Player[] players, boolean shuffle) {
+        if (game == null) {
+            game = new Game(players, shuffle);
+        }
+        animateMenuToGame();
+    }
+
     public void switchToGamePanel(Game game) {
         this.game = game;
-        gamePanel = new GamePanel(this, game, new Dimension(1280, 720));
-        frame.setContentPane(gamePanel);
-        frame.pack();
+        animateMenuToGame();
     }
 
     public void switchToMenuPanel() {
