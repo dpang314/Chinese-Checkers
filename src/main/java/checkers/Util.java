@@ -9,7 +9,7 @@ public class Util {
     public static final Color GREEN = new Color(95, 119, 82, 255);
     public static final Color BLUE = new Color(49, 43, 78, 255);
     public static final Color WHITE = new Color(131, 126, 124, 255);
-    public static final Color YELLOW = new Color(216, 158, 77, 255);
+    public static final Color YELLOW = new Color(196, 121, 27, 255);
     private static Font bigFont;
     private static final Font font = load();
 
