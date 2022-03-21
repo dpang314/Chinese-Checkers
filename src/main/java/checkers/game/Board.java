@@ -221,7 +221,46 @@ public class Board implements Cloneable, Serializable {
         if (!jumpOnly) {
             ret.addAll(possibleAdjacentMoves(p));
         }
-
+        
+        Peg chosenPeg = boardPos[p.getRow()][p.getColumn()];
+        Position[] chosenPegWinRegion;
+        
+        //if the chosen position is a peg
+        if(chosenPeg!=null) {
+ 
+        	//get its win region
+        	chosenPegWinRegion = chosenPeg.getOwner().getWR();
+        	
+        	//iterate over its win region to see if the position is in it
+        	boolean chosenPegInWinRegion = false;
+        	for(Position wrPos : chosenPegWinRegion) {
+            	
+        		//if the chosen peg IS in its win region
+            	if(wrPos.equals(p)) {
+            		chosenPegInWinRegion = true;
+            		break;
+            	}
+            	
+            }
+        	
+        	//if the chosen peg IS in its win region, remove it from ret
+        	
+        	if(chosenPegInWinRegion) {
+        		for(int i = 0; i<ret.size(); i++) {
+        			boolean possibleMoveInWinRegion = false;
+        			for(Position wrPos2 : chosenPegWinRegion) {
+        				if(wrPos2.equals(ret.get(i))) {
+        					possibleMoveInWinRegion=true;
+        				}
+        			}
+        			if(!possibleMoveInWinRegion) {
+        				ret.remove(i);
+        				i--;
+        			}
+        		}
+        	}
+        }
+       
         return ret;
     }
 
