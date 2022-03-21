@@ -4,7 +4,6 @@ import checkers.game.Board;
 import checkers.game.player.HumanPlayer;
 import checkers.game.player.Player;
 import checkers.game.player.QuinnStrategy;
-import com.sun.org.apache.xpath.internal.Arg;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

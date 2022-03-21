@@ -52,7 +52,7 @@ public class GUI {
         transitionPane.setOpaque(false);
         Timer addCloudTimer = new Timer(500, actionEvent -> {
             containerPane.add(transitionPane, 1, 0);
-            Timer timer = new Timer(550, actionEvent1 -> {
+            Timer timer = new Timer(600, actionEvent1 -> {
                 containerPane.remove(menuPanel);
                 gamePanel = new GamePanel(this, game, new Dimension(1280, 720));
                 gamePanel.setBounds(0, 0, 1280, 720);
@@ -95,7 +95,7 @@ public class GUI {
         transitionPane.setOpaque(false);
         Timer addCloudTimer = new Timer(300, actionEvent -> {
             containerPane.add(transitionPane, 1, 0);
-            Timer timer = new Timer(550, actionEvent1 -> {
+            Timer timer = new Timer(600, actionEvent1 -> {
                 containerPane.remove(gamePanel);
                 menuPanel = new MenuPanel(this);
                 menuPanel.setBounds(0, 0, 1280, 720);
