@@ -84,7 +84,6 @@ public class GamePanel extends JPanel {
         this.gui = gui;
         this.game = game;
         Player[] players = game.getPlayers();
-        // TODO center the labels
         for (Player p : players) {
             if (p != null) {
                 JLabel name = new JLabel(p.getName());

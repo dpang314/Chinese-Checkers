@@ -66,11 +66,11 @@ public class MenuPanel extends JLayeredPane {
         this.add(P4);
 
         P5 = new PlayerButton(5);
-        P5.setBounds(220, 410, P5.getIcon().getIconWidth(), P5.getIcon().getIconHeight());
+        P5.setBounds(190, 410, P5.getIcon().getIconWidth(), P5.getIcon().getIconHeight());
         this.add(P5);
 
         P6 = new PlayerButton(6);
-        P6.setBounds(480, 450, P6.getIcon().getIconWidth(), P6.getIcon().getIconHeight());
+        P6.setBounds(460, 450, P6.getIcon().getIconWidth(), P6.getIcon().getIconHeight());
         this.add(P6);
 
         start = new JButton("");
@@ -303,10 +303,23 @@ public class MenuPanel extends JLayeredPane {
             }
             displayName = new JLabel(getName());
             displayName.setFont(Util.getBigFont());
+            Canvas c = new Canvas();
+            int width = 0, height = 0;
+            if (playerType.equals(Util.PlayerType.COMPUTER_EASY) || playerType.equals(Util.PlayerType.COMPUTER_HARD) ||
+            playerType.equals(Util.PlayerType.HUMAN)) {
+                FontMetrics metrics = c.getFontMetrics(Util.getBigFont());
+                width = metrics.stringWidth(getName()) + 54;
+                height = metrics.getHeight() + 10;
+            }
+            displayName.setVerticalTextPosition(JLabel.CENTER);
+            displayName.setHorizontalTextPosition(JLabel.CENTER);
+
             if (playerType.equals(Util.PlayerType.COMPUTER_EASY) || playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
                 displayName.setForeground(Util.RED);
+                displayName.setIcon(GUI.getImageLoader().getCommonImages().getRedNameScroll(width, height));
             } else if (playerType.equals(Util.PlayerType.HUMAN)) {
                 displayName.setForeground(Util.GREEN);
+                displayName.setIcon(GUI.getImageLoader().getCommonImages().getGreenNameScroll(width, height));
             } else {
                 displayName = new JLabel("");
             }
@@ -315,13 +328,15 @@ public class MenuPanel extends JLayeredPane {
             if (playerNumber == 1) {
                 x -= 20;
             } else if (playerNumber == 3) {
-                y += 20;
+                x -= 30;
+                y += 15;
             } else if (playerNumber == 5) {
+                x -= 40;
                 y += 30;
             } else if (playerNumber == 6) {
                 y += 10;
             }
-            displayName.setBounds(this.getX() + x, this.getY() + y, 1000, 30);
+            displayName.setBounds(this.getX() + x, this.getY() + y, width, height);
             MenuPanel.this.add(displayName);
         }
 
