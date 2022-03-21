@@ -35,12 +35,7 @@ public class MenuPanel extends JLayeredPane {
         shuffler = new JButton("");
         shuffler.setBounds(335, 115, 20, 20);
         shuffler.addActionListener(actionEvent -> {
-            shuffle = !shuffle;
-            if (shuffle) {
-                shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getFilledButton());
-            } else {
-                shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
-            }
+            shuffleAction();
         });
         shuffler.setIcon(GUI.getImageLoader().getMenuPanelImages().getEmptyButton());
         shuffler.setContentAreaFilled(false);

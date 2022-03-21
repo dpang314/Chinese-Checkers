@@ -4,7 +4,7 @@ import checkers.game.Game;
 
 import java.io.*;
 
-public abstract class GameLoader {
+public class GameLoader {
 
     static FileOutputStream fos;
     static ObjectOutputStream oos;

@@ -189,25 +189,6 @@ public class Board implements Cloneable, Serializable {
         return p == null || boardPos[p.getRow()][p.getColumn()] != null;
     }
 
-    public void fillPos(Position p) {
-        //only for testing, please don't implement
-
-        boardPos[p.getRow()][p.getColumn()] = new Peg();
-    }
-
-    public void clearPos(Position p) {
-        //only for testing, please don't implement
-
-        boardPos[p.getRow()][p.getColumn()] = null;
-
-    }
-
-    public void fillPos(Position[] arr) {
-        for (Position p : arr) {
-            this.fillPos(p);
-        }
-    }
-
     public ArrayList<Position> possibleMoves(Position p, boolean jumpOnly) {
         //constraint true if ongoing turn, can only jump
 
