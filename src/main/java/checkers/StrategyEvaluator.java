@@ -2,8 +2,8 @@ package checkers;
 
 import checkers.game.Game;
 import checkers.game.player.ComputerStrategy;
-import checkers.game.player.QuinnStrategy;
-import checkers.game.player.SimpleQuinnStrategy;
+import checkers.game.player.HarderStrategy;
+import checkers.game.player.EasierStrategy;
 
 import java.awt.*;
 
@@ -35,8 +35,8 @@ public class StrategyEvaluator {
 
     public static void main(String[] args) {
         ComputerStrategy[] computers = {
-                new QuinnStrategy(Color.RED, "Harder Strategy"),
-                new SimpleQuinnStrategy(Color.RED, "Easier Strategy"),
+                new HarderStrategy(Color.RED, "Harder Strategy"),
+                new EasierStrategy(Color.RED, "Easier Strategy"),
                 null, null, null, null
         };
         play(100, false, computers);

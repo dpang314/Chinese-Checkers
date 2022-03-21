@@ -5,8 +5,8 @@ import checkers.game.board.Peg;
 import checkers.game.board.Position;
 import checkers.game.player.HumanPlayer;
 import checkers.game.player.Player;
-import checkers.game.player.QuinnStrategy;
-import checkers.game.player.SimpleQuinnStrategy;
+import checkers.game.player.HarderStrategy;
+import checkers.game.player.EasierStrategy;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -82,10 +82,10 @@ public class Game implements Serializable {
             if (players2[i] != null) {
                 if (players2[i] instanceof HumanPlayer) {
                     players2[i] = new HumanPlayer(colorAssignments[numPlayers][count], players2[i].getName());
-                } else if (players2[i] instanceof SimpleQuinnStrategy) {
-                    players2[i] = new SimpleQuinnStrategy(colorAssignments[numPlayers][count], players2[i].getName());
-                } else if (players2[i] instanceof QuinnStrategy) {
-                    players2[i] = new QuinnStrategy(colorAssignments[numPlayers][count], players2[i].getName());
+                } else if (players2[i] instanceof EasierStrategy) {
+                    players2[i] = new EasierStrategy(colorAssignments[numPlayers][count], players2[i].getName());
+                } else if (players2[i] instanceof HarderStrategy) {
+                    players2[i] = new HarderStrategy(colorAssignments[numPlayers][count], players2[i].getName());
                 }
                 count++;
             }

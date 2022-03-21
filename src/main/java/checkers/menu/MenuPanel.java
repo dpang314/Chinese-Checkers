@@ -3,10 +3,10 @@ package checkers.menu;
 import checkers.GUI;
 import checkers.Util;
 import checkers.game.Game;
+import checkers.game.player.HarderStrategy;
 import checkers.game.player.HumanPlayer;
 import checkers.game.player.Player;
-import checkers.game.player.QuinnStrategy;
-import checkers.game.player.SimpleQuinnStrategy;
+import checkers.game.player.EasierStrategy;
 import checkers.resources.GameLoader;
 
 import javax.swing.*;
@@ -233,9 +233,9 @@ public class MenuPanel extends JLayeredPane {
         if (playerButton.playerType.equals(Util.PlayerType.NONE)) {
             return null;
         } else if (playerButton.playerType.equals(Util.PlayerType.COMPUTER_EASY)) {
-            return new SimpleQuinnStrategy(Color.RED, playerButton.getName());
+            return new EasierStrategy(Color.RED, playerButton.getName());
         } else if (playerButton.playerType.equals(Util.PlayerType.COMPUTER_HARD)) {
-            return new QuinnStrategy(Color.RED, playerButton.getName());
+            return new HarderStrategy(Color.RED, playerButton.getName());
         } else if (playerButton.playerType.equals(Util.PlayerType.HUMAN)) {
             return new HumanPlayer(Color.RED, playerButton.getName());
         }

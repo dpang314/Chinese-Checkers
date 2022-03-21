@@ -34,7 +34,7 @@ import java.util.Arrays;
  * 	A: no
  */
 
-public class QuinnStrategy extends ComputerStrategy implements Serializable {
+public class HarderStrategy extends ComputerStrategy implements Serializable {
 
     private static final long serialVersionUID = 0xFECE;
 
@@ -65,14 +65,14 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
     //holds the position that the strategy is aiming for
     private Position obj;
 
-    public QuinnStrategy(Color color, String playerName) {
+    public HarderStrategy(Color color, String playerName) {
         super(color, playerName);
     }
 
     //a method to set these aforementioned weighting values
     protected static void setWeighting(double valueThreshold, double scale) {
-        QuinnStrategy.valueThreshold = valueThreshold;
-        QuinnStrategy.scale = scale;
+        HarderStrategy.valueThreshold = valueThreshold;
+        HarderStrategy.scale = scale;
     }
 
     private static Point2D.Double getPoint(Position p) {
@@ -159,7 +159,7 @@ public class QuinnStrategy extends ComputerStrategy implements Serializable {
 
     @Override
     public String toString() {
-        return "QuinnStrategy " + Util.colorToString(this.getColor()) + ": " + this.getName();
+        return "HarderStrategy " + Util.colorToString(this.getColor()) + ": " + this.getName();
     }
 
     //creates a queue of moves by iterating over the positions and looking at two at a time

@@ -9,7 +9,7 @@ import java.awt.*;
  * READ THIS BEFORE CHANGING STUFF HAPHAZARDLY
  * -------------------------------------------
  *
- * Does the same thing as QuinnStrategy,
+ * Does the same thing as HarderStrategy,
  * but there's a random check for whether
  * or not to even consider each move
  * so it's random whether or not it will find the 'best'
@@ -42,7 +42,7 @@ import java.awt.*;
  * (1 - ((stupidity-1)/(stupidity))^forceCheckInterval) chance
  */
 
-public class SimpleQuinnStrategy extends QuinnStrategy {
+public class EasierStrategy extends HarderStrategy {
 
     public int stupidity = 8;
     //read above for more info
@@ -51,7 +51,7 @@ public class SimpleQuinnStrategy extends QuinnStrategy {
     //don't exceed 14 please, see above for more info
     private int forceCheckMove = 0;
 
-    public SimpleQuinnStrategy(Color color, String playerName) {
+    public EasierStrategy(Color color, String playerName) {
         super(color, playerName);
     }
 
