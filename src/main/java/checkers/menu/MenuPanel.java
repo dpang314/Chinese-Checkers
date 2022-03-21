@@ -334,7 +334,7 @@ public class MenuPanel extends JLayeredPane {
                 x -= 40;
                 y += 30;
             } else if (playerNumber == 6) {
-                y += 10;
+                y += 15;
             }
             displayName.setBounds(this.getX() + x, this.getY() + y, width, height);
             MenuPanel.this.add(displayName);
