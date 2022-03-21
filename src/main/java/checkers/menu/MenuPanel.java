@@ -273,7 +273,7 @@ public class MenuPanel extends JLayeredPane {
 
         public void open() {
             playerType = Util.PlayerType.DEFAULT;
-            Timer timer = new Timer(1000, actionEvent -> playerOptionsPanel.open());
+            Timer timer = new Timer(870, actionEvent -> playerOptionsPanel.open());
             timer.setRepeats(false);
             timer.start();
             P1.setEnabled(false);
