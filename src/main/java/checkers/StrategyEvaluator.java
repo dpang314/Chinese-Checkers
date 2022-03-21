@@ -2,8 +2,8 @@ package checkers;
 
 import checkers.game.Game;
 import checkers.game.player.ComputerStrategy;
-import checkers.game.player.HarderStrategy;
 import checkers.game.player.EasierStrategy;
+import checkers.game.player.HarderStrategy;
 
 import java.awt.*;
 

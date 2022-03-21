@@ -16,13 +16,13 @@ import java.awt.*;
  * move though it will always find a move that is fine-ish.
  *
  *
- * THE STUPIDITY INT
+ * THE easiness INT
  *
- * increasing the 'stupidity' int will make the probability
+ * increasing the 'easiness' int will make the probability
  * of looking at each possible move lower, thereby causing it
  * to look at fewer of the possible moves and decrease the
  * likelihood of it finding an optimal one. TLDR: bigger number=
- * more stupid
+ * easier
  *
  *
  * THE FORCE-CHECKING INT
@@ -34,17 +34,17 @@ import java.awt.*;
  * and is instead caught with its pants down due to not having
  * any move to make.
  *
- * The higher the int, the stupider the strategy
+ * The higher the int, the easier the strategy
  *
  * IF THIS INT IS ABOVE 14, A CRASH BECOMES POSSIBLE,
  * ALBEIT STILL ASTRONOMICALLY IMPROBABLE:
  *
- * (1 - ((stupidity-1)/(stupidity))^forceCheckInterval) chance
+ * (1 - ((easiness-1)/(easiness))^forceCheckInterval) chance
  */
 
 public class EasierStrategy extends HarderStrategy {
 
-    public int stupidity = 8;
+    public int easiness = 8;
     //read above for more info
 
     public int forceCheckInterval = 7;
@@ -62,7 +62,7 @@ public class EasierStrategy extends HarderStrategy {
     protected void checkAndUpdateIfOptimal(Position[] path) throws Exception {
         forceCheckMove++;
         forceCheckMove %= forceCheckInterval;
-        if (boundedRandom(0, stupidity) == 0 || forceCheckMove == 0) {
+        if (boundedRandom(0, easiness) == 0 || forceCheckMove == 0) {
             super.checkAndUpdateIfOptimal(path);
         }
     }

@@ -2,7 +2,6 @@ package checkers.game;
 
 import checkers.GUI;
 import checkers.Util;
-import checkers.game.board.Move;
 import checkers.game.board.Position;
 import checkers.game.player.ComputerStrategy;
 import checkers.game.player.Player;
@@ -23,26 +22,8 @@ public class GamePanel extends JPanel {
     private static final int BUTTON_BOTTOM = 570;
     private static final int SPACING = 80;
     private static final int BUTTON_HEIGHT = 60;
-    boolean repaintButtons;
     private final Game game;
     private final ArrayList<JLabel> highlightedButtons = new ArrayList<>();
-    private final ActionListener endAction = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            game.endTurn();
-            repaintButtons = true;
-            repaint();
-            renderComputerMoves();
-        }
-    };
-    private final ActionListener undoAction = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            game.undo();
-            repaintButtons = true;
-            repaint();
-        }
-    };
     private final ActionListener saveAction = e -> save();
     private final GUI gui;
     private final ActionListener quitAction = new ActionListener() {
@@ -77,6 +58,24 @@ public class GamePanel extends JPanel {
                     gui.close();
                 }
             }
+        }
+    };
+    boolean repaintButtons;
+    private final ActionListener endAction = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            game.endTurn();
+            repaintButtons = true;
+            repaint();
+            renderComputerMoves();
+        }
+    };
+    private final ActionListener undoAction = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            game.undo();
+            repaintButtons = true;
+            repaint();
         }
     };
 
@@ -286,7 +285,7 @@ public class GamePanel extends JPanel {
                 g.drawString(game.getCurrentPlayer().getName(), BUTTON_LEFT - 10, 100);
                 g.drawString("is thinking", BUTTON_LEFT - 10, 130);
             } else {
-                if(g.getFontMetrics().stringWidth(game.getCurrentPlayer().getName()) >= 270) {
+                if (g.getFontMetrics().stringWidth(game.getCurrentPlayer().getName()) >= 270) {
                     g.drawString(game.getCurrentPlayer().getName() + "'s", BUTTON_LEFT - 10, 100);
                     g.drawString("turn", BUTTON_LEFT - 10, 120);
                 } else {

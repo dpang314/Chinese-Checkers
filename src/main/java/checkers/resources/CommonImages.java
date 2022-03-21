@@ -17,7 +17,7 @@ public class CommonImages {
     private final Image yellowNameScroll;
 
     public CommonImages() throws IOException {
-        background = ImageIO.read(new File("src/main/resources/images/background.PNG")).getScaledInstance(1280,720,Image.SCALE_DEFAULT);
+        background = ImageIO.read(new File("src/main/resources/images/background.PNG")).getScaledInstance(1280, 720, Image.SCALE_DEFAULT);
         cloudTransition = new ImageIcon("src/main/resources/images/clouds.gif");
         redNameScroll = ImageIO.read(new File("src/main/resources/images/nameScroll/red.PNG"));
         blackNameScroll = ImageIO.read(new File("src/main/resources/images/nameScroll/black.PNG"));

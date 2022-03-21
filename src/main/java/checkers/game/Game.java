@@ -3,10 +3,10 @@ package checkers.game;
 import checkers.game.board.Move;
 import checkers.game.board.Peg;
 import checkers.game.board.Position;
+import checkers.game.player.EasierStrategy;
+import checkers.game.player.HarderStrategy;
 import checkers.game.player.HumanPlayer;
 import checkers.game.player.Player;
-import checkers.game.player.HarderStrategy;
-import checkers.game.player.EasierStrategy;
 
 import java.awt.*;
 import java.io.Serializable;

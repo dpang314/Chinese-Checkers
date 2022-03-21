@@ -32,14 +32,6 @@ public class Util {
         return font;
     }
 
-    public enum PlayerType {
-        COMPUTER_EASY,
-        COMPUTER_HARD,
-        HUMAN,
-        DEFAULT, // If previously none, but now initializing type
-        NONE
-    }
-
     public static String colorToString(Color color) {
         if (color.equals(Color.RED)) {
             return "Red";
@@ -55,5 +47,13 @@ public class Util {
             return "Yellow";
         }
         return null;
+    }
+
+    public enum PlayerType {
+        COMPUTER_EASY,
+        COMPUTER_HARD,
+        HUMAN,
+        DEFAULT, // If previously none, but now initializing type
+        NONE
     }
 }

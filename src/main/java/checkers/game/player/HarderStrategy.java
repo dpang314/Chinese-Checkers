@@ -28,11 +28,6 @@ import java.util.Arrays;
  * the pegs that are farthest away.
  */
 
-/*
- * FAQ
- * 	Q: will you change it so it looks at future moves too?
- * 	A: no
- */
 
 public class HarderStrategy extends ComputerStrategy implements Serializable {
 
@@ -41,7 +36,7 @@ public class HarderStrategy extends ComputerStrategy implements Serializable {
     /*
      * The distance from the objective position
      * after which moving pegs in that outer zone
-     * becomes more valueable. Designed to encourage
+     * becomes more valuable. Designed to encourage
      * moving faraway pegs before close pegs to
      * prevent peg stranding
      */
@@ -339,8 +334,8 @@ public class HarderStrategy extends ComputerStrategy implements Serializable {
         if (!boardAtTurnStart.isOccupied(nuisance.getTR().getR()) && start.equals(nuisance.getTL()) && end.equals(nuisance.getTR().getR())) {
             return true;
         }
-		return !boardAtTurnStart.isOccupied(nuisance.getTL().getL()) && start.equals(nuisance.getTR()) && end.equals(nuisance.getTL().getL());
-	}
+        return !boardAtTurnStart.isOccupied(nuisance.getTL().getL()) && start.equals(nuisance.getTR()) && end.equals(nuisance.getTL().getL());
+    }
 
     private boolean checkFringeCase1(Move m) {
         Position start = m.getStartPosition();
@@ -368,7 +363,7 @@ public class HarderStrategy extends ComputerStrategy implements Serializable {
         if (!boardAtTurnStart.isOccupied(nuisance.getBR().getR()) && start.equals(nuisance.getBL()) && end.equals(nuisance.getBR().getR())) {
             return true;
         }
-		return !boardAtTurnStart.isOccupied(nuisance.getBL().getL()) && start.equals(nuisance.getBR()) && end.equals(nuisance.getBL().getL());
-	}
+        return !boardAtTurnStart.isOccupied(nuisance.getBL().getL()) && start.equals(nuisance.getBR()) && end.equals(nuisance.getBL().getL());
+    }
 
 }

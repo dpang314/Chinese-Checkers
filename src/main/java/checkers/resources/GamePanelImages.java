@@ -7,11 +7,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class GamePanelImages {
-    private ImageIcon blackPeg, bluePeg, greenPeg, redPeg, whitePeg, yellowPeg;
-    private ImageIcon redPegHighlighted, blackPegHighlighted, greenPegHighlighted, bluePegHighlighted, whitePegHighlighted, yellowPegHighlighted;
     private final ImageIcon positionHighlight, buttonHighlight;
     private final Image board;
     private final Image bigScroll;
+    private ImageIcon blackPeg, bluePeg, greenPeg, redPeg, whitePeg, yellowPeg;
+    private ImageIcon redPegHighlighted, blackPegHighlighted, greenPegHighlighted, bluePegHighlighted, whitePegHighlighted, yellowPegHighlighted;
 
     public GamePanelImages() throws IOException {
         loadPegs();

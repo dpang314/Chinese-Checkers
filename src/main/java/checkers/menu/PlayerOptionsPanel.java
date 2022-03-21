@@ -4,7 +4,10 @@ import checkers.GUI;
 import checkers.Util;
 
 import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -25,61 +28,6 @@ public class PlayerOptionsPanel extends JPanel {
     private Util.PlayerType selected;
     private String name = "";
     private boolean repaintButtons;
-
-    private class LimitedInput extends JTextField {
-        private final int maxCharacters = 18;
-
-        public LimitedInput() {
-            AbstractDocument doc = (AbstractDocument) this.getDocument();
-            doc.setDocumentFilter(new DocumentFilter() {
-                private void updateError() {
-                    if (nameInput.getText().length() == 0) {
-                        error.setText("Name must be at least 1 character");
-                        error.setVisible(true);
-                        save.setEnabled(false);
-                        save.setForeground(Color.GRAY);
-                    } else if (nameInput.getText().length() > maxCharacters) {
-                        throw new RuntimeException("Name length is over maxCharacters. This should never occur");
-                    } else {
-                        error.setVisible(false);
-                        save.setEnabled(true);
-                        save.setForeground(Color.BLACK);
-                    }
-                }
-
-                @Override
-                public void replace(FilterBypass fb, int offs, int length,
-                                    String str, AttributeSet a) throws BadLocationException {
-                    // Current field length + length of string to insert - length of characters to be replaced - max
-                    int overflow = fb.getDocument().getLength() + str.length() - length - maxCharacters;
-                    if (overflow > 0) {
-                        str = str.substring(0, str.length() - overflow);
-                    }
-                    super.replace(fb, offs, length, str, a);
-                    updateError();
-                }
-
-                @Override
-                public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
-                    super.remove(fb, offset, length);
-                    updateError();
-                }
-
-                @Override
-                public void insertString(FilterBypass fb, int offs,
-                                         String str, AttributeSet a)
-                        throws BadLocationException {
-                    // If input length less than or equal to 18
-                    if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
-                        super.insertString(fb, offs, str, a);
-                    }
-                    updateError();
-                }
-            });
-        }
-
-
-    }
 
     public PlayerOptionsPanel(int playerNumber, MenuPanel.PlayerButton playerButton) {
         defaultHumanName = "Human Player " + playerNumber;
@@ -321,5 +269,60 @@ public class PlayerOptionsPanel extends JPanel {
                 nameInstruct.setVisible(false);
             }
         }
+    }
+
+    private class LimitedInput extends JTextField {
+        private final int maxCharacters = 18;
+
+        public LimitedInput() {
+            AbstractDocument doc = (AbstractDocument) this.getDocument();
+            doc.setDocumentFilter(new DocumentFilter() {
+                private void updateError() {
+                    if (nameInput.getText().length() == 0) {
+                        error.setText("Name must be at least 1 character");
+                        error.setVisible(true);
+                        save.setEnabled(false);
+                        save.setForeground(Color.GRAY);
+                    } else if (nameInput.getText().length() > maxCharacters) {
+                        throw new RuntimeException("Name length is over maxCharacters. This should never occur");
+                    } else {
+                        error.setVisible(false);
+                        save.setEnabled(true);
+                        save.setForeground(Color.BLACK);
+                    }
+                }
+
+                @Override
+                public void replace(FilterBypass fb, int offs, int length,
+                                    String str, AttributeSet a) throws BadLocationException {
+                    // Current field length + length of string to insert - length of characters to be replaced - max
+                    int overflow = fb.getDocument().getLength() + str.length() - length - maxCharacters;
+                    if (overflow > 0) {
+                        str = str.substring(0, str.length() - overflow);
+                    }
+                    super.replace(fb, offs, length, str, a);
+                    updateError();
+                }
+
+                @Override
+                public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+                    super.remove(fb, offset, length);
+                    updateError();
+                }
+
+                @Override
+                public void insertString(FilterBypass fb, int offs,
+                                         String str, AttributeSet a)
+                        throws BadLocationException {
+                    // If input length less than or equal to 18
+                    if ((fb.getDocument().getLength() + str.length()) <= maxCharacters) {
+                        super.insertString(fb, offs, str, a);
+                    }
+                    updateError();
+                }
+            });
+        }
+
+
     }
 }

@@ -12,30 +12,39 @@ import java.util.HashMap;
 
 public class MenuPanelImages {
     private final HashMap<String, ImageIcon> cloudIcons = new HashMap<>();
-
+    private final ImageIcon emptyButton;
+    private final ImageIcon filledButton;
+    private final ImageIcon start;
+    private final ImageIcon load;
+    private final ImageIcon exit;
+    private final ImageIcon dragon;
+    private final ImageIcon logoBig;
+    private final ImageIcon scrollOpenAnimated;
+    private final ImageIcon scrollCloseAnimated;
+    private final ImageIcon dragonAnimated;
     public MenuPanelImages() throws IOException {
         loadCloudIcons();
         //	https://cdn1.iconfinder.com/data/icons/thin-ui-1/100/Noun_Project_100Icon_1px_grid_thin_ic_radio_btn_full-512.PNG
         filledButton = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/filledRadioButton.png"))
-                .getScaledInstance(28,28, Image.SCALE_DEFAULT));
+                .getScaledInstance(28, 28, Image.SCALE_DEFAULT));
 
         //	https://cdn1.iconfinder.com/data/icons/interface-59/24/radio-button-off-unchecked-round-circle-512.PNG
         emptyButton = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/emptyRadioButton.png"))
-                .getScaledInstance(20,20,Image.SCALE_DEFAULT));
+                .getScaledInstance(20, 20, Image.SCALE_DEFAULT));
 
         // start load exit
         BufferedImage startImage = ImageIO.read(new File("src/main/resources/images/menu/start.PNG"));
-        start = new ImageIcon(startImage.getScaledInstance((int)(startImage.getWidth() / 1.5), (int)(startImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
+        start = new ImageIcon(startImage.getScaledInstance((int) (startImage.getWidth() / 1.5), (int) (startImage.getHeight() / 1.5), Image.SCALE_DEFAULT));
 
         BufferedImage loadImage = ImageIO.read(new File("src/main/resources/images/menu/load.PNG"));
-        load = new ImageIcon(loadImage.getScaledInstance((int)(loadImage.getWidth() / 1.5), (int)(loadImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
+        load = new ImageIcon(loadImage.getScaledInstance((int) (loadImage.getWidth() / 1.5), (int) (loadImage.getHeight() / 1.5), Image.SCALE_DEFAULT));
 
         BufferedImage menuImage = ImageIO.read(new File("src/main/resources/images/menu/exit.PNG"));
-        exit = new ImageIcon(menuImage.getScaledInstance((int)(menuImage.getWidth() / 1.5), (int)(menuImage.getHeight()/ 1.5), Image.SCALE_DEFAULT));
+        exit = new ImageIcon(menuImage.getScaledInstance((int) (menuImage.getWidth() / 1.5), (int) (menuImage.getHeight() / 1.5), Image.SCALE_DEFAULT));
 
         // visuals like scrolls dragons logos
 
-        dragon = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/dragon.png")).getScaledInstance(1280,720,Image.SCALE_DEFAULT));
+        dragon = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/dragon.png")).getScaledInstance(1280, 720, Image.SCALE_DEFAULT));
 
         logoBig = new ImageIcon(ImageIO.read(new File("src/main/resources/images/menu/logoBig.png"))
                 .getScaledInstance(1280, 720, Image.SCALE_DEFAULT));
@@ -47,7 +56,7 @@ public class MenuPanelImages {
 
     private void addImageIcon(String name) throws IOException {
         BufferedImage cloud = ImageIO.read(new File("src/main/resources/images/menu/clouds/" + name + ".PNG"));
-        cloudIcons.put(name, new ImageIcon(cloud.getScaledInstance((int)(cloud.getWidth() / 1.5), (int)(cloud.getHeight() / 1.5), Image.SCALE_DEFAULT)));
+        cloudIcons.put(name, new ImageIcon(cloud.getScaledInstance((int) (cloud.getWidth() / 1.5), (int) (cloud.getHeight() / 1.5), Image.SCALE_DEFAULT)));
     }
 
     private void loadCloudIcons() throws IOException {
@@ -79,17 +88,6 @@ public class MenuPanelImages {
         addImageIcon("p5Def");
         addImageIcon("p6Def");
     }
-
-    private final ImageIcon emptyButton;
-    private final ImageIcon filledButton;
-    private final ImageIcon start;
-    private final ImageIcon load;
-    private final ImageIcon exit;
-    private final ImageIcon dragon;
-    private final ImageIcon logoBig;
-    private final ImageIcon scrollOpenAnimated;
-    private final ImageIcon scrollCloseAnimated;
-    private final ImageIcon dragonAnimated;
 
     public ImageIcon getEmptyButton() {
         return emptyButton;

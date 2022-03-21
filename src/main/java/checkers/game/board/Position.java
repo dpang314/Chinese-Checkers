@@ -2,7 +2,6 @@ package checkers.game.board;
 
 import checkers.game.Board;
 
-import java.awt.*;
 import java.io.Serializable;
 
 public class Position implements Serializable {
@@ -10,7 +9,7 @@ public class Position implements Serializable {
     public static final int[] directions = {LEFT, TOP_LEFT, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT};
     private static final boolean left = false, right = true;
     private final int row;
-	private final int column;
+    private final int column;
 
     public Position(int row, int column) {
         this.row = row;

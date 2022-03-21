@@ -12,7 +12,7 @@ public class HumanPlayer extends Player implements Serializable {
         super(color, playerName);
     }
 
-	public Move getMove(Board board) {
+    public Move getMove(Board board) {
         return null;
     }
 

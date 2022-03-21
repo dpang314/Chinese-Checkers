@@ -11,11 +11,11 @@ import java.awt.*;
 
 public class GUI {
     private static final ImageLoader imageLoader = new ImageLoader();
-    private Game game;
     private final JFrame frame;
+    private final JLayeredPane containerPane = new JLayeredPane();
+    private Game game;
     private MenuPanel menuPanel;
     private GamePanel gamePanel;
-    private final JLayeredPane containerPane = new JLayeredPane();
 
     public GUI() {
         frame = new JFrame("Chinese Checkers");

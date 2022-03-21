@@ -3,10 +3,10 @@ package checkers.menu;
 import checkers.GUI;
 import checkers.Util;
 import checkers.game.Game;
+import checkers.game.player.EasierStrategy;
 import checkers.game.player.HarderStrategy;
 import checkers.game.player.HumanPlayer;
 import checkers.game.player.Player;
-import checkers.game.player.EasierStrategy;
 import checkers.resources.GameLoader;
 
 import javax.swing.*;
@@ -306,7 +306,7 @@ public class MenuPanel extends JLayeredPane {
             Canvas c = new Canvas();
             int width = 0, height = 0;
             if (playerType.equals(Util.PlayerType.COMPUTER_EASY) || playerType.equals(Util.PlayerType.COMPUTER_HARD) ||
-            playerType.equals(Util.PlayerType.HUMAN)) {
+                    playerType.equals(Util.PlayerType.HUMAN)) {
                 FontMetrics metrics = c.getFontMetrics(Util.getBigFont());
                 width = metrics.stringWidth(getName()) + 54;
                 height = metrics.getHeight() + 10;
