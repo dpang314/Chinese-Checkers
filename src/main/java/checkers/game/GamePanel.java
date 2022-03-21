@@ -153,7 +153,7 @@ public class GamePanel extends JPanel {
 
         double adjustedColumn = column - columnWidths[row];
 
-        if (column >= 10) {
+        if (column - columnWidths[row] / 2 >= 3) {
             START_X += 5;
         }
 
