@@ -106,8 +106,13 @@ public class Game implements Serializable {
         this.board = new Board(players);
     }
 
-    public Move getTurn() {
-        return currentPlayer.getMove(board);
+    public void getTurn() {
+        Move move = currentPlayer.getMove(board);
+        if (move == null) {
+            this.endTurn();
+        } else {
+            this.movePeg(move);
+        }
     }
 
     public void endTurn() {

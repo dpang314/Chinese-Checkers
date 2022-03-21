@@ -9,9 +9,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public abstract class Player implements Serializable {
-    private final String playerName;
-    private ArrayList<Position> posArr;
-    private Color color;
+    private String playerName;
+    private final ArrayList<Position> posArr;
+    private final Color color;
     private Position[] winReg;
 
     public Player(Color color, String playerName) {
@@ -28,13 +28,11 @@ public abstract class Player implements Serializable {
         return color;
     }
 
-    public void setColor(Color c) {
-        this.color = c;
-    }
-
     public String getName() {
         return playerName;
     }
+
+    public void setName(String name) { playerName = name; }
 
     public void addInitialPos(Position pos) {
         posArr.add(pos);

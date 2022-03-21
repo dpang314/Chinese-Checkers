@@ -206,22 +206,12 @@ public class GamePanel extends JPanel {
         if (game.gameOver()) {
             repaint();
         } else if (game.getCurrentPlayer().isComputer()) {
-            Move move = game.getTurn();
-            if (move == null) {
-                game.endTurn();
-                repaintButtons = true;
-                repaint();
-                Timer timer = new Timer(100, actionEvent -> renderComputerMoves());
-                timer.setRepeats(false);
-                timer.start();
-            } else {
-                game.movePeg(move);
-                repaintButtons = true;
-                repaint();
-                Timer timer = new Timer(100, actionEvent -> renderComputerMoves());
-                timer.setRepeats(false);
-                timer.start();
-            }
+            game.getTurn();
+            repaintButtons = true;
+            repaint();
+            Timer timer = new Timer(100, actionEvent -> renderComputerMoves());
+            timer.setRepeats(false);
+            timer.start();
         }
     }
 
