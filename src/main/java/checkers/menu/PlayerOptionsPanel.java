@@ -50,8 +50,9 @@ public class PlayerOptionsPanel extends JPanel {
                 @Override
                 public void replace(FilterBypass fb, int offs, int length,
                                     String str, AttributeSet a) throws BadLocationException {
-                    if (str.length() + offs > maxCharacters) {
-                        int overflow = str.length() + offs - maxCharacters;
+                    // Current field length + length of string to insert - length of characters to be replaced - max
+                    int overflow = fb.getDocument().getLength() + str.length() - length - maxCharacters;
+                    if (overflow > 0) {
                         str = str.substring(0, str.length() - overflow);
                     }
                     super.replace(fb, offs, length, str, a);
