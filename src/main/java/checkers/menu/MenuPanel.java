@@ -78,6 +78,7 @@ public class MenuPanel extends JLayeredPane {
         start.setIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
         start.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getStart());
         start.addActionListener(actionEvent -> {
+            disableAll();
             Player[] players = {
                     createPlayer(P1),
                     createPlayer(P2),
@@ -112,13 +113,12 @@ public class MenuPanel extends JLayeredPane {
         load.setIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
         load.setDisabledIcon(GUI.getImageLoader().getMenuPanelImages().getLoad());
         load.addActionListener(actionEvent -> {
-            // loads save
             JFileChooser chooser = new JFileChooser();
             FileNameExtensionFilter filter = new FileNameExtensionFilter(
                     ".chcr save file", "chcr");
             chooser.setFileFilter(filter);
             chooser.setAcceptAllFileFilterUsed(false);
-            int returnVal = chooser.showOpenDialog(null);
+            int returnVal = chooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 try {
                     Game game = GameLoader.readGameFromFile(chooser.getSelectedFile().getPath());
@@ -186,6 +186,14 @@ public class MenuPanel extends JLayeredPane {
         this.add(dragonImage, -1, 0);
 
         repaint();
+    }
+
+    private void disableAll() {
+        for (Component component : this.getComponents()) {
+            if (component instanceof JButton) {
+                component.setEnabled(false);
+            }
+        }
     }
 
     private void shuffleAction() {
