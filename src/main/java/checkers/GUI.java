@@ -58,7 +58,7 @@ public class GUI {
                 gamePanel.setBounds(0, 0, 1280, 720);
                 containerPane.add(gamePanel, 0, 0);
             });
-            Timer t = new Timer(1080, actionEvent1 -> {
+            Timer t = new Timer(930, actionEvent1 -> {
                 containerPane.remove(transitionPane);
                 containerPane.repaint();
             });
@@ -101,7 +101,7 @@ public class GUI {
                 menuPanel.setBounds(0, 0, 1280, 720);
                 containerPane.add(menuPanel, 0, 0);
             });
-            Timer t = new Timer(1080, actionEvent1 -> {
+            Timer t = new Timer(960, actionEvent1 -> {
                 containerPane.remove(transitionPane);
                 containerPane.repaint();
             });
