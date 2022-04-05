@@ -1,1 +1,1 @@
-# AOOD Group Project
+# Chinese Checkers
