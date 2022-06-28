@@ -49,7 +49,7 @@ class MoveTest {
     @MethodSource("providePlayers")
     void getOwner(Player testPlayer) {
         Move testMove = new Move(new Position(-1, -1), new Position(-1, -1), testPlayer);
-        assertSame(testPlayer, testMove.getOwner());
+        assertSame(testPlayer, testMove.getPlayer());
     }
 
     @DisplayName("Should store reference to same position object")
@@ -57,7 +57,7 @@ class MoveTest {
     @MethodSource("providePositions")
     void getStartPosition(Position testPosition) {
         Move testMove = new Move(testPosition, testPosition, new HumanPlayer(Color.RED, "Test Human"));
-        assertSame(testMove.getStartPosition(), testPosition);
+        assertSame(testMove.getStart(), testPosition);
     }
 
     @Test

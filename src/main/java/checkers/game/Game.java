@@ -120,7 +120,7 @@ public class Game implements Serializable {
         jumped = false;
         //Doesn't add a move to the stack if
         //there is no player in the slot
-        history.add(new Move(miniHistory.get(0).getStartPosition(), miniHistory.get(miniHistory.size() - 1).getEndPosition(), currentPlayer));
+        history.add(new Move(miniHistory.get(0).getStart(), miniHistory.get(miniHistory.size() - 1).getEnd(), currentPlayer));
         //Resets final move and clears minihistory stack
         //at the end of every turn
         miniHistory.clear();
@@ -156,7 +156,7 @@ public class Game implements Serializable {
             //Creates a move to pass to board which is just a reverse of the
             //current turn's move
             Move lastMove = miniHistory.pop();
-            undoingMove = new Move(lastMove.getEndPosition(), lastMove.getStartPosition(), currentPlayer);
+            undoingMove = new Move(lastMove.getEnd(), lastMove.getStart(), currentPlayer);
             board.move(undoingMove, true);
             if (miniHistory.size() == 0) {
                 jumped = false;
@@ -167,7 +167,7 @@ public class Game implements Serializable {
         else if (canUndoTurns()) {
             for (int i = 0; i < numPlayers; i++) {
                 Move undidMove = history.pop();
-                undoingMove = new Move(undidMove.getEndPosition(), undidMove.getStartPosition(), undidMove.getOwner());
+                undoingMove = new Move(undidMove.getEnd(), undidMove.getStart(), undidMove.getPlayer());
                 board.move(undoingMove, true);
             }
             miniHistory.clear();
@@ -177,18 +177,18 @@ public class Game implements Serializable {
 
     public void movePeg(Move move) {
         if (initiallySelected == null && miniHistory.isEmpty()) {
-            initiallySelected = move.getEndPosition();
-            if (board.possibleJumpMoves(move.getStartPosition()) != null && board.possibleJumpMoves(move.getStartPosition()).contains(move.getEndPosition())) {
+            initiallySelected = move.getEnd();
+            if (board.possibleJumpMoves(move.getStart()) != null && board.possibleJumpMoves(move.getStart()).contains(move.getEnd())) {
                 jumped = true;
             }
         } else {
-            Position lastPosition = miniHistory.peek().getEndPosition();
+            Position lastPosition = miniHistory.peek().getEnd();
             // Not moving same peg
-            if (!move.getStartPosition().equals(lastPosition)) {
+            if (!move.getStart().equals(lastPosition)) {
                 throw new RuntimeException("Invalid move. startPos is not equal to the end position of the last move.");
             } else if (!jumped) {
                 throw new RuntimeException("Invalid move. Can't move again after moving to an adjacent position.");
-            } else if (!board.possibleMoves(lastPosition, true).contains(move.getEndPosition())) {
+            } else if (!board.possibleMoves(lastPosition, true).contains(move.getEnd())) {
                 throw new RuntimeException("Invalid move. Move is not a possible jump.");
             }
         }
@@ -214,14 +214,14 @@ public class Game implements Serializable {
         if (miniHistory.isEmpty()) {
             return initiallySelected != null ? initiallySelected : null;
         }
-        return miniHistory.peek().getEndPosition();
+        return miniHistory.peek().getEnd();
     }
 
     public Position startPosition() {
         if (miniHistory.isEmpty()) {
             return initiallySelected != null ? initiallySelected : null;
         }
-        return miniHistory.get(0).getStartPosition();
+        return miniHistory.get(0).getStart();
     }
 
     public void select(Position p) {

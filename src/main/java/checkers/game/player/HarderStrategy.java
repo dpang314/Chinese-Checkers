@@ -298,7 +298,7 @@ public class HarderStrategy extends ComputerStrategy implements Serializable {
      * of a single peg.
      */
     private double grandMoveValue(Move move) {
-        return scaledDist(move.getStartPosition(), obj) - scaledDist(move.getEndPosition(), obj);
+        return scaledDist(move.getStart(), obj) - scaledDist(move.getEnd(), obj);
     }
 
     // ----- ANNOYING FRINGE CASE METHOD(S) -----
@@ -309,8 +309,8 @@ public class HarderStrategy extends ComputerStrategy implements Serializable {
     }
 
     private boolean checkFringeCase0(Move m) {
-        Position start = m.getStartPosition();
-        Position end = m.getEndPosition();
+        Position start = m.getStart();
+        Position end = m.getEnd();
 
         Position nuisance = new Position(4, 6);
         Position reqObj = new Position(0, 0);
@@ -338,8 +338,8 @@ public class HarderStrategy extends ComputerStrategy implements Serializable {
     }
 
     private boolean checkFringeCase1(Move m) {
-        Position start = m.getStartPosition();
-        Position end = m.getEndPosition();
+        Position start = m.getStart();
+        Position end = m.getEnd();
 
         Position nuisance = new Position(12, 6);
         Position reqObj = new Position(16, 0);

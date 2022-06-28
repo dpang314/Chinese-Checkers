@@ -291,8 +291,8 @@ public class Board implements Cloneable, Serializable {
             return;
         }
 
-        Position startPos = move.getStartPosition();
-        Position endPos = move.getEndPosition();
+        Position startPos = move.getStart();
+        Position endPos = move.getEnd();
         //checks that the peg exists and can move to the specified location
         if (boardPos[startPos.getRow()][startPos.getColumn()] == null) {
             throw new RuntimeException("Invalid move. startPos is null.");
@@ -306,7 +306,7 @@ public class Board implements Cloneable, Serializable {
         boardPos[startPos.getRow()][startPos.getColumn()] = null;
 
         //updates the move-maker's array of positions
-        move.getOwner().getPosArr().set(indexOf(move.getOwner().getPosArr(), startPos), endPos);
+        move.getPlayer().getPosArr().set(indexOf(move.getPlayer().getPosArr(), startPos), endPos);
 
     }
 
